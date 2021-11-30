@@ -1,0 +1,117 @@
+import React, { useState } from 'react'
+import { useNavigation } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
+import { StyleSheet, Text, Image, View, TextInput, Alert, Pressable } from 'react-native'
+import { getAuth, createUserWithEmailAndPassword} from 'firebase/auth'
+
+const RegisterScreen = () => {
+
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const navigation = useNavigation()
+
+    const handleRegister = () => {
+        const auth = getAuth()
+        createUserWithEmailAndPassword(auth, email, password)
+        .then(userCredentials => {
+            const user = userCredentials.user
+            console.log(user.email)
+            Alert.alert('Conta criada com sucesso')
+            navigation.navigate('Login')
+        })
+        .catch(error => alert(error.message))
+    }
+
+    return (
+        <View style={styles.container}>
+      
+            <Image
+            style={styles.imageTeste}
+            source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
+            />
+            <View>
+              <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
+              <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Password' secureTextEntry></TextInput>
+              <View style={styles.redirectContainer}>
+                <Text style={styles.perguntaConta}>Já tens uma conta?</Text>
+                <Text style={styles.linkLogin} onPress={() => navigation.navigate('Login')}>Iniciar sessão</Text>
+              </View>
+              <Pressable
+                  style={styles.btnPressable}
+                  onPress={handleRegister}>
+                <Text style={styles.textPressable}>Criar conta</Text>
+              </Pressable>
+            </View>
+
+            <StatusBar style="auto" />
+        </View>
+    )
+}
+
+export default RegisterScreen
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        // backgroundColor: '#fff',
+        alignItems: 'center',
+        //justifyContent: 'center',
+      },
+      imageTeste: {
+        width: 176,
+        height: 120,
+        marginTop: 120,
+      },
+      textInput: {
+        width: 250,
+        //borderStyle: 'solid',
+        borderBottomWidth: 2,
+        // borderColor: '#000',
+        borderColor: 'rgb(120, 120, 120)',
+        paddingLeft: 5,
+        marginTop: 25,
+        fontSize: 16,
+      },
+      usernameLabel: {
+        marginTop: 30,
+        marginLeft: 5,
+        fontSize: 16,
+      },
+      label: {
+        marginTop: 20,
+        fontSize: 16,
+        marginStart: 5,
+      },
+      btnPressable: {
+        marginTop: 50,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'green',
+        height: 40,
+        width: 150,
+        borderRadius: 5,
+      },
+      textPressable: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: 'bold'
+      },
+      redirectContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'baseline',
+        marginTop: 10,
+        maxHeight: 20
+      },
+      linkLogin: {
+        color: 'blue',
+        fontWeight: 'bold',
+        fontSize: 14,
+        marginLeft: 8,
+      },
+      perguntaConta: {
+        color: 'rgb(120,120,120)',
+        fontSize: 13,
+      }
+})
