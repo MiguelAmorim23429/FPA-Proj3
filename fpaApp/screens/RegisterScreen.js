@@ -9,15 +9,20 @@ const RegisterScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const navigation = useNavigation()
+    const auth = getAuth()
 
     const handleRegister = () => {
-        const auth = getAuth()
+        
         createUserWithEmailAndPassword(auth, email, password)
         .then(userCredentials => {
-            const user = userCredentials.user
-            console.log(user.email)
+          // const [user, setUser] = useState(userCredentials.user)
+          auth.currentUser = null
+          // setUser(null)
+          // console.log(user.email)
+          // userCredentials
+            // const user = userCredentials.user
+            // console.log(user.email)
             Alert.alert('Conta criada com sucesso')
-            navigation.navigate('Login')
         })
         .catch(error => alert(error.message))
     }

@@ -8,7 +8,7 @@ import { app } from '../firebase';
 const HomeScreen = () => {
 
     const auth = getAuth()
-    const navigation = useNavigation()
+    // const navigation = useNavigation()
     const modalidade = 'modalidade1'
     const [data, setData] = useState('')
 
@@ -27,14 +27,11 @@ const HomeScreen = () => {
     const handleLogout = () => {
         auth
         .signOut()
-        .then(() => {
-            navigation.replace("Login")
-        })
     }
 
     return (
         <View style={styles.container}>
-            <Text>Estás logado em: {auth.currentUser.email}</Text>
+            {/* <Text>Estás logado em: {auth.currentUser.email}</Text> */}
             <Text>Modalidade: {data}</Text>
             <Button title='Logout' onPress={handleLogout}/>
         </View>

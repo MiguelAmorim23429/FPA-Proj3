@@ -11,15 +11,13 @@ const LoginScreen = () => {
     // const auth = authApp.getAuth()
     const navigation = useNavigation()
     const auth = getAuth()
-    let user = ''
+    var user = ''
 
     const handleLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
         .then(userCredentials => {
             user = userCredentials.user
-            console.log('Conta iniciada com: ', user.email)
             Alert.alert('Entraste')
-            navigation.navigate('Home')
         })
         .catch(error => {
           console.log("Tenta outra vez")
