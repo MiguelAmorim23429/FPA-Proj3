@@ -30,7 +30,7 @@ const LoginScreen = () => {
       
             <Image
             style={styles.imageTeste}
-            source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
+            source={require('C:/Users/MIGUEL AMORIM/Documents/GitHub/TM-2021/Aula 1/aula1-MiguelAmorim-23429/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
             />
             <View>
               <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
