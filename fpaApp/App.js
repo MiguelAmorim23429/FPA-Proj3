@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StyleSheet } from 'react-native';
@@ -12,23 +12,29 @@ export default function App() {
 
   const auth = getAuth()
   const [loggedIn, setLoggedIn] = useState(null)
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // User is signed in, see docs for a list of available properties
-      // https://firebase.google.com/docs/reference/js/firebase.User
-      const uid = user.uid;
-      const email = user.email
-      console.log(uid + '            ENTROUUUUUU')
-      setLoggedIn(user)
-      // ...
-    } else {
-      // User is signed out
-      // ...
-      setLoggedIn(user)
-      console.log('NAO entrouuuuuuuuuuuuu')
-    }
-  });
+    useEffect(() => {
+     const authChange =  onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // User is signed in, see docs for a list of available properties
+          // https://firebase.google.com/docs/reference/js/firebase.User
+          const uid = user.uid;
+          const email = user.email
+          setLoggedIn(user)
+          console.log(uid + '            ENTROUUUUUU')
+          
+          // ...
+        } else {
+          // User is signed out
+          // ...
+          setLoggedIn(user)
+          console.log('NAO entrouuuuuuuuuuuuu')
+        }
+      });
+      return () => {
+        authChange()
+      }
+    }, [])
+    
 
   const Stack = createNativeStackNavigator();
 
