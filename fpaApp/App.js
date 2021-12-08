@@ -5,13 +5,14 @@ import { StyleSheet } from 'react-native';
 import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import CompetitionScreen from './screens/CompetitionScreen';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth'
 
 export default function App() {
 
   const auth = getAuth()
-  const [loggedIn, setLoggedIn] = useState(null)
+  const [loggedIn, setLoggedIn] = useState(auth.currentUser)
     useEffect(() => {
      const authChange =  onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -49,7 +50,8 @@ export default function App() {
           </>
         ) : (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ headerBackVisible: false}} />
+            <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}} />
+            <Stack.Screen name="Competition" component={CompetitionScreen} options={{headerShown: false}} />
           </>
         )}
         

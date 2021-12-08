@@ -1,43 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, Button, ScrollView } from 'react-native'
-import { Card, ListItem, Icon } from 'react-native-elements'
+import { StyleSheet, Text, View,  ScrollView, TouchableOpacity, Alert, Pressable } from 'react-native'
+import { Card, Header } from 'react-native-elements'
 import { getAuth } from 'firebase/auth'
-import { getDatabase, ref, child, get, onValue } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from '../firebase';
-import { requireNativeViewManager } from 'expo-modules-core';
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
   const db = getDatabase()
-  const dbRef = ref(db, '/competicoes/')
+  const competicoesRef = ref(db, '/competicoes/')
 
   const auth = getAuth()
+  const navigation = useNavigation()
 
   const [competicoes, setCompeticoes] = useState([])
-  const [nomeCompeticao, setNomeCompeticao] = useState([])
-  const [localCompeticao, setLocalCompeticao] = useState([])
-  const [dataCompeticao, setDataCompeticao] = useState([])
 
   useEffect(() => {
-    onValue(dbRef, (snapshot) => {
+    onValue(competicoesRef, (snapshot) => {
       let comps = []
+
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
         const arrayEntries = Object.entries(childData)
-        // const data = [arrayEntries[0][1]]
-        // const local = [arrayEntries[1][1]]
-        // const nome = [arrayEntries[2][1]]
-        // nomeCompeticao.push(nome)
-        // localCompeticao.push(local)
-        // dataCompeticao.push(data)
-        comps.push(childData)
+
+        comps.push([childKey, childData])
       });
       setCompeticoes(comps)
-      setDataCompeticao(dataCompeticao)
-      console.log(competicoes)
-      setLocalCompeticao(localCompeticao)
-      setNomeCompeticao(nomeCompeticao)
+      // console.log(competicoes)
     }, {
       onlyOnce: true
     });
@@ -48,38 +38,41 @@ const HomeScreen = () => {
       .signOut()
   }
 
+  // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
+  const escolherCompeticao = (val) => {
+    console.log(val)
+    navigation.navigate('Competition', {idComp: val})
+  }
+
   return (
-    <ScrollView>
-      {/* <Text>Estás logado em: {auth.currentUser.email}</Text> */}  
+    <View style={styles.container}>
+      <Header 
+      leftComponent={{text:'Competições', style: {fontSize: 20, fontWeight: 'bold', width: 150, marginLeft: 10, color: 'white'}}}
+      />
+
+      <ScrollView style={styles.cardContainer}>
+          {competicoes.map(([key, value]) => {
+            if(value.ativa == true){
+              return (
+                <View key={key}>
+                  <TouchableOpacity onPress={() => escolherCompeticao(key)}>
+                    <Card>
+                      <Card.Title style={{fontSize:18}}>{value.nome}</Card.Title>
+                      <Card.Divider/>
+                      <Card.Image style={{borderRadius: 5}} source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}>
+                      </Card.Image>
+                      <Text style={{fontSize: 16}}>{value.data}</Text>
+                      <Text style={{fontSize: 16}}>{value.local}</Text>
+                    </Card>
+                  </TouchableOpacity>
+                </View>
+              )
+            }
+          })}
+        <Pressable style={styles.logOutPressable} title='Logout' onPress={handleLogout}><Text style={styles.textPressable}>Sair</Text></Pressable>
+      </ScrollView>
       
-      {/* <Text>Competição: {map}</Text> */}
-      <View style={styles.container}>
-        {competicoes.map((data) => {
-          return (
-            <Card containerStyle={{width: '95%', borderRadius: 10}}>
-              <Card.Title style={{fontSize:18}}>{data.nome}</Card.Title>
-              <Card.Divider/>
-              <Card.Image style={{borderRadius: 5}} source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}>
-              
-              </Card.Image>
-              <Text style={{fontSize: 16}}>{data.data}</Text>
-              <Text style={{fontSize: 16}}>{data.local}</Text>
-            </Card>
-          )
-        })}
-        <Button title='Logout' onPress={handleLogout}/>
-      </View>
-      
-      {/* <Card style={styles.card}>
-        <Card.Title>{data}</Card.Title>
-        <Card.Divider/>
-        <Card.Image source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}>
-        <Text>ffadsa</Text>
-        <Text>aa</Text>
-        </Card.Image>
-      </Card> */}
-      
-    </ScrollView>
+    </View>
   )
 }
 
@@ -89,10 +82,30 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         justifyContent: 'center',
-        width: '100%'
+        width: '100%',
+        height: '100%',
         // backgroundColor: '#fff',
     },
-    card: {
+    cardContainer: {
       width: '100%',
+      margin: 0,
+      padding: 0,
+    },
+    logOutPressable: {
+      marginTop: 50,
+      alignSelf: 'center',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'green',
+      height: 40,
+      width: 150,
+      borderRadius: 5,
+    },textPressable: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: 'bold'
+    },
+    header: {
+      fontSize: 16,
     }
 })

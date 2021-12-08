@@ -35,8 +35,11 @@ const RegisterScreen = () => {
             source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
             />
             <View>
+
+              {/* <Text style={styles.titleRegisto}>REGISTO</Text> */}
               <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
               <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Password' secureTextEntry></TextInput>
+              {/* <TextInput style={[styles.textInput, styles.pwInput]} value={password} onChangeText={text => setPassword(text)} placeholder='Password' secureTextEntry></TextInput> */}
               <View style={styles.redirectContainer}>
                 <Text style={styles.perguntaConta}>Já tens uma conta?</Text>
                 <Text style={styles.linkLogin} onPress={() => navigation.navigate('Login')}>Iniciar sessão</Text>
@@ -74,9 +77,13 @@ const styles = StyleSheet.create({
         // borderColor: '#000',
         borderColor: 'rgb(120, 120, 120)',
         paddingLeft: 5,
+        // marginBottom: 25,
         marginTop: 25,
         fontSize: 16,
       },
+      // pwInput: {
+      //   marginBottom: 0,
+      // },
       usernameLabel: {
         marginTop: 30,
         marginLeft: 5,
@@ -118,5 +125,13 @@ const styles = StyleSheet.create({
       perguntaConta: {
         color: 'rgb(120,120,120)',
         fontSize: 13,
-      }
+      },
+      // titleRegisto: {
+      //   fontSize: 14,
+      //   fontWeight: 'bold',
+      //   marginTop: 35,
+      //   marginBottom: 15,
+      //   marginStart: 5,
+      //   color: 'rgb(60, 109, 204)',
+      // }
 })

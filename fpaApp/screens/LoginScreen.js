@@ -33,8 +33,11 @@ const LoginScreen = () => {
             source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
             />
             <View>
+
+              {/* <Text style={styles.titleLogin}>LOG IN</Text> */}
               <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
-              <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Password' secureTextEntry></TextInput>
+              <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput>
+              {/* <TextInput style={[styles.textInput, styles.pwInput]} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput> */}
               <View style={styles.redirectContainer}>
                 <Text style={styles.perguntaConta}>Ainda não tenho uma conta.</Text>
                 <Text style={styles.linkRegister} onPress={() => navigation.navigate('Register')}>Criar conta</Text>
@@ -54,57 +57,69 @@ const LoginScreen = () => {
 export default LoginScreen
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        // backgroundColor: '#fff',
-        alignItems: 'center',
-        //justifyContent: 'center',
-      },
-      imageTeste: {
-        width: 176,
-        height: 120,
-        marginTop: 120,
-      },
-      textInput: {
-        width: 250,
-        //borderStyle: 'solid',
-        borderBottomWidth: 2,
-        // borderColor: '#000',
-        borderColor: 'rgb(120, 120, 120)',
-        paddingLeft: 5,
-        marginTop: 25,
-        fontSize: 16,
-      },
-      btnPressable: {
-        marginTop: 50,
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'green',
-        height: 40,
-        width: 150,
-        borderRadius: 5,
-      },
-      textPressable: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold'
-      },
-      redirectContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'baseline',
-        marginTop: 10,
-        maxHeight: 20
-      },
-      linkRegister: {
-        color: 'blue',
-        fontWeight: 'bold',
-        fontSize: 14,
-        marginLeft: 8,
-      },
-      perguntaConta: {
-        color: 'rgb(120,120,120)',
-        fontSize: 13,
-      }
+  container: {
+    flex: 1,
+    // backgroundColor: '#fff',
+    alignItems: 'center',
+    //justifyContent: 'center',
+  },
+  imageTeste: {
+    width: 176,
+    height: 120,
+    marginTop: 120,
+  },
+  textInput: {
+    width: 250,
+    //borderStyle: 'solid',
+    borderBottomWidth: 2,
+    // borderColor: '#000',
+    borderColor: 'rgb(120, 120, 120)',
+    padding: 5,
+    // marginBottom: 25,
+    marginTop: 25,
+    fontSize: 16,
+  },
+  // pwInput: {
+  //   marginBottom: 0,
+  // },
+  btnPressable: {
+    marginTop: 50,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'green',
+    height: 40,
+    width: 150,
+    borderRadius: 5,
+  },
+  textPressable: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  redirectContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginTop: 10,
+    maxHeight: 20
+  },
+  linkRegister: {
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  perguntaConta: {
+    color: 'rgb(120,120,120)',
+    fontSize: 13,
+  },
+  // titleLogin: {
+  //   fontSize: 14,
+  //   fontWeight: 'bold',
+  //   marginTop: 35,
+  //   marginBottom: 15,
+  //   marginStart: 5,
+  //   color: 'rgb(60, 109, 204)',
+  // }
 })
