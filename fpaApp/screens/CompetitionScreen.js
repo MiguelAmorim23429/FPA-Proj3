@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigation } from '@react-navigation/native';
 import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { getDatabase, ref, onValue, query, equalTo, orderByChild} from "firebase/database"
-import { ListItem, Header } from 'react-native-elements'
+import { ListItem, Header, Icon } from 'react-native-elements'
 
 const CompetitionScreen = ({route}) => {
 
     // Variável com o valor do idCompeticao da competição em que se clicou no ecrã anterior
     const idCompeticao = route.params.idComp
+
+    const navigation = useNavigation()
 
     // Referência ao sítio a que se vai buscar os dados na base de dados.
     const db = getDatabase();
@@ -30,18 +33,31 @@ const CompetitionScreen = ({route}) => {
             onlyOnce: true
         });
     }, [])
-    
+
+    // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
+    const escolherProva = (val) => {
+        console.log(val)
+        navigation.navigate('AthleticsTest', {idProva: val})
+    }
+
+    const voltarBotao = () => {
+        navigation.goBack()
+    }
+    <Icon
+    name='backBtn'
+    color='white'/>
     return (
         <View style={styles.container}>
             <Header 
-                leftComponent={{text:'Provas', style: {fontSize: 20, fontWeight: 'bold', width: 150, marginLeft: 10, color: 'white'}}}
+                leftComponent={<Icon name='arrow-back' color='white' onPress={() => voltarBotao()}/>}
+                centerComponent={{text:'Provas', style: {fontSize: 20, fontWeight: 'bold', width: 150, color: 'white'}}}
             />
 
             <ScrollView style={styles.listContainer}>
                 {prova.map(([key, value]) => {
                     return(
                         <View key={key}>
-                            <TouchableOpacity onPress={() => console.log(key)}>
+                            <TouchableOpacity onPress={() => escolherProva(key)}>
                             <ListItem style={styles.listCard}>
                                 <ListItem.Content style={styles.listRowsContainer}>
                                     <ListItem.Title style={styles.listRow}>{value.nome}</ListItem.Title>

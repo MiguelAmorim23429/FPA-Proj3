@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
   },
   // titleLogin: {
-  //   fontSize: 14,
+  //   fontSize: 18,
   //   fontWeight: 'bold',
   //   marginTop: 35,
   //   marginBottom: 15,

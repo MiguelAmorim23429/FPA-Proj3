@@ -6,6 +6,7 @@ import HomeScreen from './screens/HomeScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import CompetitionScreen from './screens/CompetitionScreen';
+import AthleticsTestScreen from './screens/AthleticsTestScreen';
 import { useNavigation } from '@react-navigation/native';
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth'
 
@@ -52,6 +53,7 @@ export default function App() {
           <>
             <Stack.Screen name="Home" component={HomeScreen} options={{headerShown: false}} />
             <Stack.Screen name="Competition" component={CompetitionScreen} options={{headerShown: false}} />
+            <Stack.Screen name="AthleticsTest" component={AthleticsTestScreen} options={{headerShown: false}} />
           </>
         )}
         
