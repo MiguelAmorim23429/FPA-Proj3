@@ -43,9 +43,7 @@ const CompetitionScreen = ({route}) => {
     const voltarBotao = () => {
         navigation.goBack()
     }
-    <Icon
-    name='backBtn'
-    color='white'/>
+
     return (
         <View style={styles.container}>
             <Header 
@@ -55,13 +53,19 @@ const CompetitionScreen = ({route}) => {
 
             <ScrollView style={styles.listContainer}>
                 {prova.map(([key, value]) => {
+                    let genero = ''
+                    if(value.genero == 'Masculino'){
+                        genero = <Icon name='home'/>
+                    } else if(value.genero == 'Feminino'){
+                        genero = <Icon name='tag'/>
+                    }
                     return(
                         <View key={key}>
                             <TouchableOpacity onPress={() => escolherProva(key)}>
                             <ListItem style={styles.listCard}>
                                 <ListItem.Content style={styles.listRowsContainer}>
-                                    <ListItem.Title style={styles.listRow}>{value.nome}</ListItem.Title>
-                                    <ListItem.Title style={styles.listRow}>{value.genero}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listName]}>{value.nome}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listAge]}>{genero}</ListItem.Title>
                                 </ListItem.Content>
                             </ListItem>
                             </TouchableOpacity>
@@ -96,6 +100,12 @@ const styles = StyleSheet.create({
         alignItems: 'baseline',
     },
     listRow: {
-        marginEnd: 20,
-    }
+        fontSize: 18,
+    },
+    listName: {
+        flex: 0.5,
+    },
+    listGender: {
+        flex: 1,
+    },
 })
