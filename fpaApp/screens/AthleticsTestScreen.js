@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable } from 'react-native'
-import { Header, Icon, ListItem } from 'react-native-elements'
-import { getDatabase, ref, onValue, orderByChild, equalTo, query, set } from "firebase/database";
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable, Alert } from 'react-native'
+import { Header, ListItem } from 'react-native-elements'
+import { getDatabase, ref, onValue, orderByChild, equalTo, query, set, update } from "firebase/database";
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const AthleticsTestScreen = ({route}) => {
 
@@ -21,7 +22,7 @@ const AthleticsTestScreen = ({route}) => {
     const [resultados, setResultados] = useState({})
 
     useEffect(() => {
-        // Busca dos participantes existentes na prova com id: 'prova1'
+        // Busca dos participantes existentes na prova que selecionamos no ecrã anterior
         let participantes = []
         
         onValue(participantesRef, (snapshot) => {
@@ -31,12 +32,14 @@ const AthleticsTestScreen = ({route}) => {
               participantes.push([childKey, childData])
             });
             setParticipante(participantes)
+
+            // Preencher objeto com 
             let newResultados = {}
             for([key, data] of participantes){
                 newResultados[key] = data.resultado||''
             }
             setResultados(newResultados)
-            // console.log(participantes[0][1].atleta)
+            console.log(newResultados)
         }, {
             onlyOnce: true
         });
@@ -77,11 +80,25 @@ const AthleticsTestScreen = ({route}) => {
         navigation.goBack()
     }
 
-    const adicionarResultado = (idParticipante, resultado) => {
-        // console.log()
-        set(ref(db, 'provas/participantes/' + idParticipante), {
-            resultado: resultado,
+    const adicionarResultado = (participantes, resultados) => {
+        // set(ref(db, '/provas/' + idProva + '/participantes/' + idParticipante + '/resultado/'), {
+        //     resultado: resultado,
+        // })
+
+        // const resultadoParticipante = {
+        //     resultado: res
+        // }
+        const updates = {}
+        participantes.forEach((participante, index) => {
+            updates['/provas/' + idProva + '/participantes/' + participante + '/resultado/'] = resultados[index]
+            // resultados.forEach((resultado) => {
+                
+            // })
         })
+
+        update(ref(db), updates)
+
+        Alert.alert('Resultados adicionados com sucesso.')
     }
 
     const setResultadoOnIndex = (valResultado, index) => {
@@ -94,29 +111,22 @@ const AthleticsTestScreen = ({route}) => {
         <View style={styles.container}>
             <Header 
                 leftComponent={
-                    <View style={{marginStart: 10}}>
-                        <Icon name='arrow-back' color='white' onPress={() => voltarBotao()}/>
+                    <View style={styles.headerContainer}>
+                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()}/>
+                        <Text style={styles.headerTitle}>Participantes</Text>
                     </View>
                 }
-                centerComponent={{text:'Participantes', style: {fontSize: 20, fontWeight: 'bold', width: 150, color: 'white'}}}
             />
 
             <View style={styles.labelContainer}>
-                <Text style={styles.labelName}>Nome</Text>
-                <Text style={styles.labelTeam}>Clube</Text>
-                <Text style={styles.labelAge}>Escalão</Text>
-                <Text></Text>
+                <Text style={styles.labelNome}>Nome</Text>
+                <Text style={styles.labelClube}>Clube</Text>
+                <Text style={styles.labelEscalao}>Escalão</Text>
+                <Text style={styles.labelMarca}>Marca</Text>
             </View>
             <ScrollView style={styles.listContainer}>
                 {atletaIgual.map(([key, value], index) => {
-                    let escalao = ''
-                    if(value[0].escalao == 'INICIADOS'){
-                        escalao = <Text>INI</Text>
-                    } else if(value[0].escalao == 'JUNIORES'){
-                        escalao = <Text>JUN</Text>
-                    }
-                    console.log(index)
-
+                    
                     return(
                         <View key={index}>
                             <TouchableOpacity onPress={() => console.log(key)}>
@@ -124,7 +134,7 @@ const AthleticsTestScreen = ({route}) => {
                                 <ListItem.Content style={styles.listRowsContainer}>
                                     <ListItem.Title style={[styles.listRow, styles.listName]}>{value[0].nome}</ListItem.Title>
                                     <ListItem.Title style={[styles.listRow, styles.listTeam]}>{value[0].clube}</ListItem.Title>
-                                    <ListItem.Title style={[styles.listRow, styles.listAge]}>{escalao}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listAge]}>{value[0].escalao.substring(0, 3)}</ListItem.Title>
                                     <TextInput style={styles.textInput} value={resultados[key]||''} onChangeText={text => setResultadoOnIndex(text, key)} placeholder='Resultado'></TextInput>
                                     {/* {console.log(resultado)} */}
                                 </ListItem.Content>
@@ -135,7 +145,7 @@ const AthleticsTestScreen = ({route}) => {
                 })}
                 <Pressable
                     style={styles.btnPressable}
-                    onPress={() => console.log(resultados)}>
+                    onPress={() => adicionarResultado(Object.keys(resultados), Object.values(resultados))}>
                       <Text style={styles.textPressable}>Adicionar</Text>
                 </Pressable>
             </ScrollView>
@@ -148,9 +158,22 @@ export default AthleticsTestScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#fff',
         alignItems: 'center',
-        // justifyContent: 'center',
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        paddingLeft: 15,
+        alignItems: 'baseline'
+    },
+    headerIcon: {
+        marginEnd: 24,
+        color: 'white',
+    },
+    headerTitle: {
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        width: 150, 
+        color: 'white',
     },
     listContainer: {
         width: '100%',
@@ -169,6 +192,7 @@ const styles = StyleSheet.create({
     },
     listName: {
         flex: 2,
+        marginStart: 5,
     },
     listTeam: {
         flex: 1,
@@ -188,23 +212,32 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'baseline',
+        marginTop: 20,
+        backgroundColor: '#5A79BA',
     },
-    labelName: {
-        flex: 1,
-        marginStart: 30,
-    },
-    labelTeam: {
-        flex: 0.6,
-    },
-    labelAge:{
+    labelNome: {
         flex: 1.6,
+        marginStart: 28,
+        color: 'white',
+    },
+    labelClube: {
+        flex: 0.8,
+        color: 'white',
+    },
+    labelEscalao:{
+        flex: 1,
+        color: 'white',
+    },
+    labelMarca:{
+        flex: 1,
+        color: 'white',
     },
     btnPressable: {
         marginTop: 50,
         alignSelf: 'center',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'green',
+        backgroundColor: '#5A79BA',
         height: 40,
         width: 150,
         borderRadius: 5,

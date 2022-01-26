@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 import { getDatabase, ref, onValue, query, equalTo, orderByChild} from "firebase/database"
-import { ListItem, Header, Icon } from 'react-native-elements'
+import { ListItem, Header } from 'react-native-elements'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const CompetitionScreen = ({route}) => {
 
     // Variável com o valor do idCompeticao da competição em que se clicou no ecrã anterior
     const idCompeticao = route.params.idComp
-
     const navigation = useNavigation()
 
     // Referência ao sítio a que se vai buscar os dados na base de dados.
@@ -18,7 +18,7 @@ const CompetitionScreen = ({route}) => {
     const [prova, setProva] = useState([])
 
     useEffect(() => {
-        // Busca das provas existentes na competicao com id: 'competicao1'
+        // Busca das provas existentes na competicao que selecionamos no ecrã anterior
         onValue(provasRef, (snapshot) => {
             let provas = [] 
 
@@ -28,7 +28,6 @@ const CompetitionScreen = ({route}) => {
               provas.push([childKey, childData])
             });
             setProva(provas)
-            // console.log(provas)
         }, {
             onlyOnce: true
         });
@@ -47,25 +46,36 @@ const CompetitionScreen = ({route}) => {
     return (
         <View style={styles.container}>
             <Header 
-                leftComponent={<Icon name='arrow-back' color='white' onPress={() => voltarBotao()}/>}
-                centerComponent={{text:'Provas', style: {fontSize: 20, fontWeight: 'bold', width: 150, color: 'white'}}}
+                leftComponent={
+                    <View style={styles.headerContainer}>
+                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()}/>
+                        <Text style={styles.headerTitle}>Provas</Text>
+                    </View>
+                }
             />
+
+            <View style={styles.labelContainer}>
+                <Text style={styles.labelHora}>Hora</Text>
+                <Text style={styles.labelProva}>Prova</Text>
+                <Text style={styles.labelGenero}>Género</Text>
+            </View>
 
             <ScrollView style={styles.listContainer}>
                 {prova.map(([key, value]) => {
-                    let genero = ''
-                    if(value.genero == 'Masculino'){
-                        genero = <Icon name='home'/>
-                    } else if(value.genero == 'Feminino'){
-                        genero = <Icon name='tag'/>
+
+                    const generos = {
+                        "Masculino": <Icon name='male-sharp' size={22} color='#002aff'/>, 
+                        "Feminino": <Icon name='female-sharp' size={22} color='#ff2ef8'/>,
                     }
+
                     return(
                         <View key={key}>
                             <TouchableOpacity onPress={() => escolherProva(key)}>
                             <ListItem style={styles.listCard}>
                                 <ListItem.Content style={styles.listRowsContainer}>
-                                    <ListItem.Title style={[styles.listRow, styles.listName]}>{value.nome}</ListItem.Title>
-                                    <ListItem.Title style={[styles.listRow, styles.listAge]}>{genero}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listHora]}>{value.hora}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listNome]}>{value.nome}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listGenero]}>{generos[value.genero]}</ListItem.Title>
                                 </ListItem.Content>
                             </ListItem>
                             </TouchableOpacity>
@@ -83,9 +93,23 @@ export default CompetitionScreen
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        // backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    headerContainer: {
+        flexDirection: 'row',
+        paddingLeft: 15,
+        alignItems: 'baseline'
+    },
+    headerIcon: {
+        marginEnd: 24,
+        color: 'white',
+    },
+    headerTitle: {
+        fontSize: 20, 
+        fontWeight: 'bold', 
+        width: 150, 
+        color: 'white',
     },
     listContainer: {
         width: '100%',
@@ -98,14 +122,40 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'baseline',
+        
     },
     listRow: {
         fontSize: 18,
     },
-    listName: {
-        flex: 0.5,
-    },
-    listGender: {
+    listHora: {
         flex: 1,
+        marginStart: 5,
+    },
+    listNome: {
+        flex: 2,
+    },
+    listGenero: {
+        flex: 3,
+    },
+    labelContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'baseline',
+        marginTop: 20,
+        backgroundColor: '#5A79BA',
+        
+    },
+    labelHora: {
+        flex: 0.7,
+        marginStart: 28,
+        color: 'white',
+    },
+    labelProva: {
+        flex: 0.9,
+        color: 'white',
+    },
+    labelGenero:{
+        flex: 2,
+        color: 'white',
     },
 })

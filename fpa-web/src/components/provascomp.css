@@ -1,0 +1,36 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.main-provascomp-container {
+    min-height: 100vh;
+    background-color: rgb(231, 231, 231);
+    display: flex;
+}
+
+.main-prova-container {
+    padding: 16px;
+}
+
+.prova-container {
+    display: flex;
+    margin-bottom: 1px;
+    background: white;
+    height: 64px;
+}
+
+.prova-list {
+    display: flex;
+    list-style-type: none;
+    align-items: center;
+    gap: 24px;
+    padding-left: 24px;
+}
+
+.update-prova-container {
+    display: flex;
+    flex-direction: column;
+}

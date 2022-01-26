@@ -7,47 +7,56 @@ import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import CompetitionScreen from './screens/CompetitionScreen';
 import AthleticsTestScreen from './screens/AthleticsTestScreen';
-import { useNavigation } from '@react-navigation/native';
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth'
+import { getAuth, onAuthStateChanged} from 'firebase/auth'
+import { View, ActivityIndicator, Image, Screen } from 'react-native'
+import LoadingScreen from './screens/LoadingScreen';
 
 export default function App() {
 
+  useEffect(() => {
+    /**
+     * Espera dois segundos para meter o estado de loading como falso. 
+     * Como O firebase vai buscar a info mais rápido do que 2 segundos,
+     * a LoadingScreen amostra na mesma e ao mesmo tempo conseguimos desativá-la mais tarde.
+     * */  
+    setTimeout(() => setLoading(false), 2000)
+  }, [])
+
   const auth = getAuth()
-  const [loggedIn, setLoggedIn] = useState(auth.currentUser)
-    useEffect(() => {
-     const authChange =  onAuthStateChanged(auth, (user) => {
-        if (user) {
-          // User is signed in, see docs for a list of available properties
-          // https://firebase.google.com/docs/reference/js/firebase.User
-          const uid = user.uid;
-          const email = user.email
-          setLoggedIn(user)
-          console.log(uid + '            ENTROUUUUUU')
-          
-          // ...
-        } else {
-          // User is signed out
-          // ...
-          setLoggedIn(user)
-          console.log('NAO entrouuuuuuuuuuuuu')
-        }
-      });
-      return () => {
-        authChange()
-      }
-    }, [])
+  const [loggedIn, setLoggedIn] = useState(!!auth.currentUser)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
     
+    const authChange = onAuthStateChanged(auth, (user) => {
+      setLoggedIn(!!user)
+      setLoading(false)
+      // if (user) {
+      //   setLoggedIn(!!user)
+      //   setLoading(false)
+      // } else {
+      //   // User is signed out
+      //   setLoggedIn(!!user)
+      // }
+    });
+    return () => {
+      authChange()
+    }
+  }, [])
 
   const Stack = createNativeStackNavigator();
 
+  if(loading) {
+    return (<LoadingScreen />)
+  }
 
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {loggedIn == null ? (
+        {!loggedIn ? (
           <>
-            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
             <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+            <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
           </>
         ) : (
           <>
@@ -68,5 +77,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  imageTeste: {
+    width: 176,
+    height: 120,
+    marginTop: 120,
   },
 });

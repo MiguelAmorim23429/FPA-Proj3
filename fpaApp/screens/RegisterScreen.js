@@ -59,79 +59,68 @@ const RegisterScreen = () => {
 export default RegisterScreen
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        // backgroundColor: '#fff',
-        alignItems: 'center',
-        //justifyContent: 'center',
-      },
-      imageTeste: {
-        width: 176,
-        height: 120,
-        marginTop: 120,
-      },
-      textInput: {
-        width: 250,
-        //borderStyle: 'solid',
-        borderBottomWidth: 2,
-        // borderColor: '#000',
-        borderColor: 'rgb(120, 120, 120)',
-        paddingLeft: 5,
-        // marginBottom: 25,
-        marginTop: 25,
-        fontSize: 16,
-      },
-      // pwInput: {
-      //   marginBottom: 0,
-      // },
-      usernameLabel: {
-        marginTop: 30,
-        marginLeft: 5,
-        fontSize: 16,
-      },
-      label: {
-        marginTop: 20,
-        fontSize: 16,
-        marginStart: 5,
-      },
-      btnPressable: {
-        marginTop: 50,
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'green',
-        height: 40,
-        width: 150,
-        borderRadius: 5,
-      },
-      textPressable: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold'
-      },
-      redirectContainer: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'baseline',
-        marginTop: 10,
-        maxHeight: 20
-      },
-      linkLogin: {
-        color: 'blue',
-        fontWeight: 'bold',
-        fontSize: 14,
-        marginLeft: 8,
-      },
-      perguntaConta: {
-        color: 'rgb(120,120,120)',
-        fontSize: 13,
-      },
-      // titleRegisto: {
-      //   fontSize: 14,
-      //   fontWeight: 'bold',
-      //   marginTop: 35,
-      //   marginBottom: 15,
-      //   marginStart: 5,
-      //   color: 'rgb(60, 109, 204)',
-      // }
+  container: {
+    flex: 1,
+    // backgroundColor: '#fff',
+    alignItems: 'center',
+    //justifyContent: 'center',
+  },
+  imageTeste: {
+    width: 176,
+    height: 120,
+    marginTop: 120,
+  },
+  textInput: {
+    width: 300,
+    //borderStyle: 'solid',
+    borderBottomWidth: 2,
+    // borderColor: '#000',
+    borderColor: 'rgb(120, 120, 120)',
+    padding: 10,
+    // marginBottom: 25,
+    marginTop: 25,
+    fontSize: 18,
+  },
+  usernameLabel: {
+    marginTop: 30,
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  label: {
+    marginTop: 20,
+    fontSize: 16,
+    marginStart: 5,
+  },
+  btnPressable: {
+    marginTop: 50,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#5A79BA',
+    height: 40,
+    width: 150,
+    borderRadius: 5,
+  },
+  textPressable: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
+  redirectContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginTop: 10,
+    maxHeight: 20
+  },
+  linkLogin: {
+    color: 'blue',
+    fontWeight: 'bold',
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  perguntaConta: {
+    color: 'rgb(120,120,120)',
+    fontSize: 13,
+  },
 })

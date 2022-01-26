@@ -2,56 +2,84 @@ import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image, View, TextInput, Alert, Pressable } from 'react-native'
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged} from 'firebase/auth'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { getDatabase, ref, onValue } from "firebase/database";
+import LoadingScreen from './LoadingScreen';
 
 const LoginScreen = () => {
 
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    // const auth = authApp.getAuth()
-    const navigation = useNavigation()
-    const auth = getAuth()
-    var user = ''
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [utilizador, setUtilizador] = useState([])
 
-    const handleLogin = () => {
-        signInWithEmailAndPassword(auth, email, password)
-        .then(userCredentials => {
-            user = userCredentials.user
-            Alert.alert('Entraste')
-        })
-        .catch(error => {
-          console.log("Tenta outra vez")
-          alert(error.message)
-        })
+  const navigation = useNavigation()
+
+  const auth = getAuth()
+  const db = getDatabase()
+  const usersRef = ref(db, '/users')
+  
+  useEffect(() => {
+    let users = []
+    const getUsers = onValue(usersRef, (snapshot) => {
+        snapshot.forEach((childSnapshot) => {
+            const childKey = childSnapshot.key;
+            const childData = childSnapshot.val();
+            users.push([childKey, childData])
+        });
+        setUtilizador(users)
+    }, {
+        onlyOnce: true
+    });
+    return () => {
+      getUsers()
     }
+  }, [])
 
-    return (
-        <View style={styles.container}>
-      
-            <Image
-            style={styles.imageTeste}
-            source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
-            />
-            <View>
+  let username = ''
 
-              {/* <Text style={styles.titleLogin}>LOG IN</Text> */}
-              <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
-              <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput>
-              {/* <TextInput style={[styles.textInput, styles.pwInput]} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput> */}
-              <View style={styles.redirectContainer}>
-                <Text style={styles.perguntaConta}>Ainda não tenho uma conta.</Text>
-                <Text style={styles.linkRegister} onPress={() => navigation.navigate('Register')}>Criar conta</Text>
-              </View>
-              <Pressable
-              style={styles.btnPressable}
-              onPress={handleLogin}>
-                <Text style={styles.textPressable}>Entrar</Text>
-              </Pressable>
-            </View>
+  const handleLogin = () => {
+    signInWithEmailAndPassword(auth, email, password)
+    .then(userCredentials => {
 
-            <StatusBar style="auto" />
+      utilizador.map(([key, value]) => {
+        if(userCredentials.user.email === value.email) {
+          console.log("E IGUALLLLL")
+          username = value.username
+        }
+        console.log("chave: " + key + " / valor: " + value.email)
+      })
+
+        Alert.alert('Bem vindo ' + username)
+    })
+    .catch(error => {
+      console.log("Tenta outra vez")
+      alert(error.message)
+    })
+  }
+
+  return (
+    <View style={styles.container}>
+  
+        <Image
+          style={styles.imageTeste}
+          source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
+        />
+        <View>
+          <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
+          <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput>
+          {/* <View style={styles.redirectContainer}>
+            <Text style={styles.perguntaConta}>Ainda não tenho uma conta.</Text>
+            <Text style={styles.linkRegister} onPress={() => navigation.navigate('Register')}>Criar conta</Text>
+          </View> */}
+          <Pressable
+          style={styles.btnPressable}
+          onPress={handleLogin}>
+            <Text style={styles.textPressable}>Entrar</Text>
+          </Pressable>
         </View>
-    )
+        <StatusBar style="auto" />
+    </View>
+  )
 }
 
 export default LoginScreen
@@ -63,31 +91,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     //justifyContent: 'center',
   },
+  containerLoading: {
+    flex: 1,
+    // backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   imageTeste: {
     width: 176,
     height: 120,
     marginTop: 120,
   },
   textInput: {
-    width: 250,
-    //borderStyle: 'solid',
-    borderBottomWidth: 2,
-    // borderColor: '#000',
-    borderColor: 'rgb(120, 120, 120)',
-    padding: 5,
-    // marginBottom: 25,
-    marginTop: 25,
-    fontSize: 16,
+    width: 300,
+        //borderStyle: 'solid',
+        borderBottomWidth: 2,
+        // borderColor: '#000',
+        borderColor: 'rgb(120, 120, 120)',
+        padding: 10,
+        // marginBottom: 25,
+        marginTop: 25,
+        fontSize: 18,
   },
-  // pwInput: {
-  //   marginBottom: 0,
-  // },
   btnPressable: {
     marginTop: 50,
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#5A79BA',
     height: 40,
     width: 150,
     borderRadius: 5,
@@ -114,12 +145,4 @@ const styles = StyleSheet.create({
     color: 'rgb(120,120,120)',
     fontSize: 13,
   },
-  // titleLogin: {
-  //   fontSize: 18,
-  //   fontWeight: 'bold',
-  //   marginTop: 35,
-  //   marginBottom: 15,
-  //   marginStart: 5,
-  //   color: 'rgb(60, 109, 204)',
-  // }
 })

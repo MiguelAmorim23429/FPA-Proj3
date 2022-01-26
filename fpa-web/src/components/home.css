@@ -1,0 +1,128 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.main-home-container {
+    min-height: 100vh;
+    background-color: rgb(231, 231, 231);
+}
+
+.cabecalho {
+    background-color: #1375BC;
+    padding: 16px 32px 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cabecalho-logo {
+    width: 150px;
+}
+
+.cabecalho-logo:hover{
+    cursor: pointer;
+}
+
+.cabecalho-loggedUser {
+    color: white;
+    margin-right: 128px;
+}
+
+.cabecalho-logout-btn {
+    width: 100px;
+    height: 40px;
+    background-color: white;
+    color: #1375BC;
+    border-style: none;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.cabecalho-logout-btn:hover {
+    cursor: pointer;
+}
+
+.main-competicao-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.competicao-container {
+    display: flex;
+    padding: 8px;
+    margin: 16px;
+    width: 360px;
+    border-radius: 8px;
+    flex: 1;
+    gap: 8px;
+    background-color: white;
+}
+
+.competicao-container:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.competicao-info-container {
+    display: flex;
+    flex-direction: column;
+    width: 240px;
+}
+
+.competicao-img {
+    width: 128px;
+}
+
+.competicao-label {
+
+}
+
+.competicao-btn-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    width: 120px;
+}
+
+.competicao-btn-hide {
+    display: none;
+    width: 64px;
+    height: 48px;
+    border-style: none;
+}
+
+.competicao-btn-show {
+    display: block;
+    width: 64px;
+    height: 48px;
+    border-style: none;
+}
+
+#atualizar-competicao-btn {
+    background-color: green;
+    border-radius: 8px;
+    color: white;
+}
+
+#atualizar-competicao-btn:hover {
+    background-color: rgb(63, 214, 63);
+    cursor: pointer;
+}
+
+#apagar-competicao-btn {
+    background-color: red;
+    border-radius: 8px;
+    color: white;
+}
+
+#apagar-competicao-btn:hover {
+    background-color: rgb(255, 75, 75);
+    cursor: pointer;
+    
+}

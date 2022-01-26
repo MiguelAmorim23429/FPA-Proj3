@@ -37,7 +37,7 @@ const HomeScreen = (props) => {
       auth
       .signOut()
   }
-
+  
   // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
   const escolherCompeticao = (val) => {
     console.log(val)
@@ -46,8 +46,9 @@ const HomeScreen = (props) => {
 
   return (
     <View style={styles.container}>
-      <Header 
-      leftComponent={{text:'Competições', style: {fontSize: 20, fontWeight: 'bold', width: 150, marginLeft: 10, color: 'white'}}}
+      <Header
+      leftComponent={{text:'Competições', style: {fontSize: 20, fontWeight: 'bold', flexDirection: 'row', alignSelf: 'baseline', width: 130, marginLeft: 10, color: 'white'}}}
+      rightComponent={<Pressable style={styles.logOutPressable} title='Logout' onPress={handleLogout}><Text style={styles.textPressable}>Sair</Text></Pressable>}
       />
 
       <ScrollView style={styles.cardContainer}>
@@ -69,7 +70,7 @@ const HomeScreen = (props) => {
               )
             }
           })}
-        <Pressable style={styles.logOutPressable} title='Logout' onPress={handleLogout}><Text style={styles.textPressable}>Sair</Text></Pressable>
+        
       </ScrollView>
       
     </View>
@@ -92,20 +93,19 @@ const styles = StyleSheet.create({
       padding: 0,
     },
     logOutPressable: {
-      marginTop: 50,
       alignSelf: 'center',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'green',
-      height: 40,
-      width: 150,
+      backgroundColor: 'white',
       borderRadius: 5,
-    },textPressable: {
-      color: 'white',
-      fontSize: 18,
-      fontWeight: 'bold'
+      width: 64,
+      height: 30,
+      flexDirection: 'row',
+      alignSelf: 'baseline',
     },
-    header: {
+    textPressable: {
+      color: '#5A79BA',
+      fontWeight: 'bold',
       fontSize: 16,
-    }
+    },
 })
