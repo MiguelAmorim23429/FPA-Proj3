@@ -62,7 +62,7 @@ const LoginScreen = () => {
   
         <Image
           style={styles.imageTeste}
-          source={require('C:/Users/Pedro/Documents/GitHub/FPA-Proj3/fpaApp/assets/fpa-logo.png')}
+          source={require('../assets/fpa-logo.png')}
         />
         <View>
           <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>

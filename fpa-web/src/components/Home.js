@@ -23,7 +23,7 @@ const Home = () => {
   useEffect(() => {
     onValue(competicoesRef, (snapshot) => {
       let comps = []
-
+      
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
@@ -52,72 +52,56 @@ const Home = () => {
     const nomeComp = value.nome;
     const dataComp = value.data;
     const localComp = value.local;
-    navigate('/updatecomp', {state:{ idComp, nomeComp, dataComp, localComp }})
+    navigate('/updatecomp', { state: { idComp, nomeComp, dataComp, localComp } })
   }
 
   const deleteComp = (key, value) => {
     const idComp = key;
 
-    const compData = {
-      ativa: false,
-      data: value.data,
-      local: value.local,
-      nome: value.nome,
-    }
-
     const updates = {}
-    updates['/competicoes/' + idComp] = compData
+    updates[`/competicoes/${idComp}/ativa`] = false
 
     update(ref(db), updates)
   }
 
   const goToProvasComp = (key) => {
     const idComp = key;
-    navigate('/provascomp', {state:{ idComp }})
-  }
-
-  const handleLogout = () => {
-    <Navigate to='/login' />
-    console.log(user.email)
-    logout()
+    navigate('/provas', { state: { idComp } })
   }
 
   return (
-    <div className='main-home-container'>
-      <header className='cabecalho'>
-        <img className='cabecalho-logo' src={logo} alt='home logo'></img>
-        <span>
-          <label className='cabecalho-loggedUser'>Sessão iniciada em: {user?.email}</label>
-          <button className='cabecalho-logout-btn' onClick={handleLogout}>Sair</button>
-        </span>
-      </header>
-      <main>
-        <div className='main-competicao-container'>
-          {competicoes.map(([key, value], index) => {
-            if (value.ativa == true) {
-              return (
-                <div key={key}>
-                  <div className='competicao-container'
-                  onMouseEnter={() => showButton(index)}
-                  onMouseLeave={hideButton}
-                  onClick={() => goToProvasComp(key)}>
-                    <div className='competicao-info-container'>
-                      <h2>{value.nome}</h2>
-                      <img className='competicao-img' src={logotest} alt='foto competição'></img>
-                      <label className='competicao-label'>{value.data}</label>
-                      <label className='competicao-label'>{value.local}</label>
-                    </div>
-                    <div className='competicao-btn-container'>
-                      <button className={indexBtn == index ? 'competicao-btn-show' : 'competicao-btn-hide'} id='atualizar-competicao-btn' onClick={() => goToUpdateComp(key, value)}>Atualizar</button>
-                      <button className={indexBtn == index ? 'competicao-btn-show' : 'competicao-btn-hide'} id='apagar-competicao-btn' onClick={() => deleteComp(key, value)}>Apagar</button>
-                    </div>
-                  </div>
+    <div className='main-competicao-container'>
+
+      <button onClick={() => navigate('/addcomp')}>Adicionar Competição</button>
+      <button onClick={() => navigate('/addathlete')}>Adicionar Atleta</button>
+
+      {competicoes.map(([key, value], index) => {
+        if (value.ativa) {
+          return (
+            <div key={key}>
+              <div className='competicao-container'
+                onMouseEnter={() => showButton(index)}
+                onMouseLeave={hideButton}
+                onClick={() => goToProvasComp(key)}>
+                <div className='competicao-info-container'>
+                  <h2>{value.nome}</h2>
+                  <img className='competicao-img' src={logotest} alt='foto competição'></img>
+                  <label className='competicao-label'>{value.data}</label>
+                  <label className='competicao-label'>{value.local}</label>
                 </div>
-              )
-            }
-          })}
-        </div>
-      </main>
+                <div className='competicao-btn-container'>
+                  <button className={indexBtn == index ? 'competicao-btn-show' : 'competicao-btn-hide'} id='atualizar-competicao-btn' onClick={(e) => {
+                    e.stopPropagation();
+                    goToUpdateComp(key, value)}}>Atualizar</button>
+                  <button className={indexBtn == index ? 'competicao-btn-show' : 'competicao-btn-hide'} id='apagar-competicao-btn' onClick={(e) => {
+                    e.stopPropagation();
+                    window.confirm("Deseja mesmo remover?") && deleteComp(key, value)}}>Remover</button>
+                </div>
+              </div>
+            </div>
+          )
+        }
+      })}
     </div>
   )
 }

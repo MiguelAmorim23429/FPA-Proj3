@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.main-participantsprova-container {
+    min-height: 100vh;
+    background-color: rgb(231, 231, 231);
+    display: flex;
+}
+
+.main-participant-container {
+    padding: 16px;
+    flex: 1;
+    /* width: 720px;
+    height: 480px; */
+}
+
+.participant-container {
+    display: flex;
+    height: 56px;
+    margin-bottom: 1px;
+    background: white;
+    padding: 0 8px 0 16px;
+    /* padding: 16px; */
+}
+
+.participant-list {
+    display: flex;
+    width: 70%;
+    list-style-type: none;
+    align-items: center;
+    gap: 24px;
+}
+
+.participant-list-item {
+    display: flex;
+    flex: 0.3;
+}
+
+.participant-list-btn-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin: auto;
+}

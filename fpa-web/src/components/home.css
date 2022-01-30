@@ -105,13 +105,11 @@
 }
 
 #atualizar-competicao-btn {
-    background-color: green;
     border-radius: 8px;
     color: white;
 }
 
 #atualizar-competicao-btn:hover {
-    background-color: rgb(63, 214, 63);
     cursor: pointer;
 }
 

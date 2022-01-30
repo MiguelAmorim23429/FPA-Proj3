@@ -6,6 +6,9 @@ import AddCompetition from './components/AddCompetition';
 import PrivateRoute from './components/PrivateRoute';
 import UpdateCompetition from './components/UpdateCompetition';
 import ProvasCompetition from './components/ProvasCompetition';
+import Master from './components/Master';
+import ParticipantsProva from './components/ParticipantsProva';
+import AddAthlete from './components/AddAthlete';
 
 function App() {
   return (
@@ -15,13 +18,53 @@ function App() {
           path="/"
           element={
             <PrivateRoute>
-              <Home />
+              <Master>
+                <Home />
+              </Master>
             </PrivateRoute>
           }
         />
-        <Route path="/addcomp" element={<AddCompetition />} />
-        <Route path="/updatecomp" element={<UpdateCompetition />} />
-        <Route path="/provascomp" element={<ProvasCompetition />} />
+        <Route path="/addcomp"
+          element={
+            <PrivateRoute>
+              <Master>
+                <AddCompetition />
+              </Master>
+            </PrivateRoute>
+          }
+        />
+        <Route path="/updatecomp"
+          element={
+            <PrivateRoute>
+              <Master>
+                <UpdateCompetition />
+              </Master>
+            </PrivateRoute>
+          } />
+        <Route path="/provas"
+          element={
+            <PrivateRoute>
+              <Master>
+                <ProvasCompetition />
+              </Master>
+            </PrivateRoute>
+          } />
+          <Route path="/participantes"
+          element={
+            <PrivateRoute>
+              <Master>
+                <ParticipantsProva />
+              </Master>
+            </PrivateRoute>
+          } />
+          <Route path="/addathlete"
+          element={
+            <PrivateRoute>
+              <Master>
+                <AddAthlete />
+              </Master>
+            </PrivateRoute>
+          } />
         <Route path="/login" element={<Login />} />
       </Routes>
     </BrowserRouter>

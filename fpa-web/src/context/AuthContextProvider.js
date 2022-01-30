@@ -18,17 +18,23 @@ function AuthContextProvider({ children }) {
 
     useEffect(() => {
         const authChange = onAuthStateChanged(auth, (currentUser) => {
-            setUser(currentUser)
-            console.log(currentUser.email)
-        })
-    
-      return () => {
-        authChange()
-      };
-    }, []);
-    
+            if (currentUser) {
+                setUser(currentUser)
+                console.log(`Logged in: ${currentUser.email}`)
+            } else {
+                setUser(currentUser)
+                console.log(`Not logged in: ${currentUser.email}`)
+            }
 
-    return <UserAuthContext.Provider value={{user, login, logout}}>{children}</UserAuthContext.Provider>
+        })
+
+        return () => {
+            authChange()
+        };
+    }, []);
+
+
+    return <UserAuthContext.Provider value={{ user, login, logout }}>{children}</UserAuthContext.Provider>
 };
 
 export { UserAuthContext }
