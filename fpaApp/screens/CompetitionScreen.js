@@ -55,32 +55,36 @@ const CompetitionScreen = ({route}) => {
             />
 
             <View style={styles.labelContainer}>
-                <Text style={styles.labelHora}>Hora</Text>
-                <Text style={styles.labelProva}>Prova</Text>
-                <Text style={styles.labelGenero}>Género</Text>
+                <Text style={styles.item_label}>Hora</Text>
+                <Text style={styles.item_label}>Prova</Text>
+                <Text style={styles.item_label}>Escalão</Text>
+                <Text style={styles.item_label}>Género</Text>
             </View>
 
             <ScrollView style={styles.listContainer}>
                 {prova.map(([key, value]) => {
 
                     const generos = {
-                        "Masculino": <Icon name='male-sharp' size={22} color='#002aff'/>, 
-                        "Feminino": <Icon name='female-sharp' size={22} color='#ff2ef8'/>,
+                        "Masculino": <Icon name='male-sharp' size={20} color='#03A3FF'/>, 
+                        "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7'/>,
                     }
 
-                    return(
-                        <View key={key}>
-                            <TouchableOpacity onPress={() => escolherProva(key)}>
-                            <ListItem style={styles.listCard}>
-                                <ListItem.Content style={styles.listRowsContainer}>
-                                    <ListItem.Title style={[styles.listRow, styles.listHora]}>{value.hora}</ListItem.Title>
-                                    <ListItem.Title style={[styles.listRow, styles.listNome]}>{value.nome}</ListItem.Title>
-                                    <ListItem.Title style={[styles.listRow, styles.listGenero]}>{generos[value.genero]}</ListItem.Title>
-                                </ListItem.Content>
-                            </ListItem>
-                            </TouchableOpacity>
-                        </View>
-                    )
+                    if(value.ativa) {
+                        return(
+                            <View key={key}>
+                                <TouchableOpacity onPress={() => escolherProva(key)}>
+                                <ListItem style={styles.listCard}>
+                                    <ListItem.Content style={styles.listRowsContainer}>
+                                        <ListItem.Title style={[styles.listRow, styles.listHora]}>{value.hora}</ListItem.Title>
+                                        <ListItem.Title style={[styles.listRow, styles.listNome]}>{value.categoria}</ListItem.Title>
+                                        <ListItem.Title style={[styles.listRow, styles.listNome]}>{value.escalao.substring(0, 3)}</ListItem.Title>
+                                        <ListItem.Title style={[styles.listRow, styles.listGenero]}>{generos[value.genero]}</ListItem.Title>
+                                    </ListItem.Content>
+                                </ListItem>
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    }
                 })
                 }
             </ScrollView>
@@ -125,37 +129,31 @@ const styles = StyleSheet.create({
         
     },
     listRow: {
-        fontSize: 18,
+        // fontSize: 16,
+        flex: 2,
     },
     listHora: {
-        flex: 1,
+        // flex: 1,
         marginStart: 5,
     },
     listNome: {
-        flex: 2,
+        // flex: 2,
     },
     listGenero: {
-        flex: 3,
+        // flex: 3,
     },
     labelContainer: {
         flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'baseline',
-        marginTop: 20,
+        // justifyContent: 'space-evenly',
+        // alignItems: 'baseline',
+        marginTop: 8,
         backgroundColor: '#5A79BA',
-        
+        width: '100%',
+        // flex: 2,
     },
-    labelHora: {
-        flex: 0.7,
-        marginStart: 28,
+    item_label: {
         color: 'white',
-    },
-    labelProva: {
-        flex: 0.9,
-        color: 'white',
-    },
-    labelGenero:{
-        flex: 2,
-        color: 'white',
+        marginStart: 24,
+        flex: 1,
     },
 })

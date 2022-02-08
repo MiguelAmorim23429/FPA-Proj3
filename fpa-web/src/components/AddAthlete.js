@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './addcomp.css'
+import './addathlete.css'
 import { getDatabase, ref, push } from "firebase/database"
 import { useNavigate } from 'react-router-dom';
 
@@ -35,12 +35,12 @@ const AddAthlete = () => {
     }
 
     return (
-        <div className='main-addcomp-container'>
-            <form className='addcomp-form' onSubmit={adicionarAtleta}>
-                <input className='addcomp-input' placeholder='Nome' onChange={event => setNome(event.target.value)}></input>
-                <input className='addcomp-input' placeholder='Número Federação' onChange={event => setNFederacao(event.target.value)}></input>
-                <input className='addcomp-input' placeholder='Clube' onChange={event => setClube(event.target.value)}></input>
-                <input className='addcomp-input' placeholder='Data Nascimento' type='date' onChange={event => setDtNasc(event.target.value)}></input>
+        <div className='main-addathlete-container'>
+            <form className='addathlete-form' onSubmit={adicionarAtleta}>
+                <input className='addathlete-input' placeholder='Nome' onChange={event => setNome(event.target.value)}></input>
+                <input className='addathlete-input' placeholder='Número Federação' onChange={event => setNFederacao(event.target.value)}></input>
+                <input className='addathlete-input' placeholder='Clube' onChange={event => setClube(event.target.value)}></input>
+                <input className='addathlete-input' placeholder='Data Nascimento' type='date' onChange={event => setDtNasc(event.target.value)}></input>
                 <select onChange={event => setGenero(event.target.value)}>
                     <option className='select-default' value="0">Género</option>
                     <option value="Masculino">Masculino</option>
@@ -51,7 +51,7 @@ const AddAthlete = () => {
                     <option value="INICIADOS">INICIADOS</option>
                     <option value="JUNIORES">JUNIORES</option>
                 </select>
-                <button className='addcomp-btn' type='submit'>Adicionar</button>
+                <button className='addathlete-btn' type='submit'>Adicionar</button>
             </form>
         </div>
     )

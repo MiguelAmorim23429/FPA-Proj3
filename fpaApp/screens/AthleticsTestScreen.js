@@ -126,6 +126,7 @@ const AthleticsTestScreen = ({route}) => {
             </View>
             <ScrollView style={styles.listContainer}>
                 {atletaIgual.map(([key, value], index) => {
+                    console.log(`chave: ${key} com valor: ${value} e index: ${index}`)
                     
                     return(
                         <View key={index}>
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'baseline',
-        marginTop: 20,
+        marginTop: 8,
         backgroundColor: '#5A79BA',
     },
     labelNome: {

@@ -13,31 +13,24 @@ import LoadingScreen from './screens/LoadingScreen';
 
 export default function App() {
 
-  useEffect(() => {
-    /**
-     * Espera dois segundos para meter o estado de loading como falso. 
-     * Como O firebase vai buscar a info mais rápido do que 2 segundos,
-     * a LoadingScreen amostra na mesma e ao mesmo tempo conseguimos desativá-la mais tarde.
-     * */  
-    setTimeout(() => setLoading(false), 2000)
-  }, [])
+  // useEffect(() => {
+  //   /**
+  //    * Espera dois segundos para meter o estado de loading como falso. 
+  //    * Como O firebase vai buscar a info mais rápido do que 2 segundos,
+  //    * a LoadingScreen amostra na mesma e ao mesmo tempo conseguimos desativá-la mais tarde.
+  //    * */  
+  //   setTimeout(() => setLoading(false), 2000)
+  // }, [])
 
   const auth = getAuth()
-  const [loggedIn, setLoggedIn] = useState(!!auth.currentUser)
+  const [loggedIn, setLoggedIn] = useState(auth.currentUser)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     
     const authChange = onAuthStateChanged(auth, (user) => {
-      setLoggedIn(!!user)
+      setLoggedIn(user)
       setLoading(false)
-      // if (user) {
-      //   setLoggedIn(!!user)
-      //   setLoading(false)
-      // } else {
-      //   // User is signed out
-      //   setLoggedIn(!!user)
-      // }
     });
     return () => {
       authChange()

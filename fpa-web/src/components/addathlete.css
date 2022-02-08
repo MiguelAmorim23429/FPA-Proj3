@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.main-addathlete-container {
+    min-height: 100vh;
+    background-color: rgb(231, 231, 231);
+}
+
+.addathlete-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    height: 480px;
+}
+
+.addathlete-input {
+    width: 420px;
+    height: 56px;
+    padding: 16px;
+    font-size: 16px;
+}
+
+.addathlete-input:focus {
+    outline: none;
+}
+
+.addathlete-btn {
+    width: 180px;
+    height: 48px;
+    padding: 8px;
+    font-size: 16px;
+    margin-top: 32px;
+    background-color: #0076BF;
+    border-style: none;
+    border-radius: 8px;
+    color: white;
+}
+
+.addathlete-btn:hover {
+    cursor: pointer;
+    background-color: #009617;
+}

@@ -53,7 +53,7 @@ const HomeScreen = (props) => {
 
       <ScrollView style={styles.cardContainer}>
           {competicoes.map(([key, value]) => {
-            if(value.ativa == true){
+            if(value.ativa){
               return (
                 <View key={key}>
                   <TouchableOpacity onPress={() => escolherCompeticao(key)}>

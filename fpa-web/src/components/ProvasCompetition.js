@@ -3,12 +3,14 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './provascomp.css'
 
+import * as IoIcons from 'react-icons/io'
+
 const ProvasCompetition = () => {
 
     const navigate = useNavigate()
     const { state } = useLocation()
 
-    const { idComp } = state;
+    const { idComp } = state; // recebemos o valor do idComp que enviamos do ecrã das competições quando clicamos na competição
 
     const [hora, setHora] = useState('')
     const [nome, setNome] = useState('')
@@ -20,9 +22,9 @@ const ProvasCompetition = () => {
     const [indexBtn, setIndexBtn] = useState(-1);
 
     const db = getDatabase();
-    const provasRef = ref(db, '/provas/')
+    const provasRef = ref(db, '/provas/') // referência à base de dados para depois adicionar provas novas
     const provasCompRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(idComp))
-    const modalidadesRef = ref(db, '/modalidades/')
+    const modalidadesRef = ref(db, '/modalidades/') // referência à base de dados para ir buscar as modalidades
 
     const [prova, setProva] = useState([])
     const [modalidades, setModalidades] = useState([])
@@ -68,7 +70,7 @@ const ProvasCompetition = () => {
         });
     }, []);
 
-    const deleteProva = (key) => {
+    const deleteProva = (key) => { // so altera o estado, não apaga realmente da base de dados
         const idProva = key;
 
         const updates = {}
@@ -77,9 +79,9 @@ const ProvasCompetition = () => {
         update(ref(db), updates)
     }
 
-    const adicionarProva = () => {
+    const adicionarProva = () => { // função para criar uma nova função com os dados inseridos nos inputs do ecrã
 
-        const newProvaRef = push(provasRef, {
+        const newProvaRef = push(provasRef, { // a função push do firebase cria um id novo automaticamente 
             categoria: categoria,
             competicao: idComp,
             escalao: escalao,
@@ -95,14 +97,14 @@ const ProvasCompetition = () => {
         navigate('/')
     }
 
-    const goToParticipantsProva = (key) => {
+    const goToParticipantsProva = (key) => {  // função redireciona para o ecrã dos participantes desta prova, e envia o id da prova para esse ecrã
         const idProva = key;
         console.log("AAA" + idProva)
         navigate('/participantes', { state: { idProva } })
       }
 
     return (
-        prova.length == 0 ? (
+        prova.length == 0 ? ( // se não existirem provas na competição, mostra um quando com o text das linhas 112 e 114. se tiver provas são listadas
             <div className='main-provascomp-container'>
                 <div className='main-prova-container'>
                     <div className='prova-container' style={{ justifyContent: 'center', alignItems: 'center', height: '180px' }}>
@@ -147,12 +149,12 @@ const ProvasCompetition = () => {
         ) : (
             <div className='main-provascomp-container'>
                 <div className='main-prova-container'>
-                    {prova.map(([key, value], index) => {
+                    {prova.map(([key, value], index) => { // fazemos map do array prova para um array com a chave da prova, os seus dados e index
 
-                        // const generos = {
-                        //     "Masculino": <Icon name='male-sharp' size={22} color='#002aff' />,
-                        //     "Feminino": <Icon name='female-sharp' size={22} color='#ff2ef8' />,
-                        // }
+                        const generos = {
+                            "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
+                            "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
+                        }
                         if (value.ativa) {
                             return (
                                 // <div >
@@ -163,7 +165,7 @@ const ProvasCompetition = () => {
                                         <li className='prova-list-item'>{value.hora}</li>
                                         <li className='prova-list-item'>{value.nome}</li>
                                         <li className='prova-list-item'>{value.escalao}</li>
-                                        <li className='prova-list-item'>{value.genero}</li>
+                                        <li className='prova-list-item'>{generos[value.genero]}</li>
                                     </ul>
                                     <div className='prova-list-btn-container'>
                                         <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => goToParticipantsProva(key)}>Participantes</button>

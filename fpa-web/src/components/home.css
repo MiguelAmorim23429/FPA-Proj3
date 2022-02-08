@@ -45,20 +45,85 @@
     cursor: pointer;
 }
 
-.main-competicao-container {
+.side-bar-show {
+    top: 0;
+    left: 0;
+    transition: 350ms;
+    position: fixed;
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    width: 200px;
+    height: 100vh;
+    background-color: #1375BC;
+}
+
+.side-bar-hide {
+    top: 0;
+    left: -100%;
+    position: fixed;
+    display: flex;
+    position: fixed;
+    transition: 850ms;
+    width: 200px;
+    height: 100vh;
+    background-color: #060b26;
+}
+
+.side-bar-btn {
+    width: 100%;
+    height: 56px;
+    border-style: none;
+    background-color: #1375BC;
+    color: white;
+    text-align: left;
+    padding-left: 15%;
+}
+
+.side-bar-btn:hover {
+    cursor: pointer;
+    background-color: #0b5e99;
+}
+
+.side-bar-closebtn {
+    width: 32px;
+    height:32px;
+    margin: 24px;
+    color: white;
+}
+
+.side-bar-closebtn:hover {
+    cursor: pointer;
+}
+
+.side-bar-openbtn {
+    width: 32px;
+    height:32px;
+    margin: 24px;
+}
+
+.side-bar-openbtn:hover {
+    cursor: pointer;
+}
+
+.side-bar-menu-times {
+    display: flex;
+    flex-direction: column;
+    list-style-type: none;
+    width: 100%;
+}
+
+.main-competicao-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(360px, 1fr));
+    padding: 32px;
+    gap: 32px;
 }
 
 .competicao-container {
     display: flex;
-    padding: 8px;
-    margin: 16px;
-    width: 360px;
+    align-items: center;
+    height: 240px;
+    padding: 16px;
     border-radius: 8px;
-    flex: 1;
-    gap: 8px;
     background-color: white;
 }
 
@@ -70,7 +135,8 @@
 .competicao-info-container {
     display: flex;
     flex-direction: column;
-    width: 240px;
+    gap: 8px;
+    flex: 2;
 }
 
 .competicao-img {
@@ -87,7 +153,7 @@
     justify-content: center;
     align-items: center;
     gap: 16px;
-    width: 120px;
+    flex: 1;
 }
 
 .competicao-btn-hide {
@@ -105,22 +171,25 @@
 }
 
 #atualizar-competicao-btn {
-    border-radius: 8px;
+    background-color: #1375BC;
     color: white;
+    border-radius: 4px;
+    width: 80%;
 }
 
 #atualizar-competicao-btn:hover {
+    background-color: #2f8fd3;
     cursor: pointer;
 }
 
 #apagar-competicao-btn {
-    background-color: red;
-    border-radius: 8px;
+    background-color: rgb(238, 46, 46);
     color: white;
+    border-radius: 4px;
+    width: 80%;
 }
 
 #apagar-competicao-btn:hover {
     background-color: rgb(255, 75, 75);
     cursor: pointer;
-    
 }

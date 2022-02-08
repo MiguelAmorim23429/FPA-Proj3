@@ -17,18 +17,18 @@ const LoginScreen = () => {
   const auth = getAuth()
   const db = getDatabase()
   const usersRef = ref(db, '/users')
-  
+
   useEffect(() => {
     let users = []
     const getUsers = onValue(usersRef, (snapshot) => {
-        snapshot.forEach((childSnapshot) => {
-            const childKey = childSnapshot.key;
-            const childData = childSnapshot.val();
-            users.push([childKey, childData])
-        });
-        setUtilizador(users)
+      snapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key;
+        const childData = childSnapshot.val();
+        users.push([childKey, childData])
+      });
+      setUtilizador(users)
     }, {
-        onlyOnce: true
+      onlyOnce: true
     });
     return () => {
       getUsers()
@@ -39,45 +39,59 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     signInWithEmailAndPassword(auth, email, password)
-    .then(userCredentials => {
+      .then(userCredentials => {
 
-      utilizador.map(([key, value]) => {
-        if(userCredentials.user.email === value.email) {
-          console.log("E IGUALLLLL")
-          username = value.username
-        }
-        console.log("chave: " + key + " / valor: " + value.email)
-      })
+        utilizador.map(([key, value]) => {
+          if (userCredentials.user.email === value.email) {
+            console.log("E IGUALLLLL")
+            username = value.username
+          }
+          console.log("chave: " + key + " / valor: " + value.email)
+        })
 
         Alert.alert('Bem vindo ' + username)
-    })
-    .catch(error => {
-      console.log("Tenta outra vez")
-      alert(error.message)
-    })
+      })
+      .catch(error => {
+        switch (error.code) {
+          case 'auth/invalid-email':
+            alert('Campos vazios')
+            break
+          case 'auth/user-not-found':
+            alert('E-mail introduzido errado ou não existe')
+            break
+          case 'auth/wrong-password':
+            alert('Palavra-passe errada')
+            break
+          case 'auth/too-many-requests':
+            alert('Falhou o inicio de sessão demasiadas vezes. Tente novamente mais tarde')
+            break
+        }
+        console.log(error.message)
+        // alert(error.message)
+      })
   }
 
   return (
     <View style={styles.container}>
-  
-        <Image
-          style={styles.imageTeste}
-          source={require('../assets/fpa-logo.png')}
-        />
-        <View>
-          <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
-          <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput>
-          {/* <View style={styles.redirectContainer}>
+
+      <Image
+        style={styles.imageTeste}
+        source={require('../assets/fpa-logo.png')}
+      />
+      <View>
+        <TextInput style={styles.textInput} keyboardType='email-address' value={email} onChangeText={text => setEmail(text)} placeholder='Email'></TextInput>
+        <TextInput style={styles.textInput} value={password} onChangeText={text => setPassword(text)} placeholder='Palavra-passe' secureTextEntry></TextInput>
+        {/* <View style={styles.redirectContainer}>
             <Text style={styles.perguntaConta}>Ainda não tenho uma conta.</Text>
             <Text style={styles.linkRegister} onPress={() => navigation.navigate('Register')}>Criar conta</Text>
           </View> */}
-          <Pressable
+        <Pressable
           style={styles.btnPressable}
           onPress={handleLogin}>
-            <Text style={styles.textPressable}>Entrar</Text>
-          </Pressable>
-        </View>
-        <StatusBar style="auto" />
+          <Text style={styles.textPressable}>Entrar</Text>
+        </Pressable>
+      </View>
+      <StatusBar style="auto" />
     </View>
   )
 }
@@ -104,14 +118,14 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: 300,
-        //borderStyle: 'solid',
-        borderBottomWidth: 2,
-        // borderColor: '#000',
-        borderColor: 'rgb(120, 120, 120)',
-        padding: 10,
-        // marginBottom: 25,
-        marginTop: 25,
-        fontSize: 18,
+    //borderStyle: 'solid',
+    borderBottomWidth: 2,
+    // borderColor: '#000',
+    borderColor: 'rgb(120, 120, 120)',
+    padding: 10,
+    // marginBottom: 25,
+    marginTop: 25,
+    fontSize: 18,
   },
   btnPressable: {
     marginTop: 50,

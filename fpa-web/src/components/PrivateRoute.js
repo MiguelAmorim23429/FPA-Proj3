@@ -3,10 +3,13 @@ import { UserAuthContext } from '../context/AuthContextProvider';
 import { useNavigate, Navigate } from 'react-router-dom';
 
 export default function PrivateRoute({ children }) {
-    const { user } = useContext(UserAuthContext);
+    // const { user } = useContext(UserAuthContext);
+
+    let utilizador = {}
+    utilizador = JSON.parse(localStorage.getItem("logged-user"))
+    
     const navigate = useNavigate()
+    // console.log(user)
 
-    console.log(user)
-
-    return user ? children : <Navigate to="/login" />
+    return utilizador ? children : <Navigate to="/login" />
 }

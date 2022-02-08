@@ -18,14 +18,9 @@ function AuthContextProvider({ children }) {
 
     useEffect(() => {
         const authChange = onAuthStateChanged(auth, (currentUser) => {
-            if (currentUser) {
-                setUser(currentUser)
-                console.log(`Logged in: ${currentUser.email}`)
-            } else {
-                setUser(currentUser)
-                console.log(`Not logged in: ${currentUser.email}`)
-            }
-
+            setUser(currentUser)
+            localStorage.setItem("logged-user", JSON.stringify(currentUser)) // guardar user em local storage
+            console.log(currentUser)
         })
 
         return () => {

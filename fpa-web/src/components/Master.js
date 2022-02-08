@@ -1,9 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 import logo from '../assets/home-logo.jpg'
-import logotest from '../assets/fpa-logo.png'
 import './home.css'
 import { UserAuthContext } from '../context/AuthContextProvider';
-import { useNavigate, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Master = ({ children }) => {
 
@@ -24,7 +23,7 @@ const Master = ({ children }) => {
   return (
     <div className='main-home-container'>
       <header className='cabecalho'>
-        <img className='cabecalho-logo' src={logo} alt='home logo'></img>
+        <img className='cabecalho-logo' src={logo} alt='home logo' onClick={() => navigate('/')}></img>
         <span>
           <label className='cabecalho-loggedUser'>Sessão iniciada em: {user?.email}</label>
           <button className='cabecalho-logout-btn' onClick={handleLogout}>Sair</button>
