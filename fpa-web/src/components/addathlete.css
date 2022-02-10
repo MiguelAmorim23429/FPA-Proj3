@@ -30,12 +30,17 @@
     outline: none;
 }
 
+.select-container {
+    display: flex;
+    gap: 24px;
+}
+
 .addathlete-btn {
     width: 180px;
     height: 48px;
     padding: 8px;
     font-size: 16px;
-    margin-top: 32px;
+    /* margin-top: 32px; */
     background-color: #0076BF;
     border-style: none;
     border-radius: 8px;

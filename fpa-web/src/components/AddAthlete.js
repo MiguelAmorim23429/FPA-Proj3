@@ -15,11 +15,11 @@ const AddAthlete = () => {
     const navigate = useNavigate()
 
     const db = getDatabase()
-    
+
     const atletasRef = ref(db, '/atletas/')
-    
+
     const adicionarAtleta = () => {
-        
+
         const newAtletaRef = push(atletasRef, {
             clube: clube,
             dtNascimento: dtNasc,
@@ -41,16 +41,19 @@ const AddAthlete = () => {
                 <input className='addathlete-input' placeholder='Número Federação' onChange={event => setNFederacao(event.target.value)}></input>
                 <input className='addathlete-input' placeholder='Clube' onChange={event => setClube(event.target.value)}></input>
                 <input className='addathlete-input' placeholder='Data Nascimento' type='date' onChange={event => setDtNasc(event.target.value)}></input>
-                <select onChange={event => setGenero(event.target.value)}>
-                    <option className='select-default' value="0">Género</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Feminino">Feminino</option>
-                </select>
-                <select onChange={event => setEscalao(event.target.value)}>
-                    <option className='select-default' value="0">Escalão</option>
-                    <option value="INICIADOS">INICIADOS</option>
-                    <option value="JUNIORES">JUNIORES</option>
-                </select>
+                <div className='select-container'>
+                    <select onChange={event => setGenero(event.target.value)}>
+                        <option className='select-default' value="0">Género</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="Feminino">Feminino</option>
+                    </select>
+                    <select onChange={event => setEscalao(event.target.value)}>
+                        <option className='select-default' value="0">Escalão</option>
+                        <option value="INICIADOS">INICIADOS</option>
+                        <option value="JUNIORES">JUNIORES</option>
+                    </select>
+                </div>
+
                 <button className='addathlete-btn' type='submit'>Adicionar</button>
             </form>
         </div>

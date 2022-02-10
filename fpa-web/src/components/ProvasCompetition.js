@@ -1,4 +1,4 @@
-import { equalTo, getDatabase, onValue, orderByChild, push, query, ref, update } from 'firebase/database';
+import { equalTo, getDatabase, off, onValue, orderByChild, push, query, ref, update } from 'firebase/database';
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import './provascomp.css'
@@ -56,7 +56,7 @@ const ProvasCompetition = () => {
 
     useEffect(() => {
 
-        onValue(modalidadesRef, (snapshot) => {
+        const handler = (snapshot) => {
             let modalidadesArray = []
 
             snapshot.forEach((childSnapshot) => {
@@ -65,9 +65,13 @@ const ProvasCompetition = () => {
                 modalidadesArray.push([childKey, childData])
             });
             setModalidades(modalidadesArray)
-        }, {
-            onlyOnce: true
-        });
+        }
+
+        onValue(modalidadesRef, handler)
+
+        return (() => {
+            off(handler)
+        })
     }, []);
 
     const deleteProva = (key) => { // so altera o estado, não apaga realmente da base de dados
@@ -99,7 +103,6 @@ const ProvasCompetition = () => {
 
     const goToParticipantsProva = (key) => {  // função redireciona para o ecrã dos participantes desta prova, e envia o id da prova para esse ecrã
         const idProva = key;
-        console.log("AAA" + idProva)
         navigate('/participantes', { state: { idProva } })
       }
 

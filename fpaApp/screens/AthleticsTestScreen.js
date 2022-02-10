@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable, Alert } from 'react-native'
 import { Header, ListItem } from 'react-native-elements'
-import { getDatabase, ref, onValue, orderByChild, equalTo, query, set, update } from "firebase/database";
+import { getDatabase, ref, onValue, off, get, update } from "firebase/database";
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const AthleticsTestScreen = ({route}) => {
@@ -15,85 +15,162 @@ const AthleticsTestScreen = ({route}) => {
     const db = getDatabase()
     const participantesRef = ref(db, '/provas/' + idProva + '/participantes/')
     const atletasRef = ref(db, '/atletas')
+    const provaRef = ref(db, `/provas/${idProva}`) // referência à base de dados para ir buscar a prova que clicamos
 
     const [participante, setParticipante] = useState([])
     const [atleta, setAtleta] = useState([])
     const [atletaIgual, setAtletaIgual] = useState([])
     const [resultados, setResultados] = useState({})
 
-    useEffect(() => {
-        // Busca dos participantes existentes na prova que selecionamos no ecrã anterior
-        let participantes = []
-        
-        onValue(participantesRef, (snapshot) => {
-            snapshot.forEach((childSnapshot) => {
-              const childKey = childSnapshot.key;
-              const childData = childSnapshot.val();
-              participantes.push([childKey, childData])
-            });
-            setParticipante(participantes)
+    const [prova, setProva] = useState(null)
+    const [inscritos, setAtletas] = useState({})
 
-            // Preencher objeto com 
-            let newResultados = {}
-            for([key, data] of participantes){
-                newResultados[key] = data.resultado||''
-            }
-            setResultados(newResultados)
-            console.log(newResultados)
-        }, {
-            onlyOnce: true
-        });
+    useEffect(() => {
+        get(provaRef).then((snapshot) => {
+            setProva(snapshot.val())
+        })
+
+        console.log(prova)
     }, [])
 
     useEffect(() => {
-        let atletas = []
-        onValue(atletasRef, (snapshot) => {
-            snapshot.forEach((childSnapshot) => {
+
+        const handler = async (snapshot) => {
+
+            let atletasSnapshot = await get(atletasRef)
+
+            let atletas = {}
+
+            atletasSnapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
-                // if(childKey == participante[0][1].atleta) {
-                //     console.log(childData)
-                //     atletas.push(childData)
-                // }
-                atletas.push([childKey, childData])
-                
-            });
-            setAtleta(atletas)
-        }, {
-            onlyOnce: true
-        });
-    }, [])
-
-    useEffect(() => {
-        let atletasIguais = []
-        atleta.map(([key, value]) => {
-            participante.map(([keyParticipante, valueParticipante]) => {
-                if(key == valueParticipante.atleta){
-                    atletasIguais.push([keyParticipante, [value, valueParticipante]])
+                if (childData.genero == prova.genero) {
+                    atletas[childKey] = childData
                 }
-            })
+            });
+
+            console.log("BATATAS")
+
+            // console.log("aa" + atletas)
+
+            let inscritos = {}
+            let newResultados = {}
+
+            snapshot.forEach((childSnapshot) => {
+                const participanteId = childSnapshot.key
+                const atletaId = childSnapshot.val().atleta;
+                const resultado = childSnapshot.val().resultado
+
+                console.log(`id participante: ${participanteId}`)
+                console.log(`resultado: ${resultado}`)
+                newResultados[participanteId] = resultado||''
+                // console.log("İrem")
+                console.log(newResultados)
+                // console.log("Pedro")
+                inscritos[participanteId] = atletas[atletaId]
+            });
+
+            console.log(inscritos)
+
+            console.log("ARROZ")
+
+            setAtletas(inscritos)
+
+            
+            // for([key, data] of Object.entries(inscritos)){
+            //     console.log(key)
+            //     console.log(data)
+            //     newResultados[key] = data.resultado||''
+            // }
+
+            console.log(newResultados)
+            setResultados(newResultados)
+
+        }
+
+        if(prova) {
+            onValue(participantesRef, handler)
+        }
+
+        return (() => {
+            if(prova) {
+                off(handler)
+            }
         })
-        setAtletaIgual(atletasIguais)
-    }, [atleta])
+    }, [prova])
+
+    // useEffect(() => {
+    //     // Busca dos participantes existentes na prova que selecionamos no ecrã anterior
+    //     let participantes = []
+        
+    //     onValue(participantesRef, (snapshot) => {
+    //         snapshot.forEach((childSnapshot) => {
+    //           const childKey = childSnapshot.key;
+    //           const childData = childSnapshot.val();
+    //           participantes.push([childKey, childData])
+    //         });
+    //         setParticipante(participantes)
+
+    //         // Preencher objeto com 
+    //         let newResultados = {}
+    //         for([key, data] of participantes){
+    //             newResultados[key] = data.resultado||''
+    //         }
+    //         setResultados(newResultados)
+    //         console.log("CARNEE")
+    //         console.log(newResultados)
+    //     }, {
+    //         onlyOnce: true
+    //     });
+    // }, [])
+
+    // useEffect(() => {
+    //     let atletas = []
+    //     onValue(atletasRef, (snapshot) => {
+    //         snapshot.forEach((childSnapshot) => {
+    //             const childKey = childSnapshot.key;
+    //             const childData = childSnapshot.val();
+    //             // if(childKey == participante[0][1].atleta) {
+    //             //     console.log(childData)
+    //             //     atletas.push(childData)
+    //             // }
+    //             atletas.push([childKey, childData])
+                
+    //         });
+    //         setAtleta(atletas)
+    //     }, {
+    //         onlyOnce: true
+    //     });
+    // }, [])
+
+    // useEffect(() => {
+    //     let atletasIguais = []
+    //     atleta.map(([key, value]) => {
+    //         participante.map(([keyParticipante, valueParticipante]) => {
+    //             if(key == valueParticipante.atleta){
+    //                 atletasIguais.push([keyParticipante, [value, valueParticipante]])
+    //             }
+    //         })
+    //     })
+    //     setAtletaIgual(atletasIguais)
+    // }, [atleta])
 
     const voltarBotao = () => {
         navigation.goBack()
     }
 
     const adicionarResultado = (participantes, resultados) => {
-        // set(ref(db, '/provas/' + idProva + '/participantes/' + idParticipante + '/resultado/'), {
-        //     resultado: resultado,
-        // })
 
-        // const resultadoParticipante = {
-        //     resultado: res
-        // }
+        console.log("LLL")
+        console.log(participantes)
+        console.log("XXX")
+        console.log(resultados)
+        console.log("BBB")
         const updates = {}
         participantes.forEach((participante, index) => {
+            // console.log("CCCCCC: " + index)
+            console.log("DDDD" + participante)
             updates['/provas/' + idProva + '/participantes/' + participante + '/resultado/'] = resultados[index]
-            // resultados.forEach((resultado) => {
-                
-            // })
         })
 
         update(ref(db), updates)
@@ -103,8 +180,11 @@ const AthleticsTestScreen = ({route}) => {
 
     const setResultadoOnIndex = (valResultado, index) => {
         let newResultado = Object.assign({}, resultados)
+
         newResultado[index] = valResultado;
+        // console.log(newResultado)
         setResultados(newResultado)
+        console.log(resultados)
     }
 
     return (
@@ -125,17 +205,17 @@ const AthleticsTestScreen = ({route}) => {
                 <Text style={styles.labelMarca}>Marca</Text>
             </View>
             <ScrollView style={styles.listContainer}>
-                {atletaIgual.map(([key, value], index) => {
-                    console.log(`chave: ${key} com valor: ${value} e index: ${index}`)
+                {Object.entries(inscritos).map(([key, value], index) => {
+                    // console.log(`chave: ${key} com valor: ${value} e index: ${index}`)
                     
                     return(
                         <View key={index}>
                             <TouchableOpacity onPress={() => console.log(key)}>
                             <ListItem style={styles.listCard}>
                                 <ListItem.Content style={styles.listRowsContainer}>
-                                    <ListItem.Title style={[styles.listRow, styles.listName]}>{value[0].nome}</ListItem.Title>
-                                    <ListItem.Title style={[styles.listRow, styles.listTeam]}>{value[0].clube}</ListItem.Title>
-                                    <ListItem.Title style={[styles.listRow, styles.listAge]}>{value[0].escalao.substring(0, 3)}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listName]}>{value.nome}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listTeam]}>{value.clube}</ListItem.Title>
+                                    <ListItem.Title style={[styles.listRow, styles.listAge]}>{value.escalao.substring(0, 3)}</ListItem.Title>
                                     <TextInput style={styles.textInput} value={resultados[key]||''} onChangeText={text => setResultadoOnIndex(text, key)} placeholder='Resultado'></TextInput>
                                     {/* {console.log(resultado)} */}
                                 </ListItem.Content>
