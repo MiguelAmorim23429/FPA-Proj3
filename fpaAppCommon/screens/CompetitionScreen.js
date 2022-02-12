@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
-import { getDatabase, ref, onValue, query, equalTo, orderByChild} from "firebase/database"
+import { getDatabase, ref, onValue, query, equalTo, orderByChild } from "firebase/database"
 import { ListItem, Header } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const CompetitionScreen = ({route}) => {
+const CompetitionScreen = ({ route }) => {
 
     // Variável com o valor do idCompeticao da competição em que se clicou no ecrã anterior
     const idCompeticao = route.params.idComp
@@ -20,12 +20,12 @@ const CompetitionScreen = ({route}) => {
     useEffect(() => {
         // Busca das provas existentes na competicao que selecionamos no ecrã anterior
         onValue(provasRef, (snapshot) => {
-            let provas = [] 
+            let provas = []
 
             snapshot.forEach((childSnapshot) => {
-              const childKey = childSnapshot.key;
-              const childData = childSnapshot.val();
-              provas.push([childKey, childData])
+                const childKey = childSnapshot.key;
+                const childData = childSnapshot.val();
+                provas.push([childKey, childData])
             });
             setProva(provas)
         }, {
@@ -36,7 +36,7 @@ const CompetitionScreen = ({route}) => {
     // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
     const escolherProva = (val) => {
         console.log(val)
-        navigation.navigate('AthleticsTest', {idProva: val})
+        navigation.navigate('AthleticsTest', { idProva: val })
     }
 
     const voltarBotao = () => {
@@ -45,10 +45,10 @@ const CompetitionScreen = ({route}) => {
 
     return (
         <View style={styles.container}>
-            <Header 
+            <Header
                 leftComponent={
                     <View style={styles.headerContainer}>
-                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()}/>
+                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()} />
                         <Text style={styles.headerTitle}>Provas</Text>
                     </View>
                 }
@@ -65,22 +65,22 @@ const CompetitionScreen = ({route}) => {
                 {prova.map(([key, value]) => {
 
                     const generos = {
-                        "Masculino": <Icon name='male-sharp' size={20} color='#03A3FF'/>, 
-                        "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7'/>,
+                        "Masculino": <Icon name='male-sharp' size={20} color='#03A3FF' />,
+                        "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7' />,
                     }
 
-                    if(value.ativa) {
-                        return(
+                    if (value.ativa) {
+                        return (
                             <View key={key}>
                                 <TouchableOpacity onPress={() => escolherProva(key)}>
-                                <ListItem style={styles.listCard}>
-                                    <ListItem.Content style={styles.listRowsContainer}>
-                                        <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{generos[value.genero]}</ListItem.Title>
-                                    </ListItem.Content>
-                                </ListItem>
+                                    <ListItem style={styles.listCard}>
+                                        <ListItem.Content style={styles.listRowsContainer}>
+                                            <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
+                                            <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
+                                            <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
+                                            <ListItem.Title style={styles.listRow}>{generos[value.genero]}</ListItem.Title>
+                                        </ListItem.Content>
+                                    </ListItem>
                                 </TouchableOpacity>
                             </View>
                         )
@@ -110,9 +110,9 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     headerTitle: {
-        fontSize: 20, 
-        fontWeight: 'bold', 
-        width: 150, 
+        fontSize: 20,
+        fontWeight: 'bold',
+        width: 150,
         color: 'white',
     },
     listContainer: {

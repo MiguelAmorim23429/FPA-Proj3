@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import logotest from '../assets/fpa-logo.png'
 import './home.css'
 import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, onValue, update } from "firebase/database"
+import { getDatabase, ref, onValue, update, off } from "firebase/database"
 
 import * as FaIcons from 'react-icons/fa'
 import * as AiIcons from 'react-icons/ai'
@@ -19,7 +19,8 @@ const Home = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    onValue(competicoesRef, (snapshot) => {
+
+    const handler = (snapshot) => {
       let comps = []
 
       snapshot.forEach((childSnapshot) => {
@@ -28,10 +29,12 @@ const Home = () => {
         comps.push([childKey, childData])
       });
       setCompeticoes(comps)
-      console.log(competicoes)
-    }, {
-      onlyOnce: true
-    });
+    }
+    
+    onValue(competicoesRef, handler)
+    return(() => {
+      off(handler)
+    })
   }, [])
 
   const showSideBar = () => { setSidebar(!sidebar) }

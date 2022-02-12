@@ -133,7 +133,7 @@ const ProvasCompetition = () => {
                                 <option className='select-default' value="0">Modalidade</option>
                                 {modalidades.map(([key, value]) => {
                                     return (
-                                        <option key={value.nome}>{value.nome}</option>
+                                        <option key={key}>{value.nome}</option>
                                     )
                                 })}
                             </select>
