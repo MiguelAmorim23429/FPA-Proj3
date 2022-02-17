@@ -16,21 +16,38 @@ const HomeScreen = (props) => {
   const [competicoes, setCompeticoes] = useState([])
 
   useEffect(() => {
-    onValue(competicoesRef, (snapshot) => {
+
+    const handler = (snapshot) => {
+
       let comps = []
 
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
-        const arrayEntries = Object.entries(childData)
-
         comps.push([childKey, childData])
       });
       setCompeticoes(comps)
-      // console.log(competicoes)
-    }, {
-      onlyOnce: true
-    });
+    }
+
+    onValue(competicoesRef, handler)
+    return (() => {
+      off(handler)
+    })
+    // onValue(competicoesRef, (snapshot) => {
+    //   let comps = []
+
+    //   snapshot.forEach((childSnapshot) => {
+    //     const childKey = childSnapshot.key;
+    //     const childData = childSnapshot.val();
+    //     const arrayEntries = Object.entries(childData)
+
+    //     comps.push([childKey, childData])
+    //   });
+    //   setCompeticoes(comps)
+    //   // console.log(competicoes)
+    // }, {
+    //   onlyOnce: true
+    // });
   }, [])
 
   const handleLogout = () => {
@@ -60,7 +77,7 @@ const HomeScreen = (props) => {
                   <Card>
                     <Card.Title style={styles.cardTitle}>{value.nome}</Card.Title>
                     <Card.Divider />
-                    <Card.Image style={{ borderRadius: 5 }} source={require('../assets/fpa-logo.png')}>
+                    <Card.Image style={{ borderRadius: 5 }} source={{uri: value.foto}}>
                     </Card.Image>
                     <Text style={styles.cardText}>{value.data}</Text>
                     <Text style={styles.cardText}>{value.local}</Text>

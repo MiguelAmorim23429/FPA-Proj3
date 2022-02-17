@@ -9,6 +9,8 @@ import ProvasCompetition from './components/ProvasCompetition';
 import Master from './components/Master';
 import ParticipantsProva from './components/ParticipantsProva';
 import AddAthlete from './components/AddAthlete';
+import AddManagers from './components/AddManagers';
+import ManagerPermissions from './components/ManagerPermissions';
 
 function App() {
   return (
@@ -62,6 +64,22 @@ function App() {
             <PrivateRoute>
               <Master>
                 <AddAthlete />
+              </Master>
+            </PrivateRoute>
+          } />
+          <Route path="/addmanager"
+          element={
+            <PrivateRoute>
+              <Master>
+                <AddManagers />
+              </Master>
+            </PrivateRoute>
+          } />
+          <Route path="/permissionsmanager"
+          element={
+            <PrivateRoute>
+              <Master>
+                <ManagerPermissions />
               </Master>
             </PrivateRoute>
           } />

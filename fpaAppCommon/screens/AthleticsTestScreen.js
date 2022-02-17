@@ -17,9 +17,6 @@ const AthleticsTestScreen = ({ route }) => {
     const atletasRef = ref(db, '/atletas')
     const provaRef = ref(db, `/provas/${idProva}`) // referência à base de dados para ir buscar a prova que clicamos
 
-    const [participante, setParticipante] = useState([])
-    const [atleta, setAtleta] = useState([])
-    const [atletaIgual, setAtletaIgual] = useState([])
     const [resultados, setResultados] = useState({})
 
     const [prova, setProva] = useState(null)
@@ -29,8 +26,6 @@ const AthleticsTestScreen = ({ route }) => {
         get(provaRef).then((snapshot) => {
             setProva(snapshot.val())
         })
-
-        console.log(prova)
     }, [])
 
     useEffect(() => {
@@ -49,10 +44,6 @@ const AthleticsTestScreen = ({ route }) => {
                 }
             });
 
-            console.log("BATATAS")
-
-            // console.log("aa" + atletas)
-
             let inscritos = {}
             let newResultados = {}
 
@@ -61,29 +52,11 @@ const AthleticsTestScreen = ({ route }) => {
                 const atletaId = childSnapshot.val().atleta;
                 const resultado = childSnapshot.val().resultado
 
-                console.log(`id participante: ${participanteId}`)
-                console.log(`resultado: ${resultado}`)
                 newResultados[participanteId] = resultado || ''
-                // console.log("İrem")
-                console.log(newResultados)
-                // console.log("Pedro")
                 inscritos[participanteId] = atletas[atletaId]
             });
 
-            console.log(inscritos)
-
-            console.log("ARROZ")
-
             setAtletas(inscritos)
-
-
-            // for([key, data] of Object.entries(inscritos)){
-            //     console.log(key)
-            //     console.log(data)
-            //     newResultados[key] = data.resultado||''
-            // }
-
-            console.log(newResultados)
             setResultados(newResultados)
 
         }
@@ -99,61 +72,7 @@ const AthleticsTestScreen = ({ route }) => {
         })
     }, [prova])
 
-    // useEffect(() => {
-    //     // Busca dos participantes existentes na prova que selecionamos no ecrã anterior
-    //     let participantes = []
-
-    //     onValue(participantesRef, (snapshot) => {
-    //         snapshot.forEach((childSnapshot) => {
-    //           const childKey = childSnapshot.key;
-    //           const childData = childSnapshot.val();
-    //           participantes.push([childKey, childData])
-    //         });
-    //         setParticipante(participantes)
-
-    //         // Preencher objeto com 
-    //         let newResultados = {}
-    //         for([key, data] of participantes){
-    //             newResultados[key] = data.resultado||''
-    //         }
-    //         setResultados(newResultados)
-    //         console.log("CARNEE")
-    //         console.log(newResultados)
-    //     }, {
-    //         onlyOnce: true
-    //     });
-    // }, [])
-
-    // useEffect(() => {
-    //     let atletas = []
-    //     onValue(atletasRef, (snapshot) => {
-    //         snapshot.forEach((childSnapshot) => {
-    //             const childKey = childSnapshot.key;
-    //             const childData = childSnapshot.val();
-    //             // if(childKey == participante[0][1].atleta) {
-    //             //     console.log(childData)
-    //             //     atletas.push(childData)
-    //             // }
-    //             atletas.push([childKey, childData])
-
-    //         });
-    //         setAtleta(atletas)
-    //     }, {
-    //         onlyOnce: true
-    //     });
-    // }, [])
-
-    // useEffect(() => {
-    //     let atletasIguais = []
-    //     atleta.map(([key, value]) => {
-    //         participante.map(([keyParticipante, valueParticipante]) => {
-    //             if(key == valueParticipante.atleta){
-    //                 atletasIguais.push([keyParticipante, [value, valueParticipante]])
-    //             }
-    //         })
-    //     })
-    //     setAtletaIgual(atletasIguais)
-    // }, [atleta])
+    
 
     const voltarBotao = () => {
         navigation.goBack()

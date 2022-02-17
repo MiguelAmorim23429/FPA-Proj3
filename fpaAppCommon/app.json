@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "fpaAppCommon",
+    "name": "FPA Competições",
     "slug": "fpaAppCommon",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/icon-logo.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/icon-logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,11 +17,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.ipvcproj.fpaappcommon"
     },
     "android": {
+      "package": "com.ipvcproj.fpaappcommon",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/icon-logo.png",
         "backgroundColor": "#FFFFFF"
       }
     },

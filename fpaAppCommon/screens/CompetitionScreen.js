@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
+import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native'
 import { getDatabase, ref, onValue, query, equalTo, orderByChild } from "firebase/database"
 import { ListItem, Header } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -35,8 +35,17 @@ const CompetitionScreen = ({ route }) => {
 
     // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
     const escolherProva = (val) => {
-        console.log(val)
-        navigation.navigate('AthleticsTest', { idProva: val })
+        for(let p of prova) {
+            if(p[0] == val) {
+                if(p[1].estado == "finalizada") {
+                    navigation.navigate('AthleticsTest', { idProva: val })
+                } else if(p[1].estado == "ativa"){
+                    Alert.alert('Esta prova ainda se encontra a decorrer.')
+                } else if(p[1].estado == "emInscricoes") {
+                    Alert.alert('Esta prova ainda está em fase de inscrições.')
+                }
+            }
+        }        
     }
 
     const voltarBotao = () => {
@@ -69,7 +78,6 @@ const CompetitionScreen = ({ route }) => {
                         "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7' />,
                     }
 
-                    if (value.ativa) {
                         return (
                             <View key={key}>
                                 <TouchableOpacity onPress={() => escolherProva(key)}>
@@ -84,7 +92,6 @@ const CompetitionScreen = ({ route }) => {
                                 </TouchableOpacity>
                             </View>
                         )
-                    }
                 })
                 }
             </ScrollView>

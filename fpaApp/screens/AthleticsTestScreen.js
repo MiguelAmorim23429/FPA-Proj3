@@ -5,6 +5,7 @@ import MaskInput, { createNumberMask } from 'react-native-mask-input';
 import { Header, ListItem } from 'react-native-elements'
 import { getDatabase, ref, onValue, off, get, update } from "firebase/database";
 import Icon from 'react-native-vector-icons/Ionicons';
+import { getAuth } from 'firebase/auth';
 
 const AthleticsTestScreen = ({ route }) => {
 
@@ -14,20 +15,29 @@ const AthleticsTestScreen = ({ route }) => {
     const navigation = useNavigation()
 
     const db = getDatabase()
+    const auth = getAuth()
     const participantesRef = ref(db, '/provas/' + idProva + '/participantes/')
     const atletasRef = ref(db, '/atletas')
     const provaRef = ref(db, `/provas/${idProva}`) // referência à base de dados para ir buscar a prova que clicamos
+    const userRef = ref(db, `/users/${auth.currentUser.uid}`)
     const modalidadesRef = ref(db, `modalidades`)
 
     const [resultados, setResultados] = useState({})
 
     const [prova, setProva] = useState(null)
+    const [user, setUser] = useState(null)
     const [inscritos, setAtletas] = useState({})
     const [modalidades, setModalidades] = useState({})
+
+    
 
     useEffect(() => {
         get(provaRef).then((snapshot) => {
             setProva(snapshot.val())
+        })
+
+        get(userRef).then((snapshot) => {
+            setUser(snapshot.val())
         })
     }, [])
 
@@ -97,8 +107,16 @@ const AthleticsTestScreen = ({ route }) => {
 
         const updates = {}
         participantes.forEach((participante, index) => {
-            updates['/provas/' + idProva + '/participantes/' + participante + '/resultado/'] = resultados[index]
+            updates[`/provas/${idProva}/participantes/${participante}/resultado/`] = resultados[index]
         })
+
+        console.log(Object.values(resultados))
+        
+        if(Object.values(resultados).every(resultado => resultado !== null && resultado !== undefined && resultado !== "")) {
+            console.log("ARROZ COM FEIJÂO")
+            updates[`/provas/${idProva}/estado/`] = "finalizada"
+        }
+        
 
         update(ref(db), updates)
 
@@ -115,10 +133,61 @@ const AthleticsTestScreen = ({ route }) => {
     const maskInputCreator = (key) => {
         let maskInputModalidade;
 
-        if (Object.values(modalidades).includes("segundos")) {
-            maskInputModalidade = <MaskInput style={styles.textInput} value={resultados[key] || ''} onChangeText={text => setResultadoOnIndex(text, key)} mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']} placeholder='00:00s' />
-        } else if (Object.values(modalidades).includes("metros")) {
-            maskInputModalidade = <MaskInput style={styles.textInput} value={resultados[key] || ''} onChangeText={text => setResultadoOnIndex(text, key)} mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']} placeholder='00.00m' />
+        if(prova.estado == "ativa") {
+            if (Object.values(modalidades).includes("segundos")) {
+                maskInputModalidade = <MaskInput
+                    style={styles.textInput}
+                    value={resultados[key] || 'aaaa'}
+                    editable={user.autorizado ? true : false}
+                    selectTextOnFocus={user.autorizado ? true : false}
+                    onChangeText={text => setResultadoOnIndex(text, key)}
+                    mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
+                    placeholder='00:00s' />
+    
+            } else if (Object.values(modalidades).includes("metros")) {
+                maskInputModalidade = <MaskInput 
+                    style={styles.textInput} 
+                    value={resultados[key] || ''}
+                    editable={user.autorizado ? true : false}
+                    selectTextOnFocus={user.autorizado ? true : false}
+                    onChangeText={text => setResultadoOnIndex(text, key)} 
+                    mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']} 
+                    placeholder='00.00m' />
+                    
+            }
+        } else if(prova.estado == "finalizada"){
+            if (Object.values(modalidades).includes("segundos")) {
+                maskInputModalidade = <MaskInput
+                    style={styles.textInput}
+                    value={resultados[key] || ''}
+                    editable={false}
+                    selectTextOnFocus={false}
+                    placeholder='00:00s' />
+    
+            } else if (Object.values(modalidades).includes("metros")) {
+                maskInputModalidade = <MaskInput 
+                    style={styles.textInput} 
+                    value={resultados[key] || ''}
+                    editable={false}
+                    selectTextOnFocus={false}
+                    placeholder='00.00m' />
+                    
+            }
+        } else if(prova.estado == "emInscricoes") {
+            if (Object.values(modalidades).includes("segundos")) {
+                maskInputModalidade = <TextInput
+                    style={styles.textInput}
+                    editable={false}
+                    selectTextOnFocus={false}
+                    placeholder='00:00s' />
+    
+            } else if (Object.values(modalidades).includes("metros")) {
+                maskInputModalidade = <TextInput 
+                    style={styles.textInput} 
+                    editable={false}
+                    selectTextOnFocus={false}
+                    placeholder='00.00m' />
+            }
         }
 
         return maskInputModalidade
@@ -159,6 +228,7 @@ const AthleticsTestScreen = ({ route }) => {
                 </View>
 
                 <ScrollView style={styles.listContainer}>
+                    
                     {Object.entries(inscritos).map(([key, value], index) => {
                         return (
                             <View key={index}>
@@ -233,6 +303,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         // borderRadius: 4,
         borderColor: 'rgb(120, 120, 120)',
+        flex: 0.8,
         padding: 5,
         height: 30,
     },

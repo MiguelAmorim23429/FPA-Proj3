@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import logotest from '../assets/fpa-logo.png'
 import './home.css'
 import { useNavigate } from 'react-router-dom';
-import { getDatabase, ref, onValue, update, off } from "firebase/database"
+import { getDatabase, ref, onValue, update, off, set } from "firebase/database"
+import { storage } from '../firebase';
+import { getDownloadURL, ref as sref, listAll } from 'firebase/storage';
 
 import * as FaIcons from 'react-icons/fa'
 import * as AiIcons from 'react-icons/ai'
@@ -11,8 +13,13 @@ const Home = () => {
 
   const db = getDatabase()
   const competicoesRef = ref(db, '/competicoes/')
-  const [competicoes, setCompeticoes] = useState([])
+  const imagesRef = sref(storage, '/images/')
 
+  const [competicoes, setCompeticoes] = useState([])
+  const [images, setImages] = useState([])
+  const [imageURl, setImageURL] = useState({})
+  const [urls, setUrls] = useState([])
+  const [imgElement, setImageElement] = useState(null)
   const [indexBtn, setIndexBtn] = useState(-1);
   const [sidebar, setSidebar] = useState(false);
 
@@ -21,6 +28,7 @@ const Home = () => {
   useEffect(() => {
 
     const handler = (snapshot) => {
+
       let comps = []
 
       snapshot.forEach((childSnapshot) => {
@@ -30,9 +38,9 @@ const Home = () => {
       });
       setCompeticoes(comps)
     }
-    
+
     onValue(competicoesRef, handler)
-    return(() => {
+    return (() => {
       off(handler)
     })
   }, [])
@@ -85,6 +93,12 @@ const Home = () => {
             <li>
               <button className='side-bar-btn' onClick={() => navigate('/addathlete')}>Adicionar Atleta</button>
             </li>
+            <li>
+              <button className='side-bar-btn' onClick={() => navigate('/addmanager')}>Adicionar Gestor</button>
+            </li>
+            <li>
+              <button className='side-bar-btn' onClick={() => navigate('/permissionsmanager')}>Permissões Gestor</button>
+            </li>
           </ul>
         </nav>
       </div>
@@ -98,7 +112,8 @@ const Home = () => {
                 onClick={() => goToProvasComp(key)}>
                 <div className='competicao-info-container'>
                   <h2>{value.nome}</h2>
-                  <img className='competicao-img' src={logotest} alt='foto competição'></img>
+                  {value.foto && <img className='competicao-img' src={value.foto} alt='foto competição'></img>}
+
                   <label className='competicao-label'>{value.data}</label>
                   <label className='competicao-label'>{value.local}</label>
                 </div>
@@ -110,7 +125,6 @@ const Home = () => {
                   <button className={indexBtn === index ? 'competicao-btn-show' : 'competicao-btn-hide'} id='apagar-competicao-btn' onClick={(e) => {
                     e.stopPropagation();
                     window.confirm("Deseja mesmo remover?") && deleteComp(key, value);
-                    window.location.reload(false);
                   }}>Remover</button>
                 </div>
               </div>

@@ -54,7 +54,7 @@ const HomeScreen = () => {
                                     <Card>
                                         <Card.Title style={{ fontSize: 18 }}>{value.nome}</Card.Title>
                                         <Card.Divider />
-                                        <Card.Image style={{ borderRadius: 5 }} source={require('../assets/fpa-logo.png')}>
+                                        <Card.Image style={{ borderRadius: 5 }} source={{uri: value.foto}}>
                                         </Card.Image>
                                         <Text style={{ fontSize: 16 }}>{value.data}</Text>
                                         <Text style={{ fontSize: 16 }}>{value.local}</Text>

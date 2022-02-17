@@ -39,8 +39,8 @@ const ProvasCompetition = () => {
     }
 
     useEffect(() => {
-        // Busca das provas existentes na competicao que selecionamos no ecrã anterior
-        onValue(provasCompRef, (snapshot) => {
+
+        const handler = (snapshot) => {
             let provas = []
 
             snapshot.forEach((childSnapshot) => {
@@ -49,9 +49,14 @@ const ProvasCompetition = () => {
                 provas.push([childKey, childData])
             });
             setProva(provas)
-        }, {
-            onlyOnce: true
-        });
+        }
+
+        // Busca das provas existentes na competicao que selecionamos no ecrã anterior
+        onValue(provasCompRef, handler)
+
+        return(() => {
+            off(handler)
+        })
     }, [])
 
     useEffect(() => {
@@ -65,6 +70,7 @@ const ProvasCompetition = () => {
                 modalidadesArray.push([childKey, childData])
             });
             setModalidades(modalidadesArray)
+            console.log(modalidadesArray)
         }
 
         onValue(modalidadesRef, handler)
@@ -93,7 +99,7 @@ const ProvasCompetition = () => {
             hora: hora,
             modalidade: modalidade,
             nome: nome,
-            ativa: true
+            estado: "emInscricoes"
         })
 
         const provaId = newProvaRef.key
@@ -104,7 +110,7 @@ const ProvasCompetition = () => {
     const goToParticipantsProva = (key) => {  // função redireciona para o ecrã dos participantes desta prova, e envia o id da prova para esse ecrã
         const idProva = key;
         navigate('/participantes', { state: { idProva } })
-      }
+    }
 
     return (
         prova.length == 0 ? ( // se não existirem provas na competição, mostra um quando com o text das linhas 112 e 114. se tiver provas são listadas
@@ -133,7 +139,7 @@ const ProvasCompetition = () => {
                                 <option className='select-default' value="0">Modalidade</option>
                                 {modalidades.map(([key, value]) => {
                                     return (
-                                        <option key={key}>{value.nome}</option>
+                                        <option key={key} value={key}>{value.nome}</option>
                                     )
                                 })}
                             </select>
@@ -158,26 +164,25 @@ const ProvasCompetition = () => {
                             "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
                             "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
                         }
-                        if (value.ativa) {
-                            return (
-                                // <div >
-                                <div key={key} className='prova-container'
-                                    onMouseEnter={() => showButton(index)}
-                                    onMouseLeave={hideButton}>
-                                    <ul className='prova-list'>
-                                        <li className='prova-list-item'>{value.hora}</li>
-                                        <li className='prova-list-item'>{value.nome}</li>
-                                        <li className='prova-list-item'>{value.escalao}</li>
-                                        <li className='prova-list-item'>{generos[value.genero]}</li>
-                                    </ul>
-                                    <div className='prova-list-btn-container'>
-                                        <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => goToParticipantsProva(key)}>Participantes</button>
-                                        <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='apagar-prova-btn' onClick={() => window.confirm("Deseja mesmo remover?") && deleteProva(key)}>Remover</button>
-                                    </div>
+                        return (
+                            // <div >
+                            <div key={key} className='prova-container'
+                                onMouseEnter={() => showButton(index)}
+                                onMouseLeave={hideButton}>
+                                <ul className='prova-list'>
+                                    <li className='prova-list-item'>{value.hora}</li>
+                                    <li className='prova-list-item'>{value.nome}</li>
+                                    <li className='prova-list-item'>{value.escalao}</li>
+                                    <li className='prova-list-item'>{generos[value.genero]}</li>
+                                </ul>
+                                <div className='prova-list-btn-container'>
+                                    <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => goToParticipantsProva(key)}>Participantes</button>
+                                    <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='apagar-prova-btn' onClick={() => window.confirm("Deseja mesmo remover?") && deleteProva(key)}>Remover</button>
                                 </div>
-                                // </div>
-                            )
-                        }
+                            </div>
+                            // </div>
+                        )
+
                     })}
                 </div>
                 <div className='update-prova-container'>

@@ -69,7 +69,7 @@ const CompetitionScreen = ({route}) => {
                         "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7'/>,
                     }
 
-                    if(value.ativa) {
+                    // if(value.ativa) {
                         return(
                             <View key={key}>
                                 <TouchableOpacity onPress={() => escolherProva(key)}>
@@ -84,7 +84,7 @@ const CompetitionScreen = ({route}) => {
                                 </TouchableOpacity>
                             </View>
                         )
-                    }
+                    // }
                 })
                 }
             </ScrollView>
