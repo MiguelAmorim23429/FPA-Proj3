@@ -8,6 +8,12 @@ function AuthContextProvider({ children }) {
 
     const [user, setUser] = useState(auth.currentUser)
 
+    const [idComp, setIdComp] = useState(null)
+    const [nameComp, setNameComp] = useState(null)
+    const [dateComp, setDateComp] = useState(null)
+    const [locationComp, setLocationComp] = useState(null)
+    const [photoComp, setPhotoComp] = useState(null)
+
     function login(email, password) {
         return signInWithEmailAndPassword(auth, email, password)
     }
@@ -29,7 +35,20 @@ function AuthContextProvider({ children }) {
     }, []);
 
 
-    return <UserAuthContext.Provider value={{ user, login, logout }}>{children}</UserAuthContext.Provider>
+    return <UserAuthContext.Provider value={{ user,
+         login,
+         logout,
+         idComp,
+         setIdComp,
+         nameComp,
+         setNameComp,
+         dateComp,
+         setDateComp,
+         locationComp,
+         setLocationComp,
+         photoComp,
+         setPhotoComp }}>{children}
+         </UserAuthContext.Provider>
 };
 
 export { UserAuthContext }

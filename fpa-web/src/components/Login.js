@@ -1,6 +1,6 @@
 import React, { useContext, useState } from 'react';
 import logo from '../assets/fpa-logo.png'
-import './login.css'
+import '../styles/login.css'
 import { UserAuthContext } from '../context/AuthContextProvider';
 import { useNavigate, Navigate } from 'react-router-dom';
 

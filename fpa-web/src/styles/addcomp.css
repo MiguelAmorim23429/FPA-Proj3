@@ -1,0 +1,49 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.main-add-comp-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    min-height: 100%;
+}
+
+.add-comp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 50%;
+    height: 100%;
+    align-items: center;
+    margin-top: 48px;
+    padding: 24px 0;
+}
+
+.add-comp-input {
+    width: 420px;
+    height: 56px;
+    padding: 16px;
+    font-size: 16px;
+}
+
+.add-comp-input:focus {
+    outline: none;
+}
+
+.add-comp-btn {
+    border-radius: 1em;
+    border-style: none;
+    /* background-color: white; */
+    width: 136px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 16px;
+}
+
+.add-comp-btn:hover {
+    cursor: pointer;
+}

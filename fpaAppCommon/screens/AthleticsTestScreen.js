@@ -8,83 +8,113 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const AthleticsTestScreen = ({ route }) => {
 
     // Variável com o valor do idProva da prova em que se clicou no ecrã anterior
-    const idProva = route.params.idProva
+    const idMatch = route.params.idProva
 
     const navigation = useNavigation()
 
     const db = getDatabase()
-    const participantesRef = ref(db, '/provas/' + idProva + '/participantes/')
-    const atletasRef = ref(db, '/atletas')
-    const provaRef = ref(db, `/provas/${idProva}`) // referência à base de dados para ir buscar a prova que clicamos
+    const participantsRef = ref(db, '/provas/' + idMatch + '/participantes/')
+    const athletesRef = ref(db, '/atletas')
+    const matchRef = ref(db, `/provas/${idMatch}`) // referência à base de dados para ir buscar a prova que clicamos
 
-    const [resultados, setResultados] = useState({})
+    const [results, setResults] = useState({})
 
-    const [prova, setProva] = useState(null)
-    const [inscritos, setAtletas] = useState({})
+    const [match, setMatch] = useState(null)
+    const [enrolled, setAthletes] = useState({})
 
     useEffect(() => {
-        get(provaRef).then((snapshot) => {
-            setProva(snapshot.val())
+
+        const handlerMatch = (snapshot) => {
+            const matchObj = snapshot.val()
+            setMatch(matchObj)
+            
+        }
+
+        // console.log(match)
+
+        const fetchMatch = onValue(matchRef, handlerMatch)
+
+        // get(matchRef).then((snapshot) => {
+        //     setMatch(snapshot.val())
+        // })
+
+        return(() => {
+            fetchMatch()
         })
     }, [])
 
     useEffect(() => {
-
+        
         const handler = async (snapshot) => {
 
-            let atletasSnapshot = await get(atletasRef)
+            let atletasSnapshot = await get(athletesRef)
 
             let atletas = {}
 
             atletasSnapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
-                if (childData.genero == prova.genero) {
+                
+                if (childData.genero === match.genero) {
                     atletas[childKey] = childData
+                }
+            })
+            
+            // let inscritos = {}
+            let newResults = {}
+            let enrolledResultsArray = []
+            let enrolledResults = {}
+
+            snapshot.forEach((childSnapshot) => {
+                const idParticipant = childSnapshot.key
+                const idAthlete = childSnapshot.val().atleta;
+                const result = childSnapshot.val().resultado;
+
+                newResults[idParticipant] = result || ''
+                // inscritos[idParticipant] = atletas[idAthlete]
+
+                atletas[idAthlete].resultado = result || ''
+                enrolledResults[idParticipant] = atletas[idAthlete]
+
+                enrolledResultsArray = Object.entries(enrolledResults)
+
+                for(let i = 0; i<enrolledResultsArray.length; i++) {
+                    enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
                 }
             });
 
-            let inscritos = {}
-            let newResultados = {}
-
-            snapshot.forEach((childSnapshot) => {
-                const participanteId = childSnapshot.key
-                const atletaId = childSnapshot.val().atleta;
-                const resultado = childSnapshot.val().resultado
-
-                newResultados[participanteId] = resultado || ''
-                inscritos[participanteId] = atletas[atletaId]
-            });
-
-            setAtletas(inscritos)
-            setResultados(newResultados)
-
+            setAthletes(enrolledResultsArray)
+            
         }
 
-        if (prova) {
-            onValue(participantesRef, handler)
-        }
+        const fetchParticipants = onValue(participantsRef, handler)
+        // if (match) {
+            fetchParticipants()
+        // }
 
         return (() => {
-            if (prova) {
-                off(handler)
-            }
+            // if (match) {
+                fetchParticipants()
+                // off(handler)
+            // }
         })
-    }, [prova])
+    }, [match])
 
     
 
-    const voltarBotao = () => {
+    const goToPreviousScreen = () => {
         navigation.goBack()
     }
+    
+   
 
     const setResultadoOnIndex = (valResultado, index) => {
-        let newResultado = Object.assign({}, resultados)
+        let newResultado = Object.assign({}, results)
 
         newResultado[index] = valResultado;
         // console.log(newResultado)
-        setResultados(newResultado)
-        console.log(resultados)
+        setResults(newResultado)
+        console.log(results)
     }
 
     return (
@@ -92,7 +122,7 @@ const AthleticsTestScreen = ({ route }) => {
             <Header
                 leftComponent={
                     <View style={styles.headerContainer}>
-                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()} />
+                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
                         <Text style={styles.headerTitle}>Participantes</Text>
                     </View>
                 }
@@ -105,19 +135,18 @@ const AthleticsTestScreen = ({ route }) => {
                 <Text style={styles.labelRow}>Marca</Text>
             </View>
             <ScrollView style={styles.listContainer}>
-                {Object.entries(inscritos).map(([key, value], index) => {
-                    // console.log(`chave: ${key} com valor: ${value} e index: ${index}`)
+                {Object.entries(enrolled).map(([key, value], index) => {
+                    // console.log(`chave: ${key} com valor: ${value[1].resultado} e index: ${index}`)
 
                     return (
                         <View key={index}>
                             <TouchableOpacity onPress={() => console.log(key)}>
                                 <ListItem style={styles.listCard}>
                                     <ListItem.Content style={styles.listRowsContainer}>
-                                        <ListItem.Title style={styles.listName}>{value.nome}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.clube}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{resultados[key] || ''}</ListItem.Title>
-                                        {/* {console.log(resultado)} */}
+                                        <ListItem.Title style={styles.listName}>{value[1].nome}</ListItem.Title>
+                                        <ListItem.Title style={styles.listRow}>{value[1].clube}</ListItem.Title>
+                                        <ListItem.Title style={styles.listRow}>{value[1].escalao.substring(0, 3)}</ListItem.Title>
+                                        <ListItem.Title style={styles.listRow}>{value[1].resultado || ''}</ListItem.Title>
                                     </ListItem.Content>
                                 </ListItem>
                             </TouchableOpacity>

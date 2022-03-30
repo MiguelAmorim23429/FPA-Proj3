@@ -7,20 +7,31 @@
 
 .main-participantsprova-container {
     min-height: 100vh;
-    background-color: rgb(231, 231, 231);
     display: flex;
     padding: 16px;
     flex-direction: column;
 }
 
+.start-btn-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.match-status-text {
+    margin-left: 12px;
+}
+
 .start-test-btn {
     width: 180px;
-    height: 56px;
+    height: 48px;
     color: white;
     background-color: #1375BC;
     border-style: none;
-    margin-bottom: 24px;
     font-size: 18px;
+    border-radius: 24px;
+    margin-left: 72px;
 }
 
 .start-test-btn:hover {
@@ -41,10 +52,10 @@
 .participant-container {
     display: flex;
     height: 56px;
-    margin-bottom: 1px;
-    background: white;
     padding: 0 8px 0 16px;
-    /* padding: 16px; */
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.2);
 }   
 
 .participant-list {

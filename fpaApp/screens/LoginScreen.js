@@ -10,7 +10,7 @@ const LoginScreen = () => {
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [utilizador, setUtilizador] = useState([])
+  const [user, setUser] = useState([])
 
   const navigation = useNavigation()
 
@@ -19,14 +19,14 @@ const LoginScreen = () => {
   const usersRef = ref(db, '/users')
 
   useEffect(() => {
-    let users = []
+    let usersArray = []
     const getUsers = onValue(usersRef, (snapshot) => {
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
-        users.push([childKey, childData])
+        usersArray.push([childKey, childData])
       });
-      setUtilizador(users)
+      setUser(usersArray)
     }, {
       onlyOnce: true
     });
@@ -41,7 +41,7 @@ const LoginScreen = () => {
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredentials => {
 
-        utilizador.map(([key, value]) => {
+        user.map(([key, value]) => {
           if (userCredentials.user.email === value.email) {
             console.log("E IGUALLLLL")
             username = value.username
@@ -101,13 +101,10 @@ export default LoginScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // backgroundColor: '#fff',
     alignItems: 'center',
-    //justifyContent: 'center',
   },
   containerLoading: {
     flex: 1,
-    // backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -118,12 +115,9 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: 300,
-    //borderStyle: 'solid',
     borderBottomWidth: 2,
-    // borderColor: '#000',
     borderColor: 'rgb(120, 120, 120)',
     padding: 10,
-    // marginBottom: 25,
     marginTop: 25,
     fontSize: 18,
   },

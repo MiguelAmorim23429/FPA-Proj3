@@ -1,8 +1,10 @@
 import React, { useContext } from 'react';
 import logo from '../assets/home-logo.jpg'
-import './home.css'
+import '../styles/home.css'
 import { UserAuthContext } from '../context/AuthContextProvider';
 import { useNavigate } from 'react-router-dom';
+
+import * as IoIcons from 'react-icons/io'
 
 const Master = ({ children }) => {
 
@@ -16,7 +18,6 @@ const Master = ({ children }) => {
     e.preventDefault()
     // <Navigate to='/login' />
     navigate('/login')
-    console.log(user.email)
     await logout()
   }
 
@@ -24,9 +25,10 @@ const Master = ({ children }) => {
     <div className='main-home-container'>
       <header className='cabecalho'>
         <img className='cabecalho-logo' src={logo} alt='home logo' onClick={() => navigate('/')}></img>
-        <span>
-          <label className='cabecalho-loggedUser'>Sessão iniciada em: {user?.email}</label>
-          <button className='cabecalho-logout-btn' onClick={handleLogout}>Sair</button>
+        <span className='log-info-section'>
+          <label className='cabecalho-loggedUser'>{user?.email}</label>
+          {/* <button className='cabecalho-logout-btn' onClick={handleLogout}>Sair</button> */}
+          <IoIcons.IoIosLogOut className='logout-icon' onClick={handleLogout} />
         </span>
       </header>
       <main>

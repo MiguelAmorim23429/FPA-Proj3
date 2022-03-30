@@ -3,35 +3,38 @@ import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, Pressable } from 'react-native'
 import { Card, Header } from 'react-native-elements'
 import { getAuth } from 'firebase/auth'
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, off } from "firebase/database";
 import { app } from '../firebase';
 
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 const HomeScreen = (props) => {
+
   const db = getDatabase()
-  const competicoesRef = ref(db, '/competicoes/')
+  const competitionsRef = ref(db, '/competicoes/')
 
   const auth = getAuth()
   const navigation = useNavigation()
 
-  const [competicoes, setCompeticoes] = useState([])
+  const [competitions, setCompetitions] = useState([])
 
   useEffect(() => {
 
     const handler = (snapshot) => {
 
-      let comps = []
+      let competitionsArray = []
 
       snapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
-        comps.push([childKey, childData])
+        competitionsArray.push([childKey, childData])
       });
-      setCompeticoes(comps)
+      setCompetitions(competitionsArray)
     }
 
-    onValue(competicoesRef, handler)
+    const closeCompetionsOnvalue = onValue(competitionsRef, handler)
     return (() => {
-      off(handler)
+      closeCompetionsOnvalue()
     })
     // onValue(competicoesRef, (snapshot) => {
     //   let comps = []
@@ -64,12 +67,13 @@ const HomeScreen = (props) => {
   return (
     <View style={styles.container}>
       <Header
-        leftComponent={{ text: 'Competições', style:styles.screenTitle }}
-        rightComponent={<Pressable style={styles.logOutPressable} title='Logout' onPress={handleLogout}><Text style={styles.textPressable}>Sair</Text></Pressable>}
+        leftComponent={{ text: 'Competições', style: styles.screenTitle }}
+        // rightComponent={<Pressable style={styles.logOutPressable} title='Logout' onPress={handleLogout}><Text style={styles.textPressable}>Sair</Text></Pressable>}
+        rightComponent={<Icon name='logout' onPress={handleLogout} style={styles.logOutPressable} size={22} color='white'/>}
       />
 
-      <ScrollView style={styles.cardContainer}>
-        {competicoes.map(([key, value]) => {
+      {/* <ScrollView style={styles.cardContainer}>
+        {competitions.map(([key, value]) => {
           if (value.ativa) {
             return (
               <View key={key}>
@@ -83,6 +87,36 @@ const HomeScreen = (props) => {
                     <Text style={styles.cardText}>{value.local}</Text>
                   </Card>
                 </TouchableOpacity>
+              </View>
+            )
+          }
+        })}
+
+      </ScrollView> */}
+
+      <ScrollView style={styles.cardContainer}>
+        {competitions.map(([key, value]) => {
+          if (value.ativa) {
+            return (
+              <View key={key}>
+                <Pressable onPress={() => escolherCompeticao(key)}>
+                  <Card containerStyle={styles.card}>
+
+                    <Card.Image style={styles.cardImage} source={{ uri: value.foto }}></Card.Image>
+
+                    <View style={styles.cardInfo}>
+
+                      <Card.Title style={styles.cardTitle}>{value.nome}</Card.Title>
+
+                      <View style={styles.cardLabelContainer}>
+                        <Text style={styles.cardLabel}>{value.data}</Text>
+                        <Text style={styles.cardLabel}>{value.local}</Text>
+                      </View>
+
+                    </View>
+
+                  </Card>
+                </Pressable>
               </View>
             )
           }
@@ -108,32 +142,52 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '100%',
   },
-  cardTitle: {
-    fontSize: 18,
+  card: {
+    padding: 0,
+    borderRadius: 16,
+    position: 'relative',
   },
-  cardText: {
+  cardImage: {
+    width: '100%',
+    borderRadius: 16,
+  },
+  cardInfo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    borderRadius: 16,
+  },
+  cardTitle: {
+    fontSize: 24,
+    color: 'white',
+    position: 'absolute',
+    top: 16,
+    left: 16,
+  },
+  cardLabelContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    position: 'absolute',
+    top: 56,
+    left: 16,
+  },
+  cardLabel: {
     fontSize: 16,
-    marginTop: 4,
+    color: 'white',
   },
   logOutPressable: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'white',
-    borderRadius: 4,
-    paddingVertical: 8,
     paddingHorizontal: 24,
   },
-  textPressable: {
-    color: '#1375BC',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
   screenTitle: {
-    fontSize: 20, 
-    fontWeight: 'bold',
-    width: 130, 
-    height: 'auto',
-    marginTop: 4,
     color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+    width: 160,
+    paddingStart: 16,
   }
 })

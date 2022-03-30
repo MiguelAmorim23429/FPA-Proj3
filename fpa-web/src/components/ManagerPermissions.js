@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react'
-import './managerpermissions.css'
+import '../styles/managerpermissions.css'
 import { getDatabase, ref, onValue, update, off } from "firebase/database"
 import { UserAuthContext } from '../context/AuthContextProvider';
+
+import * as BsIcons from 'react-icons/bs'
 
 function ManagerPermissions() {
 
@@ -18,18 +20,18 @@ function ManagerPermissions() {
     useEffect(() => {
         
         const handler = (snapshot) => {
-            let users = []
-            let utilizador = {}
+            let usersArray = []
+            let userObj = {}
             // let loggedUser = user
             snapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
-                utilizador = JSON.parse(localStorage.getItem("logged-user"))
-                if(utilizador.uid != childKey) {
-                    users.push([childKey, childData])
+                userObj = JSON.parse(localStorage.getItem("logged-user"))
+                if(userObj.uid != childKey) {
+                    usersArray.push([childKey, childData])
                 }
             });
-            setUsers(users)
+            setUsers(usersArray)
         }
 
         const fetchUsers = onValue(usersRef, handler)
@@ -40,7 +42,7 @@ function ManagerPermissions() {
         })
     }, [])
 
-    const darAutorizacoes = (key) => {
+    const givePermissions = (key) => {
         const idUser = key;
 
         const updates = {}
@@ -49,7 +51,7 @@ function ManagerPermissions() {
         update(ref(db), updates)
     }
 
-    const tirarAutorizacoes = (key) => {
+    const removePermissions = (key) => {
         const idUser = key;
 
         const updates = {}
@@ -73,17 +75,17 @@ function ManagerPermissions() {
             <div className='main-managerpermissions-container'>
                 <div className='users-list-container'>
                     {users.map(([key, user], index) => {
-                        const autorizacao = {
-                            false: <label>Não Autorizado</label>,
-                            true: <label>Autorizado</label>
+                        const authorization = {
+                            false: <label className='status-label'>Não Autorizado <BsIcons.BsXCircle id='not-authorized-icon'/> </label>,
+                            true: <label className='status-label'>Autorizado <BsIcons.BsCheckCircle id='authorized-icon'/></label>
                         }
                         return (
                             <div key={key} className='users-container'>
                                 <ul className='users-info-list'>
                                     <li className='users-list-item'>{user.username}</li>
                                     <li className='users-list-item'>{user.email}</li>
-                                    <li className='users-list-item' id={user.autorizado == false ? 'label-naoautorizado' : 'label-autorizado'}>{autorizacao[user.autorizado]}</li>
-                                    <button className={user.autorizado == false ? 'update-btn-autorizar' : 'update-btn-naoautorizar'} onClick={user.autorizado == false ? () => window.confirm("Deseja mesmo dar permissões a este utilizador?") && darAutorizacoes(key) : () => window.confirm("Deseja mesmo retirar permissões a este utilizador?") && tirarAutorizacoes(key)}>{user.autorizado == false ? "Dar Permissões" : "Tirar Permissões"}</button>
+                                    <li className='users-list-item' id={user.autorizado == false ? 'label-not-authorized' : 'label-authorized'}>{authorization[user.autorizado]}</li>
+                                    <button className={user.autorizado == false ? 'update-btn-autorizar' : 'update-btn-naoautorizar'} onClick={user.autorizado == false ? () => window.confirm("Deseja mesmo dar permissões a este utilizador?") && givePermissions(key) : () => window.confirm("Deseja mesmo retirar permissões a este utilizador?") && removePermissions(key)}>{user.autorizado == false ? "Dar Permissões" : "Tirar Permissões"}</button>
                                 </ul>
                             </div>
                         )

@@ -6,115 +6,143 @@ import { Header, ListItem } from 'react-native-elements'
 import { getDatabase, ref, onValue, off, get, update } from "firebase/database";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAuth } from 'firebase/auth';
+import UseModalidades from './UseModalidades';
 
 const AthleticsTestScreen = ({ route }) => {
 
     // Variável com o valor do idProva da prova em que se clicou no ecrã anterior
-    const idProva = route.params.idProva
+    const idMatch = route.params.idProva
 
     const navigation = useNavigation()
 
     const db = getDatabase()
     const auth = getAuth()
-    const participantesRef = ref(db, '/provas/' + idProva + '/participantes/')
-    const atletasRef = ref(db, '/atletas')
-    const provaRef = ref(db, `/provas/${idProva}`) // referência à base de dados para ir buscar a prova que clicamos
+    const participantsRef = ref(db, '/provas/' + idMatch + '/participantes/')
+    const athletesRef = ref(db, '/atletas')
+    const matchRef = ref(db, `/provas/${idMatch}`) // referência à base de dados para ir buscar a prova que clicamos
     const userRef = ref(db, `/users/${auth.currentUser.uid}`)
-    const modalidadesRef = ref(db, `modalidades`)
-
-    const [resultados, setResultados] = useState({})
-
-    const [prova, setProva] = useState(null)
-    const [user, setUser] = useState(null)
-    const [inscritos, setAtletas] = useState({})
-    const [modalidades, setModalidades] = useState({})
-
     
 
+    const [results, setResults] = useState({})
+
+    const [match, setMatch] = useState(null)
+    const [user, setUser] = useState(null)
+    const [inscritos, setAtletas] = useState({})
+    const [modalidades] = UseModalidades({ modalidade: match?.modalidade })
+
     useEffect(() => {
-        get(provaRef).then((snapshot) => {
-            setProva(snapshot.val())
-        })
+
+        const handlerMatch = (snapshot) => {
+            const matchObj = snapshot.val()
+            setMatch(matchObj)
+
+            // let userObj = await get(userRef)
+
+            // setUser(userObj)
+            
+        }
+
+        const fetchMatch = onValue(matchRef, handlerMatch)
 
         get(userRef).then((snapshot) => {
             setUser(snapshot.val())
         })
+
+        return(() => {
+            fetchMatch()
+        })
+
     }, [])
 
-    useEffect(() => {
+    const sortFunction = ([,a], [,b]) => {
+        if(a.resultado === "" || a.resultado === null) return 1;
+        if(b.resultado === "" || b.resultado === null) return -1;
+        if(a.resultado === b.resultado) return 0;
+        return a.resultado < b.resultado ? -1 : 1;
+    }
 
+    useEffect(() => {
+        
         const handler = async (snapshot) => {
 
-            let atletasSnapshot = await get(atletasRef)
+            let atletasSnapshot = await get(athletesRef)
 
             let atletas = {}
 
             atletasSnapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
-                if (childData.genero == prova.genero) {
+                if (childData.genero === match.genero) {
                     atletas[childKey] = childData
                 }
             });
 
-            let modalidadesSnapshot = await get(modalidadesRef)
-
-            let modalidades = {}
-
-            modalidadesSnapshot.forEach((childSnapshot) => {
-                const childKey = childSnapshot.key;
-                const childData = childSnapshot.val();
-                if (childKey == prova.modalidade) {
-                    modalidades[childKey] = childData.unidade
-                }
-            })
-
-            setModalidades(modalidades)
-
             let inscritos = {}
             let newResultados = {}
 
-            snapshot.forEach((childSnapshot) => {
-                const participanteId = childSnapshot.key
-                const atletaId = childSnapshot.val().atleta;
-                const resultado = childSnapshot.val().resultado
+            // NOVA VERSÃO!!!!!
+            let enrolledResultsArray = []
+            let enrolledResults = {}
 
-                newResultados[participanteId] = resultado || ''
-                inscritos[participanteId] = atletas[atletaId]
+            snapshot.forEach((childSnapshot) => {
+                const idParticipant = childSnapshot.key
+                const idAthlete = childSnapshot.val().atleta;
+                const result = childSnapshot.val().resultado
+
+                newResultados[idParticipant] = result || ''
+                inscritos[idParticipant] = atletas[idAthlete]
+
+                // NOVA VERSÃO!!!!!
+                atletas[idAthlete].resultado = result || ''
+                enrolledResults[idParticipant] = atletas[idAthlete]
+
+                enrolledResultsArray = Object.entries(enrolledResults)
+
+                for(let i = 0; i<enrolledResultsArray.length; i++) {
+                    // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
+                    enrolledResultsArray.sort(sortFunction)
+                }
             });
 
-            setAtletas(inscritos)
-            setResultados(newResultados)
+            // setAtletas(inscritos)
+            setResults(newResultados)
+
+            // NOVA VERSÃO!!!!!
+            setAtletas(enrolledResultsArray)
 
         }
 
-        if (prova) {
-            onValue(participantesRef, handler)
-        }
+        const closeParticipantsOnvalue = match && onValue(participantsRef, handler)
 
-        return (() => {
-            if (prova) {
-                off(handler)
-            }
+        return(() => {
+                match && closeParticipantsOnvalue()
         })
-    }, [prova])
 
-    const voltarBotao = () => {
+    }, [match])
+
+    const goToPreviousScreen = () => {
         navigation.goBack()
     }
 
-    const adicionarResultado = (participantes, resultados) => {
+    const addResult = (enrolledResults) => {
 
         const updates = {}
-        participantes.forEach((participante, index) => {
-            updates[`/provas/${idProva}/participantes/${participante}/resultado/`] = resultados[index]
-        })
+        let resultsArray = []
 
-        console.log(Object.values(resultados))
+        const enrolledResultsArray = Object.entries(enrolledResults)
         
-        if(Object.values(resultados).every(resultado => resultado !== null && resultado !== undefined && resultado !== "")) {
-            console.log("ARROZ COM FEIJÂO")
-            updates[`/provas/${idProva}/estado/`] = "finalizada"
+        enrolledResultsArray.forEach((enrolledResult) => {
+
+            const idParticipant = enrolledResult[1][0]
+            const result = enrolledResult[1][1].resultado
+
+            updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result
+
+            resultsArray.push(result)
+        })
+        
+        if(resultsArray.every(result => result !== null && result !== undefined && result !== "")) {
+            updates[`/provas/${idMatch}/estado/`] = "finalizada"
         }
         
 
@@ -123,66 +151,69 @@ const AthleticsTestScreen = ({ route }) => {
         Alert.alert('Resultados adicionados com sucesso.')
     }
 
-    const setResultadoOnIndex = (valResultado, index) => {
-        let newResultado = Object.assign({}, resultados)
+    const setResultOnIndex = (valResultado, index) => {
+        // let newResult = Object.assign({}, results)
+        let newResult = Object.assign({}, inscritos)
 
-        newResultado[index] = valResultado;
-        setResultados(newResultado)
+        // newResult[index] = valResultado;
+        newResult[index][1].resultado = valResultado
+
+        setAtletas(newResult)
     }
 
     const maskInputCreator = (key) => {
-        let maskInputModalidade;
+        let sportModalityMaskInput;
 
-        if(prova.estado == "ativa") {
+        if(match.estado == "ativa") {
             if (Object.values(modalidades).includes("segundos")) {
-                maskInputModalidade = <MaskInput
+                sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={resultados[key] || 'aaaa'}
+                    value={results[key] || 'aaaa'}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
-                    onChangeText={text => setResultadoOnIndex(text, key)}
+                    onChangeText={text => setResultOnIndex(text, key)}
                     mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
                     placeholder='00:00s' />
     
             } else if (Object.values(modalidades).includes("metros")) {
-                maskInputModalidade = <MaskInput 
+                sportModalityMaskInput = <MaskInput 
                     style={styles.textInput} 
-                    value={resultados[key] || ''}
+                    value={inscritos[key][1].resultado || ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
-                    onChangeText={text => setResultadoOnIndex(text, key)} 
+                    onChangeText={text => setResultOnIndex(text, key)} 
                     mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']} 
                     placeholder='00.00m' />
                     
             }
-        } else if(prova.estado == "finalizada"){
+        } else if(match.estado == "finalizada"){
             if (Object.values(modalidades).includes("segundos")) {
-                maskInputModalidade = <MaskInput
+                sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={resultados[key] || ''}
+                    value={inscritos[key][1].resultado || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00:00s' />
     
             } else if (Object.values(modalidades).includes("metros")) {
-                maskInputModalidade = <MaskInput 
+                sportModalityMaskInput = <MaskInput 
                     style={styles.textInput} 
-                    value={resultados[key] || ''}
+                    value={inscritos[key][1].resultado || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00.00m' />
                     
             }
-        } else if(prova.estado == "emInscricoes") {
+        } else if(match.estado == "emInscricoes") {
             if (Object.values(modalidades).includes("segundos")) {
-                maskInputModalidade = <TextInput
+                sportModalityMaskInput = <TextInput
                     style={styles.textInput}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00:00s' />
     
             } else if (Object.values(modalidades).includes("metros")) {
-                maskInputModalidade = <TextInput 
+                sportModalityMaskInput = <TextInput 
                     style={styles.textInput} 
                     editable={false}
                     selectTextOnFocus={false}
@@ -190,7 +221,7 @@ const AthleticsTestScreen = ({ route }) => {
             }
         }
 
-        return maskInputModalidade
+        return sportModalityMaskInput
     }
 
     return (
@@ -199,7 +230,7 @@ const AthleticsTestScreen = ({ route }) => {
                 <Header
                     leftComponent={
                         <View style={styles.headerContainer}>
-                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()} />
+                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
                             <Text style={styles.headerTitle}>Participantes</Text>
                         </View>
                     }
@@ -214,7 +245,7 @@ const AthleticsTestScreen = ({ route }) => {
                 <Header
                     leftComponent={
                         <View style={styles.headerContainer}>
-                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()} />
+                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
                             <Text style={styles.headerTitle}>Participantes</Text>
                         </View>
                     }
@@ -235,9 +266,9 @@ const AthleticsTestScreen = ({ route }) => {
                                 <TouchableOpacity onPress={() => console.log(key)}>
                                     <ListItem style={styles.listCard}>
                                         <ListItem.Content style={styles.listRowsContainer}>
-                                            <ListItem.Title style={styles.listName}>{value.nome}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{value.clube}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
+                                            <ListItem.Title style={styles.listName}>{value[1].nome}</ListItem.Title>
+                                            <ListItem.Title style={styles.listRow}>{value[1].clube}</ListItem.Title>
+                                            <ListItem.Title style={styles.listRow}>{value[1].escalao.substring(0, 3)}</ListItem.Title>
                                             {maskInputCreator(key)}
                                         </ListItem.Content>
                                     </ListItem>
@@ -247,7 +278,8 @@ const AthleticsTestScreen = ({ route }) => {
                     })}
                     <Pressable
                         style={styles.btnPressable}
-                        onPress={() => adicionarResultado(Object.keys(resultados), Object.values(resultados))}>
+                        onPress={() => addResult(inscritos)}>
+                        {/* onPress={() => addResult(Object.keys(results), Object.values(results))}> */}
                         <Text style={styles.textPressable}>Adicionar</Text>
                     </Pressable>
                 </ScrollView>

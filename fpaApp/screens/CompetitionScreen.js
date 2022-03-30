@@ -8,26 +8,26 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const CompetitionScreen = ({route}) => {
 
     // Variável com o valor do idCompeticao da competição em que se clicou no ecrã anterior
-    const idCompeticao = route.params.idComp
+    const idCompetition = route.params.idComp
     const navigation = useNavigation()
 
     // Referência ao sítio a que se vai buscar os dados na base de dados.
     const db = getDatabase();
-    const provasRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(idCompeticao))
+    const matchesRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(idCompetition))
 
-    const [prova, setProva] = useState([])
+    const [match, setMatch] = useState([])
 
     useEffect(() => {
         // Busca das provas existentes na competicao que selecionamos no ecrã anterior
-        onValue(provasRef, (snapshot) => {
-            let provas = [] 
+        onValue(matchesRef, (snapshot) => {
+            let matchesArray = [] 
 
             snapshot.forEach((childSnapshot) => {
               const childKey = childSnapshot.key;
               const childData = childSnapshot.val();
-              provas.push([childKey, childData])
+              matchesArray.push([childKey, childData])
             });
-            setProva(provas)
+            setMatch(matchesArray)
         }, {
             onlyOnce: true
         });
@@ -39,7 +39,7 @@ const CompetitionScreen = ({route}) => {
         navigation.navigate('AthleticsTest', {idProva: val})
     }
 
-    const voltarBotao = () => {
+    const goToPreviousScreen = () => {
         navigation.goBack()
     }
 
@@ -48,7 +48,7 @@ const CompetitionScreen = ({route}) => {
             <Header 
                 leftComponent={
                     <View style={styles.headerContainer}>
-                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => voltarBotao()}/>
+                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()}/>
                         <Text style={styles.headerTitle}>Provas</Text>
                     </View>
                 }
@@ -62,9 +62,9 @@ const CompetitionScreen = ({route}) => {
             </View>
 
             <ScrollView style={styles.listContainer}>
-                {prova.map(([key, value]) => {
+                {match.map(([key, value]) => {
 
-                    const generos = {
+                    const genders = {
                         "Masculino": <Icon name='male-sharp' size={20} color='#03A3FF'/>, 
                         "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7'/>,
                     }
@@ -78,7 +78,7 @@ const CompetitionScreen = ({route}) => {
                                         <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
                                         <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
                                         <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{generos[value.genero]}</ListItem.Title>
+                                        <ListItem.Title style={styles.listRow}>{genders[value.genero]}</ListItem.Title>
                                     </ListItem.Content>
                                 </ListItem>
                                 </TouchableOpacity>

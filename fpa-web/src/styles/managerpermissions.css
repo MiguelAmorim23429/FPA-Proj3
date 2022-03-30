@@ -7,7 +7,6 @@
 
 .main-managerpermissions-container {
     min-height: 100vh;
-    background-color: rgb(231, 231, 231);
     display: flex;
     justify-content: center;
 }
@@ -19,11 +18,11 @@
 
 .users-container {
     display: flex;
-
     height: 56px;
-    margin-bottom: 1px;
-    background: white;
     padding: 0 16px;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.2);
 }
 
 .users-info-list {
@@ -40,12 +39,26 @@
     flex: 1;
 }
 
-#label-autorizado {
-    color: green;
+.status-label {
+    display: flex;
+    align-items: center;
 }
 
-#label-naoautorizado {
-    color: red;
+#authorized-icon {
+    margin-left: 8px;
+    color: rgba(0, 160, 0, 0.8);
+}
+
+#not-authorized-icon {
+    margin-left: 8px;
+    color: rgba(225, 0, 0, 0.8);
+}
+
+#label-authorized {
+}
+
+#label-not-authorized {
+    
 }
 
 .update-btn-autorizar {
@@ -66,7 +79,7 @@
     height: 32px;
     padding: 8px;
     border-style: none;
-    background-color: rgb(226, 52, 52);
+    background-color: rgba(225, 0, 0, 0.8);
     color: white;
 }
 

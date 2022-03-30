@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './addathlete.css'
+import '../styles/addathlete.css'
 import { getDatabase, ref, push } from "firebase/database"
 import { useNavigate } from 'react-router-dom';
 
