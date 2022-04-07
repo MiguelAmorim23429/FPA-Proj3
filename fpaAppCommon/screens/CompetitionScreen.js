@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native'
+import { ScrollView, StyleSheet, View, Text } from 'react-native'
 import { getDatabase, ref, onValue, query, equalTo, orderByChild } from "firebase/database"
-import { ListItem, Header } from 'react-native-elements'
+import { Header } from 'react-native-elements'
 import Icon from 'react-native-vector-icons/Ionicons';
+import Accordion from './Accordion';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const CompetitionScreen = ({ route }) => {
 
@@ -34,18 +36,24 @@ const CompetitionScreen = ({ route }) => {
     }, [])
 
     // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
-    const escolherProva = (val) => {
-        for(let match of matchesById) {
-            if(match[0] == val) {
-                if(match[1].estado == "finalizada") {
-                    navigation.navigate('AthleticsTest', { idProva: val })
-                } else if(match[1].estado == "ativa"){
-                    Alert.alert('Esta prova ainda se encontra a decorrer.')
-                } else if(match[1].estado == "emInscricoes") {
-                    Alert.alert('Esta prova ainda está em fase de inscrições.')
-                }
-            }
-        }        
+    const escolherProva = (matchKey) => {
+        console.log(`prova::::::${matchKey}`)
+        // console.log(`prova: ${matchKey} e modalidade: ${sportModality}`)
+        // for (let match of matchesById) {
+        //     // console.log(matchKey)
+        //     if (match[0] === matchKey) {
+        //         if (match[1].estado === "finalizada") {
+
+        //             navigation.navigate('AthleticsTest', {
+        //                 matchId: matchKey
+        //             })
+        //         } else if (match[1].estado === "ativa") {
+        //             Alert.alert('Esta prova ainda se encontra a decorrer.')
+        //         } else if (match[1].estado === "emInscricoes") {
+        //             Alert.alert('Esta prova ainda está em fase de inscrições.')
+        //         }
+        //     }
+        // }
     }
 
     const goToPreviousScreen = () => {
@@ -53,49 +61,85 @@ const CompetitionScreen = ({ route }) => {
     }
 
     return (
-        <View style={styles.container}>
-            <Header
-                leftComponent={
-                    <View style={styles.headerContainer}>
-                        <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
-                        <Text style={styles.headerTitle}>Provas</Text>
-                    </View>
-                }
-            />
-
-            <View style={styles.labelContainer}>
-                <Text style={styles.labelHora}>Hora</Text>
-                <Text style={styles.item_label}>Prova</Text>
-                <Text style={styles.item_label}>Escalão</Text>
-                <Text style={styles.item_label}>Género</Text>
-            </View>
-
-            <ScrollView style={styles.listContainer}>
-                {matchesById.map(([key, value]) => {
-
-                    const genders = {
-                        "Masculino": <Icon name='male-sharp' size={20} color='#03A3FF' />,
-                        "Feminino": <Icon name='female-sharp' size={20} color='#EC49A7' />,
+        matchesById.length === 0 ?
+            (<View style={styles.container}>
+                <Header
+                    statusBarProps={
+                        {
+                            backgroundColor: 'transparent',
+                            translucent: true,
+                        }
                     }
+                    containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    backgroundColor='#1375BC'
+                    ViewComponent={LinearGradient} // Don't forget this!
+                    linearGradientProps={{
+                        colors: ['#1375BC', '#1794e8'],
+                        start: { x: 0.1, y: 0.5 },
+                        end: { x: 1, y: 0.5 },
+                    }}
+                    leftComponent={
+                        <View style={styles.headerContainer}>
+                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
+                            <Text style={styles.headerTitle}>Provas</Text>
+                        </View>
+                    }
+                />
+                <Text>Não há provas.</Text>
+            </View>
+            )
+            :
+            (<View style={styles.container}>
+                <Header
+                    statusBarProps={
+                        {
+                            backgroundColor: 'transparent',
+                            translucent: true,
+                        }
+                    }
+                    containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    backgroundColor='#1375BC'
+                    ViewComponent={LinearGradient} // Don't forget this!
+                    linearGradientProps={{
+                        colors: ['#1375BC', '#1794e8'],
+                        start: { x: 0.1, y: 0.5 },
+                        end: { x: 1, y: 0.5 },
+                    }}
+                    leftComponent={
+                        <View style={styles.headerContainer}>
+                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
+                            <Text style={styles.headerTitle}>Provas</Text>
+                        </View>
+                    }
+                />
 
+                <ScrollView style={styles.listContainer}>
+
+                    {matchesById.map(([key, value], index) => {
+
+                        const genders = {
+                            "Masculino": <Icon name='male-sharp' size={24} color='#03A3FF' />,
+                            "Feminino": <Icon name='female-sharp' size={24} color='#EC49A7' />,
+                        }
                         return (
                             <View key={key}>
-                                <TouchableOpacity onPress={() => escolherProva(key)}>
-                                    <ListItem style={styles.listCard}>
-                                        <ListItem.Content style={styles.listRowsContainer}>
-                                            <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{genders[value.genero]}</ListItem.Title>
-                                        </ListItem.Content>
-                                    </ListItem>
-                                </TouchableOpacity>
+                                <Accordion
+                                    cardIndex={index}
+                                    competitionId={idCompetition}
+                                    matchId={key}
+                                    sportModalityId={value.modalidade}
+                                    hora={value.hora}
+                                    categoria={value.categoria}
+                                    escalao={value.escalao}
+                                    genero={genders[value.genero]} />
                             </View>
                         )
-                })
-                }
-            </ScrollView>
-        </View>
+                    })
+                    }
+                </ScrollView>
+            </View>
+            )
+
     )
 }
 
@@ -103,9 +147,11 @@ export default CompetitionScreen
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: '100%',
+        height: '100%',
+        padding: 0,
+        margin: 0,
+        backgroundColor: 'white',
     },
     headerContainer: {
         flexDirection: 'row',
@@ -124,34 +170,5 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         width: '100%',
-    },
-    listCard: {
-        borderWidth: 1,
-        borderColor: 'rgb(200,200,200)',
-    },
-    listRowsContainer: {
-        flexDirection: 'row',
-    },
-    listHora: {
-        flex: 1,
-        marginStart: 24,
-    },
-    listRow: {
-        flex: 1,
-        textAlign: 'center',
-    },
-    labelContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-    },
-    labelHora: {
-        marginStart: 48,
-        marginEnd: 48,
-        color: 'black',
-    },
-    item_label: {
-        flex: 1,
-        color: 'black',
-        textAlign: 'center',
-    },
+    }
 })

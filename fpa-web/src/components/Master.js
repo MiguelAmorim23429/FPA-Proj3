@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import logo from '../assets/home-logo.jpg'
+import logo from '../assets/home-logo-no-background.png'
 import '../styles/home.css'
 import { UserAuthContext } from '../context/AuthContextProvider';
 import { useNavigate } from 'react-router-dom';

@@ -6,7 +6,7 @@ import { Header, ListItem } from 'react-native-elements'
 import { getDatabase, ref, onValue, off, get, update } from "firebase/database";
 import Icon from 'react-native-vector-icons/Ionicons';
 import { getAuth } from 'firebase/auth';
-import UseModalidades from './UseModalidades';
+import useSportModalities from './useSportModalities';
 
 const AthleticsTestScreen = ({ route }) => {
 
@@ -21,14 +21,17 @@ const AthleticsTestScreen = ({ route }) => {
     const athletesRef = ref(db, '/atletas')
     const matchRef = ref(db, `/provas/${idMatch}`) // referência à base de dados para ir buscar a prova que clicamos
     const userRef = ref(db, `/users/${auth.currentUser.uid}`)
-    
+
 
     const [results, setResults] = useState({})
 
     const [match, setMatch] = useState(null)
     const [user, setUser] = useState(null)
     const [inscritos, setAtletas] = useState({})
-    const [modalidades] = UseModalidades({ modalidade: match?.modalidade })
+
+    const [sportModality] = useSportModalities({ sportModalityId: match?.modalidade })
+
+    const [inputChanged, setInputChanged] = useState(false);
 
     useEffect(() => {
 
@@ -39,30 +42,49 @@ const AthleticsTestScreen = ({ route }) => {
             // let userObj = await get(userRef)
 
             // setUser(userObj)
-            
+
         }
 
-        const fetchMatch = onValue(matchRef, handlerMatch)
+        const closeFetchMatch = onValue(matchRef, handlerMatch)
 
         get(userRef).then((snapshot) => {
             setUser(snapshot.val())
         })
 
-        return(() => {
-            fetchMatch()
+        return (() => {
+            closeFetchMatch()
         })
 
     }, [])
 
-    const sortFunction = ([,a], [,b]) => {
-        if(a.resultado === "" || a.resultado === null) return 1;
-        if(b.resultado === "" || b.resultado === null) return -1;
-        if(a.resultado === b.resultado) return 0;
-        return a.resultado < b.resultado ? -1 : 1;
+    const sortFunction = ([, a], [, b]) => {
+        // console.log(`MODALIDADE: ${sportModality?.unidade}`)
+        // if(Object?.values(sportModality).includes("segundos")) {
+        //     if(a.resultado === "" || a.resultado === null) return 1;
+        //     if(b.resultado === "" || b.resultado === null) return -1;
+        //     if(a.resultado === b.resultado) return 0;
+        //     return a.resultado < b.resultado ? -1 : 1;
+        // } else if(Object?.values(sportModality).includes("metros")) {
+        //     if(a.resultado === "" || a.resultado === null) return 1;
+        //     if(b.resultado === "" || b.resultado === null) return -1;
+        //     if(a.resultado === b.resultado) return 0;
+        //     return a.resultado > b.resultado ? -1 : 1;
+        // }
+        if (sportModality?.unidade === "segundos") {
+            if (a.resultado === "" || a.resultado === null) return 1;
+            if (b.resultado === "" || b.resultado === null) return -1;
+            if (a.resultado === b.resultado) return 0;
+            return a.resultado < b.resultado ? -1 : 1;
+        } else if (sportModality?.unidade === "metros") {
+            if (a.resultado === "" || a.resultado === null) return 1;
+            if (b.resultado === "" || b.resultado === null) return -1;
+            if (a.resultado === b.resultado) return 0;
+            return a.resultado > b.resultado ? -1 : 1;
+        }
     }
 
     useEffect(() => {
-        
+
         const handler = async (snapshot) => {
 
             let atletasSnapshot = await get(athletesRef)
@@ -98,7 +120,7 @@ const AthleticsTestScreen = ({ route }) => {
 
                 enrolledResultsArray = Object.entries(enrolledResults)
 
-                for(let i = 0; i<enrolledResultsArray.length; i++) {
+                for (let i = 0; i < enrolledResultsArray.length; i++) {
                     // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
                     enrolledResultsArray.sort(sortFunction)
                 }
@@ -114,14 +136,34 @@ const AthleticsTestScreen = ({ route }) => {
 
         const closeParticipantsOnvalue = match && onValue(participantsRef, handler)
 
-        return(() => {
-                match && closeParticipantsOnvalue()
+        return (() => {
+            match && closeParticipantsOnvalue()
         })
 
-    }, [match])
+    }, [match, sportModality])
 
     const goToPreviousScreen = () => {
-        navigation.goBack()
+        if(inputChanged) {
+            Alert.alert(
+                "Tens a certeza?",
+                "Vais perder as alterações que fizeste.",
+                [
+                    {
+                        text: 'Sim',
+                        onPress: () => {
+                            navigation.goBack()
+                        },
+                    },
+                    {
+                        text: 'Não',
+                    },
+                ]
+                )
+        } else {
+            navigation.goBack()
+        }
+
+        // navigation.goBack()
     }
 
     const addResult = (enrolledResults) => {
@@ -130,7 +172,7 @@ const AthleticsTestScreen = ({ route }) => {
         let resultsArray = []
 
         const enrolledResultsArray = Object.entries(enrolledResults)
-        
+
         enrolledResultsArray.forEach((enrolledResult) => {
 
             const idParticipant = enrolledResult[1][0]
@@ -140,21 +182,25 @@ const AthleticsTestScreen = ({ route }) => {
 
             resultsArray.push(result)
         })
-        
-        if(resultsArray.every(result => result !== null && result !== undefined && result !== "")) {
+
+        if (resultsArray.every(result => result !== null && result !== undefined && result !== "")) {
             updates[`/provas/${idMatch}/estado/`] = "finalizada"
         }
-        
+
 
         update(ref(db), updates)
+
+        setInputChanged(false)
 
         Alert.alert('Resultados adicionados com sucesso.')
     }
 
     const setResultOnIndex = (valResultado, index) => {
         // let newResult = Object.assign({}, results)
-        let newResult = Object.assign({}, inscritos)
 
+        setInputChanged(true)
+        let newResult = Object.assign({}, inscritos)
+        console.log(valResultado, index, results, inscritos)
         // newResult[index] = valResultado;
         newResult[index][1].resultado = valResultado
 
@@ -163,58 +209,58 @@ const AthleticsTestScreen = ({ route }) => {
 
     const maskInputCreator = (key) => {
         let sportModalityMaskInput;
-
-        if(match.estado == "ativa") {
-            if (Object.values(modalidades).includes("segundos")) {
+        
+        if (match.estado === "ativa") {
+            if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={results[key] || 'aaaa'}
+                    value={inscritos[key][1].resultado || ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
                     onChangeText={text => setResultOnIndex(text, key)}
                     mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
                     placeholder='00:00s' />
-    
-            } else if (Object.values(modalidades).includes("metros")) {
-                sportModalityMaskInput = <MaskInput 
-                    style={styles.textInput} 
+
+            } else if (sportModality.unidade === 'metros') {
+                sportModalityMaskInput = <MaskInput
+                    style={styles.textInput}
                     value={inscritos[key][1].resultado || ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
-                    onChangeText={text => setResultOnIndex(text, key)} 
-                    mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']} 
+                    onChangeText={text => setResultOnIndex(text, key)}
+                    mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']}
                     placeholder='00.00m' />
-                    
+
             }
-        } else if(match.estado == "finalizada"){
-            if (Object.values(modalidades).includes("segundos")) {
+        } else if (match.estado === "finalizada") {
+            if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
                     value={inscritos[key][1].resultado || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00:00s' />
-    
-            } else if (Object.values(modalidades).includes("metros")) {
-                sportModalityMaskInput = <MaskInput 
-                    style={styles.textInput} 
+
+            } else if (sportModality.unidade === 'metros') {
+                sportModalityMaskInput = <MaskInput
+                    style={styles.textInput}
                     value={inscritos[key][1].resultado || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00.00m' />
-                    
+
             }
-        } else if(match.estado == "emInscricoes") {
-            if (Object.values(modalidades).includes("segundos")) {
+        } else if (match.estado === "emInscricoes") {
+            if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <TextInput
                     style={styles.textInput}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00:00s' />
-    
-            } else if (Object.values(modalidades).includes("metros")) {
-                sportModalityMaskInput = <TextInput 
-                    style={styles.textInput} 
+
+            } else if (sportModality.unidade === 'metros') {
+                sportModalityMaskInput = <TextInput
+                    style={styles.textInput}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00.00m' />
@@ -242,11 +288,21 @@ const AthleticsTestScreen = ({ route }) => {
             </View>
         ) : (
             <View style={styles.container}>
-                <Header
+                <Header containerStyle={styles.header}
                     leftComponent={
                         <View style={styles.headerContainer}>
                             <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
+                            {/* <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => {
+                                inputChanged ? console.log("QUER VOLTAR ATRÁS?") : goToPreviousScreen()
+                            }} /> */}
                             <Text style={styles.headerTitle}>Participantes</Text>
+                        </View>
+                    }
+
+                    rightComponent={
+                        inputChanged &&
+                        <View style={styles.headerContainer}>
+                            <Icon name='checkmark-sharp' style={styles.headerIcon} size={24} onPress={() => addResult(inscritos)} />
                         </View>
                     }
                 />
@@ -259,7 +315,7 @@ const AthleticsTestScreen = ({ route }) => {
                 </View>
 
                 <ScrollView style={styles.listContainer}>
-                    
+
                     {Object.entries(inscritos).map(([key, value], index) => {
                         return (
                             <View key={index}>
@@ -276,12 +332,12 @@ const AthleticsTestScreen = ({ route }) => {
                             </View>
                         )
                     })}
-                    <Pressable
-                        style={styles.btnPressable}
+                    {/* <Pressable
+                        style={inputChanged ? styles.btnPressable : styles.btnPressableHide}
                         onPress={() => addResult(inscritos)}>
                         {/* onPress={() => addResult(Object.keys(results), Object.values(results))}> */}
-                        <Text style={styles.textPressable}>Adicionar</Text>
-                    </Pressable>
+                        {/* <Text style={styles.textPressable}>Adicionar</Text> */} 
+                    {/* </Pressable> */}
                 </ScrollView>
             </View>
         )
@@ -295,10 +351,12 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
     },
+    header: {
+    },
     headerContainer: {
         flexDirection: 'row',
         paddingLeft: 15,
-        alignItems: 'baseline'
+        alignItems: 'baseline',
     },
     headerIcon: {
         marginEnd: 24,
@@ -360,6 +418,9 @@ const styles = StyleSheet.create({
         height: 40,
         width: 150,
         borderRadius: 5,
+    },
+    btnPressableHide: {
+        display: 'none',
     },
     textPressable: {
         color: 'white',

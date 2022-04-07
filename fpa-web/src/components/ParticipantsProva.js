@@ -73,7 +73,7 @@ const ParticipantsProva = () => {
             athletesSnapshot.forEach((childSnapshot) => { // Percorrer os atletas obtidos da BD, e inseri-los num objeto se o seu genero for igual ao genero da prova
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
-                if (childData.genero === match.genero) {
+                if (childData.genero === match.genero && childData.escalao === match.escalao) {
                     athletes[childKey] = childData
                 }
             });
@@ -110,13 +110,28 @@ const ParticipantsProva = () => {
 
         updates[`/provas/${idMatch}/estado/`] = "ativa"
 
-        if (match.estado === 'emInscricoes') {
+        if(match.estado === 'emInscricoes' && Object.entries(enrolled).length !== 0) {
             update(ref(db), updates)
-        } else if (match.estado === 'ativa') {
+        }
+        if(match.estado === 'ativa') {
             window.alert("Esta prova já está a decorrer.")
-        } else if (match.estado === 'finalizada') {
+        }
+        if(match.estado === 'finalizada') {
             window.alert("Esta prova já terminou.")
         }
+        if(Object.entries(enrolled).length === 0) {
+            window.alert("Tem de adicionar pelo menos um atleta para iniciar a prova.")
+        }
+
+        // if (match.estado === 'emInscricoes' && Object.entries(enrolled).length !== 0) {
+        //     update(ref(db), updates)
+        // } else if (match.estado === 'ativa') {
+        //     window.alert("Esta prova já está a decorrer.")
+        // } else if (match.estado === 'finalizada') {
+        //     window.alert("Esta prova já terminou.")
+        // } else if (Object.entries(enrolled).length === 0) {
+        //     window.alert("Tem de adicionar pelo menos um atleta para iniciar a prova.")
+        // }
 
     }
 

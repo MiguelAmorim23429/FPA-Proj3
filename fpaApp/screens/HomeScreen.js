@@ -5,6 +5,7 @@ import { Card, Header } from 'react-native-elements'
 import { getAuth } from 'firebase/auth'
 import { getDatabase, ref, onValue, off } from "firebase/database";
 import { app } from '../firebase';
+import moment from 'moment';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -109,7 +110,7 @@ const HomeScreen = (props) => {
                       <Card.Title style={styles.cardTitle}>{value.nome}</Card.Title>
 
                       <View style={styles.cardLabelContainer}>
-                        <Text style={styles.cardLabel}>{value.data}</Text>
+                        <Text style={styles.cardLabel}>{moment(value.data).format('DD-MM-YYYY')}</Text>
                         <Text style={styles.cardLabel}>{value.local}</Text>
                       </View>
 

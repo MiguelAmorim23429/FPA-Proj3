@@ -67,6 +67,7 @@
     height: 32px;
     padding: 8px;
     border-style: none;
+    border-radius: 24px;
 }
 
 .update-btn-autorizar:hover {
@@ -79,11 +80,9 @@
     height: 32px;
     padding: 8px;
     border-style: none;
-    background-color: rgba(225, 0, 0, 0.8);
-    color: white;
+    border-radius: 24px;
 }
 
 .update-btn-naoautorizar:hover {
     cursor: pointer;
-    background-color: red;
 }

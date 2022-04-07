@@ -113,35 +113,35 @@ const UpdateCompetition = () => {
                     }))
                     console.log(errors.date.valid)
                 }
-                if (location === '') {
-                    setErrors(prevState => ({
-                        ...prevState,
-                        location: {
-                            valid: false,
-                            message: emptyString,
-                        }
-                    }))
-                } else if (location.length < 6) {
-                    console.log(`${location} tem de ter mais de 6 caracteres`)
+                // if (location === '') {
+                //     setErrors(prevState => ({
+                //         ...prevState,
+                //         location: {
+                //             valid: false,
+                //             message: emptyString,
+                //         }
+                //     }))
+                // } else if (location.length < 6) {
+                //     console.log(`${location} tem de ter mais de 6 caracteres`)
 
-                    setErrors(prevState => ({
-                        ...prevState,
-                        location: {
-                            valid: false,
-                            message: 'A categoria tem de ter pelo menos 6 caracteres.',
-                        }
-                    }))
-                    console.log(errors)
-                } else {
-                    setErrors(prevState => ({
-                        ...prevState,
-                        location: {
-                            valid: true,
-                            message: emptyString,
-                        }
-                    }))
-                    console.log(errors)
-                }
+                //     setErrors(prevState => ({
+                //         ...prevState,
+                //         location: {
+                //             valid: false,
+                //             message: 'A categoria tem de ter pelo menos 6 caracteres.',
+                //         }
+                //     }))
+                //     console.log(errors)
+                // } else {
+                //     setErrors(prevState => ({
+                //         ...prevState,
+                //         location: {
+                //             valid: true,
+                //             message: emptyString,
+                //         }
+                //     }))
+                //     console.log(errors)
+                // }
 
             }, 500)
         )
@@ -182,7 +182,7 @@ const UpdateCompetition = () => {
                 <div className='input-container'>
                     <div className='input-value-box'>
                         <label>Local</label>
-                        <input className='update-comp-input' type='text' value={location}
+                        <input className='update-comp-input' required type='text' value={location}
                             onChange={event => setLocal(event.target.value)}></input>
                     </div>
 
