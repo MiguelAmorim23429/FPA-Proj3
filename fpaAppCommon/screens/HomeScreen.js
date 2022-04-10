@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, Pressable, StatusBar } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 import { Card, Header } from 'react-native-elements'
 import { useNavigation } from '@react-navigation/native';
 import React, { useState, useEffect } from 'react'

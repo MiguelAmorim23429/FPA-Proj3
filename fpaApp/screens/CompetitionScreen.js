@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView, StyleSheet, View, Text, TouchableOpacity } from 'react-native'
+import { ScrollView,StyleSheet, View, Text } from 'react-native'
 import { getDatabase, ref, onValue, query, equalTo, orderByChild } from "firebase/database"
-import { ListItem, Header, Input } from 'react-native-elements'
-import Icon from 'react-native-vector-icons/Ionicons';
+import { Header } from 'react-native-elements'
 
-import Accordion from './Accordion';
+import { LinearGradient } from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/Ionicons';
+import MatchCard from './MatchCard';
 
 const CompetitionScreen = ({ route }) => {
 
@@ -45,13 +46,24 @@ const CompetitionScreen = ({ route }) => {
         navigation.goBack()
     }
 
-    const showInput = () => {
-        return <Text>aaaa</Text>
-    }
-
     return (
         <View style={styles.container}>
+
             <Header
+                statusBarProps={
+                    {
+                        backgroundColor: 'transparent',
+                        translucent: true,
+                    }
+                }
+                containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                backgroundColor='#1375BC'
+                ViewComponent={LinearGradient} // Don't forget this!
+                linearGradientProps={{
+                    colors: ['#1375BC', '#1794e8'],
+                    start: { x: 0.1, y: 0.5 },
+                    end: { x: 1, y: 0.5 },
+                }}
                 leftComponent={
                     <View style={styles.headerContainer}>
                         <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
@@ -68,40 +80,17 @@ const CompetitionScreen = ({ route }) => {
                         "Feminino": <Icon name='female-sharp' size={24} color='#EC49A7' />,
                     }
 
-                    let listCard = <ListItem.Content style={styles.listRowsContainer} onPress={(e) => { escolherProva(key) }}>
-                        <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
-                        <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
-                        <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                        <ListItem.Title style={styles.listRow}>{genders[value.genero]}</ListItem.Title>
-                    </ListItem.Content>
-
                     // if(value.ativa) {
                     return (
                         <View key={key}>
-                            {/* <TouchableOpacity onPress={() => escolherProva(key)}>
-                                <ListItem style={styles.listCard}>
-                                    <ListItem.Content style={styles.listRowsContainer}>
-                                        <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{genders[value.genero]}</ListItem.Title>
-                                    </ListItem.Content>
-                                </ListItem>
-                            </TouchableOpacity> */}
-                            {/* <TouchableOpacity onPress={() => escolherProva(key)}> */}
-                            <Accordion cardIndex={index} chaveId={key} hora={value.hora} categoria={value.categoria} escalao={value.escalao} genero={genders[value.genero]} onPress={() => {escolherProva(key)}} />
-
-                            {/* <ListItem style={styles.listCard}>
-                                    <ListItem.Content style={styles.listRowsContainer}>
-                                        <ListItem.Title style={styles.listHora}>{value.hora}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.categoria}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{value.escalao.substring(0, 3)}</ListItem.Title>
-                                        <ListItem.Title style={styles.listRow}>{genders[value.genero]}</ListItem.Title>
-                                        <ListItem.Chevron style={styles.listRow} onPress={() => { showInput(); console.log("CHEVRON") }} />
-                                    </ListItem.Content>
-                                </ListItem> */}
-
-                            {/* </TouchableOpacity> */}
+                            <MatchCard
+                                cardIndex={index}
+                                chaveId={key}
+                                hora={value.hora}
+                                categoria={value.categoria}
+                                escalao={value.escalao}
+                                genero={genders[value.genero]}
+                                onPress={() => { escolherProva(key) }} />
                         </View>
                     )
                     // }
@@ -124,59 +113,22 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         flexDirection: 'row',
-        paddingLeft: 15,
         alignItems: 'baseline'
     },
     headerIcon: {
-        marginEnd: 24,
+        marginStart: 16,
         color: 'white',
     },
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        width: 150,
-        color: 'white',
+        flexDirection: 'row',
+        alignSelf: 'baseline',
+        width: 130,
+        marginLeft: 16,
+        color: 'white'
     },
     listContainer: {
         width: '100%',
-    },
-    // listRowsContainer: {
-    //     display: 'flex',
-    //     flexDirection: 'row',
-    //     justifyContent: 'flex-start',
-    // },
-    // listHora: {
-    //     marginEnd: 16,
-    // },
-    // listRow: {
-    //     flex: 1,
-    // },
-    listLabelContainer: {
-        // width: '100%',
-        height: 32,
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
-        paddingHorizontal: 8,
-    },
-    labelContainer: {
-        width: '23%',
-        color: 'black',
-        // backgroundColor: 'green',
-        height: '100%',
-    },
-    listInfoLabel: {
-        fontSize: 18,
-        color: 'black',
-        // flex: 1,
-    },
-    labelHora: {
-        color: 'black',
-        marginStart: 16,
-        flex: 0.3,
-    },
-    item_label: {
-        color: 'black',
-        flex: 1,
-    },
+    }
 })

@@ -4,7 +4,6 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, Image, View, TextInput, Alert, Pressable } from 'react-native'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 import { getDatabase, ref, onValue } from "firebase/database";
-import LoadingScreen from './LoadingScreen';
 
 const LoginScreen = () => {
 
@@ -54,16 +53,16 @@ const LoginScreen = () => {
       .catch(error => {
         switch (error.code) {
           case 'auth/invalid-email':
-            alert('Campos vazios')
+            alert('E-mail introduzido errado ou não existe.')
             break
           case 'auth/user-not-found':
-            alert('E-mail introduzido errado ou não existe')
+            alert('Uma conta com este e-mail não existe.')
             break
           case 'auth/wrong-password':
-            alert('Palavra-passe errada')
+            alert('Palavra-passe errada.')
             break
           case 'auth/too-many-requests':
-            alert('Falhou o inicio de sessão demasiadas vezes. Tente novamente mais tarde')
+            alert('Falhou o inicio de sessão demasiadas vezes. Tente novamente mais tarde.')
             break
         }
         console.log(error.message)

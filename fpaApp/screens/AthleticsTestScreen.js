@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Pressable, Alert } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native'
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
 import { Header, ListItem } from 'react-native-elements'
-import { getDatabase, ref, onValue, off, get, update } from "firebase/database";
-import Icon from 'react-native-vector-icons/Ionicons';
+import { getDatabase, ref, onValue, get, update } from "firebase/database";
 import { getAuth } from 'firebase/auth';
+
+import { LinearGradient } from 'expo-linear-gradient';
+import Icon from 'react-native-vector-icons/Ionicons';
 import useSportModalities from './useSportModalities';
 
 const AthleticsTestScreen = ({ route }) => {
@@ -58,18 +60,6 @@ const AthleticsTestScreen = ({ route }) => {
     }, [])
 
     const sortFunction = ([, a], [, b]) => {
-        // console.log(`MODALIDADE: ${sportModality?.unidade}`)
-        // if(Object?.values(sportModality).includes("segundos")) {
-        //     if(a.resultado === "" || a.resultado === null) return 1;
-        //     if(b.resultado === "" || b.resultado === null) return -1;
-        //     if(a.resultado === b.resultado) return 0;
-        //     return a.resultado < b.resultado ? -1 : 1;
-        // } else if(Object?.values(sportModality).includes("metros")) {
-        //     if(a.resultado === "" || a.resultado === null) return 1;
-        //     if(b.resultado === "" || b.resultado === null) return -1;
-        //     if(a.resultado === b.resultado) return 0;
-        //     return a.resultado > b.resultado ? -1 : 1;
-        // }
         if (sportModality?.unidade === "segundos") {
             if (a.resultado === "" || a.resultado === null) return 1;
             if (b.resultado === "" || b.resultado === null) return -1;
@@ -143,7 +133,7 @@ const AthleticsTestScreen = ({ route }) => {
     }, [match, sportModality])
 
     const goToPreviousScreen = () => {
-        if(inputChanged) {
+        if (inputChanged) {
             Alert.alert(
                 "Tens a certeza?",
                 "Vais perder as alterações que fizeste.",
@@ -158,12 +148,10 @@ const AthleticsTestScreen = ({ route }) => {
                         text: 'Não',
                     },
                 ]
-                )
+            )
         } else {
             navigation.goBack()
         }
-
-        // navigation.goBack()
     }
 
     const addResult = (enrolledResults) => {
@@ -200,7 +188,7 @@ const AthleticsTestScreen = ({ route }) => {
 
         setInputChanged(true)
         let newResult = Object.assign({}, inscritos)
-        console.log(valResultado, index, results, inscritos)
+        // console.log(valResultado, index, results, inscritos)
         // newResult[index] = valResultado;
         newResult[index][1].resultado = valResultado
 
@@ -209,7 +197,7 @@ const AthleticsTestScreen = ({ route }) => {
 
     const maskInputCreator = (key) => {
         let sportModalityMaskInput;
-        
+
         if (match.estado === "ativa") {
             if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <MaskInput
@@ -274,6 +262,20 @@ const AthleticsTestScreen = ({ route }) => {
         Object.entries(inscritos).length == 0 ? (
             <View style={styles.container}>
                 <Header
+                    statusBarProps={
+                        {
+                            backgroundColor: 'transparent',
+                            translucent: true,
+                        }
+                    }
+                    containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    backgroundColor='#1375BC'
+                    ViewComponent={LinearGradient} // Don't forget this!
+                    linearGradientProps={{
+                        colors: ['#1375BC', '#1794e8'],
+                        start: { x: 0.1, y: 0.5 },
+                        end: { x: 1, y: 0.5 },
+                    }}
                     leftComponent={
                         <View style={styles.headerContainer}>
                             <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
@@ -288,17 +290,29 @@ const AthleticsTestScreen = ({ route }) => {
             </View>
         ) : (
             <View style={styles.container}>
-                <Header containerStyle={styles.header}
+
+                <Header
+                    statusBarProps={
+                        {
+                            backgroundColor: 'transparent',
+                            translucent: true,
+                        }
+                    }
+                    containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    backgroundColor='#1375BC'
+                    ViewComponent={LinearGradient}
+                    linearGradientProps={{
+                        colors: ['#1375BC', '#1794e8'],
+                        start: { x: 0.1, y: 0.5 },
+                        end: { x: 1, y: 0.5 },
+                    }}
                     leftComponent={
                         <View style={styles.headerContainer}>
+                            {/* <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => { inputChanged ? console.log("QUER VOLTAR ATRÁS?") : goToPreviousScreen() }} /> */}
                             <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
-                            {/* <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => {
-                                inputChanged ? console.log("QUER VOLTAR ATRÁS?") : goToPreviousScreen()
-                            }} /> */}
                             <Text style={styles.headerTitle}>Participantes</Text>
                         </View>
                     }
-
                     rightComponent={
                         inputChanged &&
                         <View style={styles.headerContainer}>
@@ -307,36 +321,57 @@ const AthleticsTestScreen = ({ route }) => {
                     }
                 />
 
-                <View style={styles.labelContainer}>
+                {/* <View style={styles.labelContainer}>
                     <Text style={styles.labelNome}>Nome</Text>
                     <Text style={styles.labelRow}>Clube</Text>
                     <Text style={styles.labelRow}>Escalão</Text>
                     <Text style={styles.labelRow}>Marca</Text>
-                </View>
+                </View> */}
 
                 <ScrollView style={styles.listContainer}>
 
                     {Object.entries(inscritos).map(([key, value], index) => {
                         return (
-                            <View key={index}>
-                                <TouchableOpacity onPress={() => console.log(key)}>
-                                    <ListItem style={styles.listCard}>
-                                        <ListItem.Content style={styles.listRowsContainer}>
-                                            <ListItem.Title style={styles.listName}>{value[1].nome}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{value[1].clube}</ListItem.Title>
-                                            <ListItem.Title style={styles.listRow}>{value[1].escalao.substring(0, 3)}</ListItem.Title>
-                                            {maskInputCreator(key)}
-                                        </ListItem.Content>
-                                    </ListItem>
-                                </TouchableOpacity>
+                            <View key={key} style={styles.cardsContainer}>
+                                <View style={styles.listRowsContainer}>
+
+
+                                    <Text style={styles.listInfoParticipantTablePositionText}>{index + 1}º</Text>
+
+                                    <Text style={styles.listInfoNameText}>{value[1].nome}</Text>
+
+                                    <Text style={styles.listInfoClubText}>{value[1].clube}</Text>
+
+                                    <Text style={styles.listInfoAgeGroupText}>{value[1].escalao.substring(0, 3)}</Text>
+
+                                    {maskInputCreator(key)}
+
+                                    {/* <Text style={styles.listInfoResultText}>{props.result}</Text> */}
+
+                                    {/* <View style={styles.listGenderIconContainer}>
+            {props.genero}
+        </View> */}
+                                </View>
                             </View>
+                            // <View key={index}>
+                            //     <TouchableOpacity onPress={() => console.log(key)}>
+                            //         <ListItem style={styles.listCard}>
+                            //             <ListItem.Content style={styles.listRowsContainer}>
+                            //                 <ListItem.Title style={styles.listName}>{value[1].nome}</ListItem.Title>
+                            //                 <ListItem.Title style={styles.listRow}>{value[1].clube}</ListItem.Title>
+                            //                 <ListItem.Title style={styles.listRow}>{value[1].escalao.substring(0, 3)}</ListItem.Title>
+                            //                 {maskInputCreator(key)}
+                            //             </ListItem.Content>
+                            //         </ListItem>
+                            //     </TouchableOpacity>
+                            // </View>
                         )
                     })}
                     {/* <Pressable
                         style={inputChanged ? styles.btnPressable : styles.btnPressableHide}
                         onPress={() => addResult(inscritos)}>
                         {/* onPress={() => addResult(Object.keys(results), Object.values(results))}> */}
-                        {/* <Text style={styles.textPressable}>Adicionar</Text> */} 
+                    {/* <Text style={styles.textPressable}>Adicionar</Text> */}
                     {/* </Pressable> */}
                 </ScrollView>
             </View>
@@ -351,22 +386,22 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
     },
-    header: {
-    },
     headerContainer: {
         flexDirection: 'row',
-        paddingLeft: 15,
-        alignItems: 'baseline',
+        alignItems: 'baseline'
     },
     headerIcon: {
-        marginEnd: 24,
+        marginStart: 16,
         color: 'white',
     },
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        width: 150,
-        color: 'white',
+        flexDirection: 'row',
+        alignSelf: 'baseline',
+        width: 130,
+        marginLeft: 16,
+        color: 'white'
     },
     noAthleteText: {
         fontSize: 20,
@@ -375,56 +410,140 @@ const styles = StyleSheet.create({
     listContainer: {
         width: '100%',
     },
-    listCard: {
-        borderWidth: 1,
-        borderColor: 'rgb(200,200,200)',
+    cardsContainer: {
+        justifyContent: 'center',
+        alignSelf: 'center',
+        width: '95%',
+        height: 64,
+        padding: 0,
+        marginVertical: 8,
+        borderRadius: 16,
     },
     listRowsContainer: {
-        flexDirection: 'row',
+        height: 64,
+        paddingLeft: 8,
+        backgroundColor: '#ff7700',
+        width: '100%',
+        borderRadius: 16,
+        position: 'relative',
+        elevation: 4,
+        shadowColor: "#000",
     },
-    listName: {
-        flex: 2,
-    },
-    listRow: {
+    infoTextContainer: {
         flex: 1,
-        textAlign: 'center',
+    },
+    listInfoParticipantTablePositionText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        top: 22,
+        left: 16,
+    },
+    listInfoNameText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        top: 22,
+        left: 48,
+    },
+    listInfoClubText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        top: 22,
+        left: 172,
+    },
+    listInfoAgeGroupText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        top: 22,
+        left: 250,
+    },
+    listInfoResultText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        top: 22,
+        left: 320,
+    },
+    listGenderIconContainer: {
+        position: 'absolute',
+        top: 22,
+        left: 270,
     },
     textInput: {
-        borderWidth: 0.5,
-        // borderRadius: 4,
-        borderColor: 'rgb(120, 120, 120)',
-        flex: 0.8,
-        padding: 5,
-        height: 30,
-    },
-    labelContainer: {
-        flexDirection: 'row',
-        justifyContent: 'flex-start',
-    },
-    labelNome: {
-        marginStart: 24,
-        marginEnd: 128,
-    },
-    labelRow: {
-        marginEnd: 32,
-        textAlign: 'center',
-    },
-    btnPressable: {
-        marginTop: 50,
-        alignSelf: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#5A79BA',
-        height: 40,
-        width: 150,
-        borderRadius: 5,
-    },
-    btnPressableHide: {
-        display: 'none',
-    },
-    textPressable: {
+        borderBottomWidth: 3,
+        borderColor: 'rgba(255, 255, 255, 0.5)',
+        // borderColor: 'rgba(255, 246, 0, 0.5)',
+        backgroundColor: 'rgba(255, 143, 45, 0.8)',
+        // backgroundColor: 'rgba(255, 246, 0, 0.5)',
+        fontSize: 16,
         color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold'
+        // opacity: 1,
+        position: 'absolute',
+        top: 12,
+        left: 300,
+        width: 80,
+        height: 40,
+        paddingStart: 8,
+        // borderRadius: 16,
+        borderTopLeftRadius: 8,
+        borderTopRightRadius: 8,
     },
+    // listContainer: {
+    //     width: '100%',
+    // },
+    // listCard: {
+    //     borderWidth: 1,
+    //     borderColor: 'rgb(200,200,200)',
+    // },
+    // listRowsContainer: {
+    //     flexDirection: 'row',
+    // },
+    // listName: {
+    //     flex: 2,
+    // },
+    // listRow: {
+    //     flex: 1,
+    //     textAlign: 'center',
+    // },
+    // textInput: {
+    //     borderWidth: 0.5,
+    //     // borderRadius: 4,
+    //     borderColor: 'rgb(120, 120, 120)',
+    //     flex: 0.8,
+    //     padding: 5,
+    //     height: 30,
+    // },
+    // labelContainer: {
+    //     flexDirection: 'row',
+    //     justifyContent: 'flex-start',
+    // },
+    // labelNome: {
+    //     marginStart: 24,
+    //     marginEnd: 128,
+    // },
+    // labelRow: {
+    //     marginEnd: 32,
+    //     textAlign: 'center',
+    // },
+    // btnPressable: {
+    //     marginTop: 50,
+    //     alignSelf: 'center',
+    //     alignItems: 'center',
+    //     justifyContent: 'center',
+    //     backgroundColor: '#5A79BA',
+    //     height: 40,
+    //     width: 150,
+    //     borderRadius: 5,
+    // },
+    // btnPressableHide: {
+    //     display: 'none',
+    // },
+    // textPressable: {
+    //     color: 'white',
+    //     fontSize: 18,
+    //     fontWeight: 'bold'
+    // },
 })

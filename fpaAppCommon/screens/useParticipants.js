@@ -37,6 +37,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   useEffect(() => {
     const matchRef = ref(db, `/provas/${matchId}`)
+    
     const handlerMatch = (snapshot) => {
       const matchObj = snapshot.val()
       setMatch(matchObj)
@@ -52,6 +53,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   useEffect(() => {
     const sportModalitiesRef = ref(db, `modalidades/${modalidadeId}`)
+
     get(sportModalitiesRef).then((childSnapshot) => {
       setSportModality(childSnapshot.val())
     })

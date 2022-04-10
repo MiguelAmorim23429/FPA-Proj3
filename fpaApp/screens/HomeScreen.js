@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert, Pressable } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
 import { Card, Header } from 'react-native-elements'
 import { getAuth } from 'firebase/auth'
-import { getDatabase, ref, onValue, off } from "firebase/database";
+import { getDatabase, ref, onValue } from "firebase/database";
 import { app } from '../firebase';
 import moment from 'moment';
+
+import { LinearGradient } from 'expo-linear-gradient'
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -67,42 +69,35 @@ const HomeScreen = (props) => {
 
   return (
     <View style={styles.container}>
+
       <Header
-        leftComponent={{ text: 'Competições', style: styles.screenTitle }}
-        // rightComponent={<Pressable style={styles.logOutPressable} title='Logout' onPress={handleLogout}><Text style={styles.textPressable}>Sair</Text></Pressable>}
-        rightComponent={<Icon name='logout' onPress={handleLogout} style={styles.logOutPressable} size={22} color='white'/>}
-      />
-
-      {/* <ScrollView style={styles.cardContainer}>
-        {competitions.map(([key, value]) => {
-          if (value.ativa) {
-            return (
-              <View key={key}>
-                <TouchableOpacity onPress={() => escolherCompeticao(key)}>
-                  <Card>
-                    <Card.Title style={styles.cardTitle}>{value.nome}</Card.Title>
-                    <Card.Divider />
-                    <Card.Image style={{ borderRadius: 5 }} source={{uri: value.foto}}>
-                    </Card.Image>
-                    <Text style={styles.cardText}>{value.data}</Text>
-                    <Text style={styles.cardText}>{value.local}</Text>
-                  </Card>
-                </TouchableOpacity>
-              </View>
-            )
+        statusBarProps={
+          {
+            backgroundColor: 'transparent',
+            translucent: true,
           }
-        })}
-
-      </ScrollView> */}
+        }
+        containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+        backgroundColor='#1375BC'
+        ViewComponent={LinearGradient}
+        linearGradientProps={{
+          colors: ['#1375BC', '#1794e8'],
+          start: { x: 0.1, y: 0.5 },
+          end: { x: 1, y: 0.5 },
+        }}
+        leftComponent={{ text: 'Competições', style: { fontSize: 20, fontWeight: 'bold', flexDirection: 'row', alignSelf: 'baseline', width: 130, marginLeft: 16, color: 'white' } }}
+        rightComponent={<Icon name='logout' onPress={handleLogout} style={styles.logOutPressable} size={24} color='white' />}
+      />
 
       <ScrollView style={styles.cardContainer}>
         {competitions.map(([key, value]) => {
           if (value.ativa) {
             return (
-              <View key={key}>
-                <Pressable onPress={() => escolherCompeticao(key)}>
-                  <Card containerStyle={styles.card}>
+              // <View style={{ justifyContent: 'center', alignSelf: 'center', width: '100%', height: 200, padding: 0, margin: 0, borderRadius: 16 }} key={key}>
+              <View style={{ justifyContent: 'center', alignSelf: 'center', width: '100%', height: 160, padding: 0, margin: 0, borderRadius: 16 }} key={key}>
 
+                <Card containerStyle={styles.card}>
+                  <Pressable onPress={() => escolherCompeticao(key)}>
                     <Card.Image style={styles.cardImage} source={{ uri: value.foto }}></Card.Image>
 
                     <View style={styles.cardInfo}>
@@ -115,9 +110,9 @@ const HomeScreen = (props) => {
                       </View>
 
                     </View>
+                  </Pressable>
+                </Card>
 
-                  </Card>
-                </Pressable>
               </View>
             )
           }
@@ -133,24 +128,33 @@ export default HomeScreen
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: 'center',
-    // justifyContent: 'center',
     width: '100%',
     height: '100%',
     padding: 0,
     margin: 0,
+    backgroundColor: 'white',
   },
   cardContainer: {
     width: '100%',
   },
   card: {
     padding: 0,
+    margin: 0,
     borderRadius: 16,
     position: 'relative',
+    width: '90%',
+    alignSelf: 'center',
+    height: 140,
+    // height: 180,
+    borderWidth: 0,
+    elevation: 4,
+    shadowColor: "#000",
   },
   cardImage: {
     width: '100%',
+    height: '100%',
     borderRadius: 16,
+    borderWidth: 0,
   },
   cardInfo: {
     position: 'absolute',
