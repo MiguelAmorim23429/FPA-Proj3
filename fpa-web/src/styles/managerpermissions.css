@@ -13,13 +13,13 @@
 
 .users-list-container {
     padding: 32px 0;
-    width: 80%;
+    width: 90%;
 }
 
 .users-container {
     display: flex;
-    height: 56px;
-    padding: 0 16px;
+    /* height: 56px; */
+    padding: 0 8px;
     border-width: 1px 0;
     border-style: solid;
     border-color: rgba(0, 0, 0, 0.2);
@@ -29,19 +29,22 @@
     display: flex;
     list-style-type: none;
     align-items: center;
-    gap: 24px;
+    height: 56px;
+    /* gap: 24px; */
     width: 100%;
+    font-family: 'QuicksandRegular';
 }
 
 .users-list-item {
     display: flex;
-    width: 100%;
+    /* width: 50%; */
     flex: 1;
 }
 
 .status-label {
     display: flex;
     align-items: center;
+    flex: 1;
 }
 
 #authorized-icon {
@@ -62,12 +65,14 @@
 }
 
 .update-btn-autorizar {
-    /* width: 96px; */
-    flex: 0.5;
+    width: 180px;
     height: 32px;
-    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
     border-style: none;
     border-radius: 24px;
+    font-family: 'QuicksandRegular';
+    font-size: 16px;
 }
 
 .update-btn-autorizar:hover {
@@ -75,12 +80,14 @@
 }
 
 .update-btn-naoautorizar {
-    /* width: 96px; */
-    flex: 0.5;
+    width: 180px;
     height: 32px;
-    padding: 8px;
+    padding-left: 16px;
+    padding-right: 16px;
     border-style: none;
     border-radius: 24px;
+    font-family: 'QuicksandRegular';
+    font-size: 16px;
 }
 
 .update-btn-naoautorizar:hover {

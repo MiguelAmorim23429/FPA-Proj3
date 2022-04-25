@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/addcomp.css'
-import { getDatabase, ref, push, child } from "firebase/database"
+import { getDatabase, ref, push } from "firebase/database"
 import { useNavigate } from 'react-router-dom';
 import { storage } from '../firebase';
 import { uploadBytes, ref as sref, getDownloadURL } from 'firebase/storage';
@@ -32,40 +32,46 @@ const AddCompetition = () => {
             message: '',
         },
     })
-    
+
     const competicoesRef = ref(db, '/competicoes/')
-    
+
     const adicionarCompeticao = () => {
         let imagesRef
-        if(selectedFile) {
+        if (selectedFile) {
             imagesRef = sref(storage, `/images/${selectedFile.name}`);
         }
 
 
         uploadBytes(imagesRef, selectedFile)
-        .then(() => {
-            getDownloadURL(imagesRef)
-            .then((url) => {
-                const newCompRef = push(competicoesRef, {
-                    nome: name,
-                    data: date,
-                    local: location,
-                    ativa: true,
-                    foto: url,
-                })
+            .then(() => {
+                getDownloadURL(imagesRef)
+                    .then((url) => {
+                        const newCompRef = push(competicoesRef, {
+                            nome: name,
+                            data: date,
+                            local: location,
+                            ativa: true,
+                            foto: url,
+                        })
+                    })
             })
-        })
-        
+
         navigate('/')
     }
 
+    const handleSubmit = (e) => {
+        if (errors.name.valid && errors.date.valid && errors.location.valid) {
+            e.preventDefault();
+            adicionarCompeticao();
+            console.log("submeteu");
+        } else {
+            e.preventDefault();
+            console.log("ADSAD")
+            return false
+        }
+    }
+
     useEffect(() => {
-
-        const emptyString = ''
-
-        console.log(name)
-        console.log(date)
-        console.log(location)
 
         clearTimeout(timer)
 
@@ -76,60 +82,77 @@ const AddCompetition = () => {
                         ...prevState,
                         name: {
                             valid: false,
-                            message: emptyString,
+                            message: '',
                         }
                     }))
-                    console.log(`arroz: ${errors.name.message}`)
-                } else if (name.length < 6) {
-                    console.log(`${name} tem de ter mais de 6 caracteres`)
-                    setErrors(prevState => ({
-                        ...prevState,
-                        name: {
-                            valid: false,
-                            message: 'O nome tem de ter pelo menos 6 caracteres.',
-                        }
-                    }))
-                    console.log(`nome valido: ${errors.name.valid} / hora valida: ${errors.date.valid} / categoria valida: ${errors.location.valid}`)
                 } else {
-                    setErrors(prevState => ({
-                        ...prevState,
-                        name: {
-                            valid: true,
-                            message: emptyString,
-                        }
-                    }))
-
-                    console.log(`nome valido: ${errors.name.valid} / hora valida: ${errors.date.valid} / categoria valida: ${errors.location.valid}`)
+                    if (name.length < 6) {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            name: {
+                                valid: false,
+                                message: 'O nome tem de ter pelo menos 6 caracteres.',
+                            }
+                        }))
+                    } else {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            name: {
+                                valid: true,
+                                message: '',
+                            }
+                        }))
+                    }
                 }
+
                 if (date === '') {
                     setErrors(prevState => ({
                         ...prevState,
                         date: {
                             valid: false,
-                            message: emptyString,
+                            message: '',
                         }
                     }))
                 } else {
-                    setErrors(prevState => ({
-                        ...prevState,
-                        date: {
-                            valid: true,
-                            message: emptyString,
-                        }
-                    }))
-                    console.log(errors.date.valid)
+
+                    let competitionChoosenStartDate = new Date(date)
+
+                    console.log(competitionChoosenStartDate)
+
+                    if (competitionChoosenStartDate < Date.now()) {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            date: {
+                                valid: false,
+                                message: 'A data tem de ser posterior à data de hoje.',
+                            }
+                        }))
+                    } else {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            date: {
+                                valid: true,
+                                message: '',
+                            }
+                        }))
+                    }
+                    // setErrors(prevState => ({
+                    //     ...prevState,
+                    //     date: {
+                    //         valid: true,
+                    //         message: '',
+                    //     }
+                    // }))
                 }
                 if (location === '') {
                     setErrors(prevState => ({
                         ...prevState,
                         location: {
                             valid: false,
-                            message: emptyString,
+                            message: '',
                         }
                     }))
                 } else if (location.length < 6) {
-                    console.log(`${location} tem de ter mais de 6 caracteres`)
-
                     setErrors(prevState => ({
                         ...prevState,
                         location: {
@@ -137,29 +160,27 @@ const AddCompetition = () => {
                             message: 'O local tem de ter pelo menos 6 caracteres.',
                         }
                     }))
-                    console.log(errors)
                 } else {
                     setErrors(prevState => ({
                         ...prevState,
                         location: {
                             valid: true,
-                            message: emptyString,
+                            message: '',
                         }
                     }))
-                    console.log(errors)
                 }
 
             }, 500)
         )
     }, [name, date, location]);
 
-    
+
 
     return (
         <div className='main-add-comp-container'>
-            <form className='add-comp-form' onSubmit={adicionarCompeticao}>
+            <form className='add-comp-form' onSubmit={handleSubmit}>
 
-            <div className='input-container'>
+                <div className='input-container'>
                     <div className='input-value-box'>
                         <label>Nome</label>
                         <input className='update-comp-input' type='text' value={name}

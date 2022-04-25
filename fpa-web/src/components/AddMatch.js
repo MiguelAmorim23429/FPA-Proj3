@@ -272,38 +272,44 @@ function AddMatch(props) {
                 </div>
 
                 <div className='select-box-container'>
-                    <select className='info-match-select-box'
-                        value={gender}
-                        onChange={event => setGender(event.target.value)}>
+                    <div className='single-select-container'>
+                        <select className='info-match-select-box'
+                            value={gender}
+                            onChange={event => setGender(event.target.value)}>
 
-                        <option className='select-default' value="0">Género</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
+                            <option className='select-default' value="0">Género</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
 
-                    </select>
+                        </select>
+                    </div>
 
-                    <select className='info-match-select-box'
-                        value={sportModality}
-                        onChange={event => setSportModality(event.target.value)}>
+                    <div className='single-select-container'>
+                        <select className='info-match-select-box'
+                            value={sportModality}
+                            onChange={event => setSportModality(event.target.value)}>
 
-                        <option className='select-default' value="0">Modalidade</option>
-                        {modalities.map(([key, value]) => {
-                            return (
-                                <option key={key} value={key}>{value.nome}</option>
-                            )
-                        })}
+                            <option className='select-default' value="0">Modalidade</option>
+                            {modalities.map(([key, value]) => {
+                                return (
+                                    <option key={key} value={key}>{value.nome}</option>
+                                )
+                            })}
 
-                    </select>
+                        </select>
+                    </div>
 
-                    <select className='info-match-select-box'
-                        value={ageGroup}
-                        onChange={event => setAgeGroup(event.target.value)}>
+                    <div className='single-select-container'>
+                        <select className='info-match-select-box'
+                            value={ageGroup}
+                            onChange={event => setAgeGroup(event.target.value)}>
 
-                        <option className='select-default' value="0">Escalão</option>
-                        <option value="INICIADOS">INICIADOS</option>
-                        <option value="JUNIORES">JUNIORES</option>
+                            <option className='select-default' value="0">Escalão</option>
+                            <option value="INICIADOS">INICIADOS</option>
+                            <option value="JUNIORES">JUNIORES</option>
 
-                    </select>
+                        </select>
+                    </div>
                 </div>
                 <button className='add-new-match-btn' type='submit'>Adicionar</button>
             </form>

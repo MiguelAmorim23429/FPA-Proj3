@@ -77,7 +77,8 @@ const HomeScreen = (props) => {
             translucent: true,
           }
         }
-        containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+        // containerStyle={{ margin: 0, padding: 0, height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000"}}
+        containerStyle={{ margin: 0, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
         backgroundColor='#1375BC'
         ViewComponent={LinearGradient}
         linearGradientProps={{
@@ -85,8 +86,15 @@ const HomeScreen = (props) => {
           start: { x: 0.1, y: 0.5 },
           end: { x: 1, y: 0.5 },
         }}
-        leftComponent={{ text: 'Competições', style: { fontSize: 20, fontWeight: 'bold', flexDirection: 'row', alignSelf: 'baseline', width: 130, marginLeft: 16, color: 'white' } }}
-        rightComponent={<Icon name='logout' onPress={handleLogout} style={styles.logOutPressable} size={24} color='white' />}
+        leftComponent={
+          <View style={styles.headerContainer}>
+            <Text style={styles.headerTitle}>Competições</Text>
+          </View>
+        }
+        rightComponent={
+          <View style={styles.headerContainer}>
+            <Icon name='logout' onPress={handleLogout} style={styles.logOutPressable} size={24} />
+          </View>}
       />
 
       <ScrollView style={styles.cardContainer}>
@@ -133,6 +141,18 @@ const styles = StyleSheet.create({
     padding: 0,
     margin: 0,
     backgroundColor: 'white',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    height: 100,
+    alignItems: 'center',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    width: 180,
+    marginLeft: 16,
+    color: 'white'
   },
   cardContainer: {
     width: '100%',
@@ -184,9 +204,9 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   logOutPressable: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
+    // paddingHorizontal: 24,
+    marginRight: 16,
+    color: 'white'
   },
   screenTitle: {
     color: 'white',

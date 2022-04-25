@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TextInput, Alert, Animated, Keyboard } from 'react-native'
 import MaskInput, { createNumberMask } from 'react-native-mask-input';
-import { Header, ListItem } from 'react-native-elements'
+import { Header } from 'react-native-elements'
 import { getDatabase, ref, onValue, get, update } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 
 import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Toast from './Toast';
 import useSportModalities from './useSportModalities';
 
 const AthleticsTestScreen = ({ route }) => {
@@ -34,6 +35,7 @@ const AthleticsTestScreen = ({ route }) => {
     const [sportModality] = useSportModalities({ sportModalityId: match?.modalidade })
 
     const [inputChanged, setInputChanged] = useState(false);
+    const [resultsChanged, setResultsChanged] = useState(false);
 
     useEffect(() => {
 
@@ -178,25 +180,49 @@ const AthleticsTestScreen = ({ route }) => {
 
         update(ref(db), updates)
 
+        setResultsChanged(true);
+
         setInputChanged(false)
 
-        Alert.alert('Resultados adicionados com sucesso.')
+        Keyboard.dismiss();
+
+        setTimeout(() => {
+            setResultsChanged(false)
+        }, 1500);
+
+        // Alert.alert('Resultados adicionados com sucesso.')
     }
 
-    const setResultOnIndex = (valResultado, index) => {
+    const setResultOnIndex = (valResultado, index, mask) => {
         // let newResult = Object.assign({}, results)
-
+        console.log(mask)
+        let regex = new RegExp(mask)
         setInputChanged(true)
         let newResult = Object.assign({}, inscritos)
         // console.log(valResultado, index, results, inscritos)
         // newResult[index] = valResultado;
+
         newResult[index][1].resultado = valResultado
+
+        if(regex.test(valResultado)) {
+            console.log("igual", valResultado, mask)
+        } else {
+            console.log("nao igual", valResultado, mask)
+        }
 
         setAtletas(newResult)
     }
 
     const maskInputCreator = (key) => {
         let sportModalityMaskInput;
+
+        let secondsMask = "[d, d, ':', d, d, 's']$"
+
+        // [/\d/, /\d/, ':', /\d/, /\d/, 's']
+        // let secondsMask = `${}`
+
+        // let aa = /(\d\d:\d\ds)/
+        // let bb = /\d\d:\d\ds/
 
         if (match.estado === "ativa") {
             if (sportModality.unidade === "segundos") {
@@ -205,7 +231,7 @@ const AthleticsTestScreen = ({ route }) => {
                     value={inscritos[key][1].resultado || ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
-                    onChangeText={text => setResultOnIndex(text, key)}
+                    onChangeText={text => setResultOnIndex(text, key, secondsMask)}
                     mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
                     placeholder='00:00s' />
 
@@ -268,7 +294,8 @@ const AthleticsTestScreen = ({ route }) => {
                             translucent: true,
                         }
                     }
-                    containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    // containerStyle={{ margin: 0, padding: 0, height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    containerStyle={{ margin: 0, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
                     backgroundColor='#1375BC'
                     ViewComponent={LinearGradient} // Don't forget this!
                     linearGradientProps={{
@@ -298,7 +325,8 @@ const AthleticsTestScreen = ({ route }) => {
                             translucent: true,
                         }
                     }
-                    containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    // containerStyle={{ margin: 0, padding: 0, height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                    containerStyle={{ margin: 0, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
                     backgroundColor='#1375BC'
                     ViewComponent={LinearGradient}
                     linearGradientProps={{
@@ -321,13 +349,6 @@ const AthleticsTestScreen = ({ route }) => {
                     }
                 />
 
-                {/* <View style={styles.labelContainer}>
-                    <Text style={styles.labelNome}>Nome</Text>
-                    <Text style={styles.labelRow}>Clube</Text>
-                    <Text style={styles.labelRow}>Escalão</Text>
-                    <Text style={styles.labelRow}>Marca</Text>
-                </View> */}
-
                 <ScrollView style={styles.listContainer}>
 
                     {Object.entries(inscritos).map(([key, value], index) => {
@@ -346,34 +367,20 @@ const AthleticsTestScreen = ({ route }) => {
 
                                     {maskInputCreator(key)}
 
+
                                     {/* <Text style={styles.listInfoResultText}>{props.result}</Text> */}
 
                                     {/* <View style={styles.listGenderIconContainer}>
             {props.genero}
         </View> */}
                                 </View>
+
+
                             </View>
-                            // <View key={index}>
-                            //     <TouchableOpacity onPress={() => console.log(key)}>
-                            //         <ListItem style={styles.listCard}>
-                            //             <ListItem.Content style={styles.listRowsContainer}>
-                            //                 <ListItem.Title style={styles.listName}>{value[1].nome}</ListItem.Title>
-                            //                 <ListItem.Title style={styles.listRow}>{value[1].clube}</ListItem.Title>
-                            //                 <ListItem.Title style={styles.listRow}>{value[1].escalao.substring(0, 3)}</ListItem.Title>
-                            //                 {maskInputCreator(key)}
-                            //             </ListItem.Content>
-                            //         </ListItem>
-                            //     </TouchableOpacity>
-                            // </View>
                         )
                     })}
-                    {/* <Pressable
-                        style={inputChanged ? styles.btnPressable : styles.btnPressableHide}
-                        onPress={() => addResult(inscritos)}>
-                        {/* onPress={() => addResult(Object.keys(results), Object.values(results))}> */}
-                    {/* <Text style={styles.textPressable}>Adicionar</Text> */}
-                    {/* </Pressable> */}
                 </ScrollView>
+                <Toast toastTrigger={resultsChanged} />
             </View>
         )
     )
@@ -383,23 +390,26 @@ export default AthleticsTestScreen
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+        width: '100%',
+        height: '100%',
+        padding: 0,
+        margin: 0,
+        backgroundColor: 'white',
         alignItems: 'center',
     },
     headerContainer: {
         flexDirection: 'row',
-        alignItems: 'baseline'
+        height: 100,
+        alignItems: 'center',
     },
     headerIcon: {
         marginStart: 16,
         color: 'white',
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
-        flexDirection: 'row',
-        alignSelf: 'baseline',
-        width: 130,
+        width: 180,
         marginLeft: 16,
         color: 'white'
     },
@@ -422,7 +432,8 @@ const styles = StyleSheet.create({
     listRowsContainer: {
         height: 64,
         paddingLeft: 8,
-        backgroundColor: '#ff7700',
+        // backgroundColor: '#ff7700',
+        backgroundColor: '#464646',
         width: '100%',
         borderRadius: 16,
         position: 'relative',
@@ -474,9 +485,9 @@ const styles = StyleSheet.create({
     },
     textInput: {
         borderBottomWidth: 3,
-        borderColor: 'rgba(255, 255, 255, 0.5)',
+        borderColor: 'white',
         // borderColor: 'rgba(255, 246, 0, 0.5)',
-        backgroundColor: 'rgba(255, 143, 45, 0.8)',
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
         // backgroundColor: 'rgba(255, 246, 0, 0.5)',
         fontSize: 16,
         color: 'white',
@@ -488,8 +499,23 @@ const styles = StyleSheet.create({
         height: 40,
         paddingStart: 8,
         // borderRadius: 16,
-        borderTopLeftRadius: 8,
-        borderTopRightRadius: 8,
+    },
+    textInputFocused: {
+        borderBottomWidth: 3,
+        borderColor: '#00D448',
+        // borderColor: 'rgba(255, 246, 0, 0.5)',
+        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        // backgroundColor: 'rgba(255, 246, 0, 0.5)',
+        fontSize: 16,
+        color: 'white',
+        // opacity: 1,
+        position: 'absolute',
+        top: 12,
+        left: 300,
+        width: 80,
+        height: 40,
+        paddingStart: 8,
+        // borderRadius: 16,
     },
     // listContainer: {
     //     width: '100%',

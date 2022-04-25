@@ -5,44 +5,33 @@
     text-decoration: none;
 }
 
-.main-addmanager-container {
-    min-height: 100vh;
-    background-color: rgb(231, 231, 231);
+.main-add-manager-container {
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
 }
 
-.addmanager-form {
+.add-manager-form {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+    width: 50%;
+    height: 100%;
     align-items: center;
-    justify-content: center;
-    gap: 24px;
-    height: 480px;
+    margin-top: 48px;
+    padding: 24px 0;
 }
 
-.addmanager-input {
-    width: 420px;
-    height: 56px;
-    padding: 16px;
-    font-size: 16px;
-}
-
-.addmanager-input:focus {
-    outline: none;
-}
-
-.addmanager-btn {
-    width: 180px;
-    height: 48px;
-    padding: 8px;
-    font-size: 16px;
-    margin-top: 32px;
-    background-color: #0076BF;
+.add-manager-btn {
+    border-radius: 1em;
     border-style: none;
-    border-radius: 8px;
-    color: white;
+    /* background-color: white; */
+    width: 136px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 16px;
 }
 
-.addmanager-btn:hover {
+.add-manager-btn:hover {
     cursor: pointer;
-    background-color: #009617;
 }

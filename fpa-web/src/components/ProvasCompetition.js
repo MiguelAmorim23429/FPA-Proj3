@@ -87,7 +87,7 @@ const ProvasCompetition = () => {
                 <div className={addNewMatchForm ? 'add-new-match-form-show' : 'add-new-match-form-hide'}>
                     <AddMatch addForm={addNewMatchForm} showForm={showAddNewMatchForm} />
                 </div>
-                
+
                 <div className='main-prova-container'>
                     <div className='prova-container' style={{ justifyContent: 'center', alignItems: 'center', height: '180px' }}>
                         <p>
@@ -109,13 +109,6 @@ const ProvasCompetition = () => {
                 </div>
 
                 <div>
-                    {/* <div className='match-list-headers-container'>
-                        <div className='match-list-header'>Hora</div>
-                        <div className='match-list-header'>Nome</div>
-                        <div className='match-list-header'>Escalão</div>
-                        <div className='match-list-header'>Género</div>
-                    </div> */}
-
                     <table className={addNewMatchForm ? 'match-table-dark' : 'match-table'}>
                         <thead>
                             <tr className='match-table-header-row'>
@@ -136,7 +129,7 @@ const ProvasCompetition = () => {
                                 }
                                 return (
                                     // <div>
-                                    <tr onMouseEnter={() => showButton(index)}
+                                    <tr className='match-table-info-row' onMouseEnter={() => showButton(index)}
                                         onMouseLeave={hideButton}>
                                         <td className='match-table-info-row-cell'>{value.hora}</td>
                                         <td className='match-table-info-row-cell'>
@@ -156,6 +149,7 @@ const ProvasCompetition = () => {
                                             <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'}
                                                 id='goto-participants-btn'
                                                 onClick={() => goToParticipantsProva(key)}>
+                                                <BsIcons.BsPeopleFill className='btn-icon' />
                                                 Participantes
                                             </button>
                                         </td>
@@ -163,30 +157,12 @@ const ProvasCompetition = () => {
                                             <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'}
                                                 id='apagar-prova-btn'
                                                 onClick={() => window.confirm("Deseja mesmo remover?") && deleteMatch(key)}>
-                                                <BsIcons.BsTrash className='remove-btn-icon' />
+                                                <BsIcons.BsTrash className='btn-icon' />
                                                 Remover
                                             </button>
                                         </td>
                                     </tr>
-
-
-                                    // <div key={key} className='prova-container'
-                                    //     onMouseEnter={() => showButton(index)}
-                                    //     onMouseLeave={hideButton}>
-                                    //     <ul className='prova-list'>
-                                    //         <li className='prova-list-item'>{value.hora}</li>
-                                    //         <li className='prova-list-item'>{value.nome}</li>
-                                    //         <li className='prova-list-item'>{value.escalao}</li>
-                                    //         <li className='prova-list-item'>{genders[value.genero]}</li>
-                                    //     </ul>
-                                    //     <div className='prova-list-btn-container'>
-                                    //         <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => goToParticipantsProva(key)}>Participantes</button>
-                                    //         <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'} id='apagar-prova-btn' onClick={() => window.confirm("Deseja mesmo remover?") && deleteMatch(key)}>Remover</button>
-                                    //     </div>
-                                    // </div>
-                                    // </div>
                                 )
-
                             })}
                         </tbody>
                     </table>

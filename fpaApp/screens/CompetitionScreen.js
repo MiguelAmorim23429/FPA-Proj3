@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView,StyleSheet, View, Text } from 'react-native'
+import { ScrollView, StyleSheet, View, Text } from 'react-native'
 import { getDatabase, ref, onValue, query, equalTo, orderByChild } from "firebase/database"
 import { Header } from 'react-native-elements'
 
@@ -56,7 +56,8 @@ const CompetitionScreen = ({ route }) => {
                         translucent: true,
                     }
                 }
-                containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                // containerStyle={{ margin: 0, padding: 0, height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+                containerStyle={{ margin: 0, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
                 backgroundColor='#1375BC'
                 ViewComponent={LinearGradient} // Don't forget this!
                 linearGradientProps={{
@@ -76,9 +77,11 @@ const CompetitionScreen = ({ route }) => {
                 {match.map(([key, value], index) => {
 
                     const genders = {
-                        "Masculino": <Icon name='male-sharp' size={24} color='#03A3FF' />,
+                        "Masculino": <Icon name='male-sharp' size={24} color='#00B2FF' />,
                         "Feminino": <Icon name='female-sharp' size={24} color='#EC49A7' />,
                     }
+
+
 
                     // if(value.ativa) {
                     return (
@@ -113,18 +116,17 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         flexDirection: 'row',
-        alignItems: 'baseline'
+        height: 100,
+        alignItems: 'center',
     },
     headerIcon: {
         marginStart: 16,
         color: 'white',
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
-        flexDirection: 'row',
-        alignSelf: 'baseline',
-        width: 130,
+        width: 180,
         marginLeft: 16,
         color: 'white'
     },

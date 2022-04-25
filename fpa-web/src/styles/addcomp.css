@@ -6,10 +6,9 @@
 }
 
 .main-add-comp-container {
-    min-height: 100vh;
+    min-height: 100%;
     display: flex;
     justify-content: center;
-    min-height: 100%;
 }
 
 .add-comp-form {
@@ -21,17 +20,6 @@
     align-items: center;
     margin-top: 48px;
     padding: 24px 0;
-}
-
-.add-comp-input {
-    width: 420px;
-    height: 56px;
-    padding: 16px;
-    font-size: 16px;
-}
-
-.add-comp-input:focus {
-    outline: none;
 }
 
 .add-comp-btn {
