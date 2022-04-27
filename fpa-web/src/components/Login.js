@@ -20,21 +20,21 @@ const Login = () => {
             await login(email, password);
             navigate('/')
         } catch (error) {
-            switch(error.code) { // em caso de um erro no login, verifica qual é o código do erro e consoante esse codigo mostra uma mensagem de erro correspondente, (linha 49)
-                case 'auth/invalid-email' : 
-                    setError('Campos vazios')
-                    break
-                case 'auth/user-not-found' :
+            switch (error.code) { // em caso de um erro no login, verifica qual é o código do erro e consoante esse codigo mostra uma mensagem de erro correspondente, (linha 49)
+                case 'auth/invalid-email':
                     setError('E-mail introduzido errado ou não existe')
                     break
-                case 'auth/wrong-password' :
+                case 'auth/user-not-found':
+                    setError('E-mail introduzido errado ou não existe')
+                    break
+                case 'auth/wrong-password':
                     setError('Palavra-passe errada')
                     break
-                case 'auth/too-many-requests' :
+                case 'auth/too-many-requests':
                     setError('Falhou o inicio de sessão demasiadas vezes. Tente novamente mais tarde')
                     break
             }
-                
+
 
             // setError(error.message)
             console.log(error)
@@ -43,12 +43,18 @@ const Login = () => {
 
     return (
         <div className='main-login-container'>
+            {/* <img className='logo' src={logo} alt='login logo'></img> */}
             <div className='login-container'>
-                <img className='logo' src={logo} alt='login logo'></img>
-                <h2 className='login-label'>Inicie Sessão</h2>
+                {/* <img className='logo' src={logo} alt='login logo'></img> */}
+
+                <div className='login-label-container'>
+                    <h2 className='login-label'>Inicie Sessão</h2>
+                </div>
+
+
                 {error && <h5 className='error-warning'>{error}</h5>}
                 <form className='login-form' onSubmit={handleLogin}>
-                    <input className='login-input' type='email' placeholder='Email' onChange={event => setEmail(event.target.value)}></input>
+                    <input className='login-input' type='email' value={email} placeholder='Email' onChange={event => setEmail(event.target.value)}></input>
                     <input className='login-input' type='password' placeholder='Palavra-Passe' onChange={event => setPassword(event.target.value)}></input>
                     <button className='login-btn' type='submit'>Entrar</button>
                 </form>

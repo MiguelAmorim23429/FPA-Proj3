@@ -1,5 +1,6 @@
 import './App.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
+
 import Home from './components/Home'
 import Login from './components/Login'
 import AddCompetition from './components/AddCompetition';
@@ -11,6 +12,7 @@ import ParticipantsProva from './components/ParticipantsProva';
 import AddAthlete from './components/AddAthlete';
 import AddManagers from './components/AddManagers';
 import ManagerPermissions from './components/ManagerPermissions';
+import AddClub from './components/AddClub';
 
 function App() {
   return (
@@ -80,6 +82,14 @@ function App() {
             <PrivateRoute>
               <Master>
                 <ManagerPermissions />
+              </Master>
+            </PrivateRoute>
+          } />
+          <Route path="/addclub"
+          element={
+            <PrivateRoute>
+              <Master>
+                <AddClub />
               </Master>
             </PrivateRoute>
           } />

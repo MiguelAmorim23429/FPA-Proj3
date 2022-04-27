@@ -100,6 +100,9 @@ const Home = () => {
             <li>
               <button className='side-bar-btn' onClick={() => navigate('/permissionsmanager')}>Permissões Gestor</button>
             </li>
+            <li>
+              <button className='side-bar-btn' onClick={() => navigate('/addclub')}>Adicionar Clube</button>
+            </li>
           </ul>
         </nav>
       </div>

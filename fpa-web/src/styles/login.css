@@ -10,16 +10,17 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(to bottom right, #243754, #1f5fbf);
+    background: linear-gradient(to bottom right, #1375BC, #1794E8);
 }
 
 .login-container {
-    width: 480px;
+    width: 50%;
     height: 480px;
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: white;
+    border-radius: 8px;
 }
 
 .logo {
@@ -27,8 +28,16 @@
     margin-top: 24px;
 }
 
+.login-label-container {
+    height: 20%;
+    display: flex;
+    align-items: flex-end;
+}
+
 .login-label {
-    margin: 8px 0 16px 0;
+    /* margin: 8px 0 16px 0; */
+    vertical-align: center;
+    font-family: 'QuicksandBold', sans-serif;
 }
 
 .error-warning {
@@ -44,17 +53,31 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding-top: 56px;
+    /* justify-content: flex-start; */
+    width: 100%;
+    height: 100%;
+    gap: 16px;
 }
 
 .login-input {
-    width: 360px;
+    /* width: 50%;
     height: 56px;
     padding: 8px;
     font-size: 16px;
     margin-top: 16px;
     /* border-radius: 0; */
     /* border-width: 0 0 1px 0; */
-    border-style: solid;
+    /* border-style: solid; */
+
+    width: 50%;
+    font-size: 16px;
+    font-family: 'QuicksandRegular', sans-serif;
+    height: 56px;
+    padding-left: 8px;
+    border-radius: 8px;
+    border-style: none;
+    background-color: azure;
 }
 
 .login-input:focus {
@@ -62,15 +85,25 @@
 }
 
 .login-btn {
-    width: 180px;
-    height: 48px;
-    padding: 8px;
-    font-size: 16px;
-    margin-top: 32px;
-    background-color: #0076BF;
+    /* width: 30%; */
+    /* height: 48px; */
+    /* padding: 8px; */
+    /* font-size: 16px; */
+    /* margin-top: 32px; */
+    /* background-color: #0076BF; */
+    /* border-style: none; */
+    /* border-radius: 8px; */
+    /* color: white; */
+
+    border-radius: 1em;
     border-style: none;
-    border-radius: 8px;
-    color: white;
+    /* background-color: white; */
+    width: 136px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 16px;
+    cursor: pointer;
+    font-family: 'QuicksandSemiBold';
 }
 
 .login-btn:hover {

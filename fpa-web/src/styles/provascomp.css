@@ -96,7 +96,7 @@
 }
 
 .match-table-header-row-cell {
-    padding: 12px 15px;
+    padding: 0 15px;
     height: 48px;
 }
 
@@ -105,25 +105,28 @@
 }
 
 .match-table-info-row-cell {
-    /* padding: 12px 15px; */
     height: 100%;
     font-family: 'QuicksandMedium';
 }
 
 .match-table-info-row-cell:nth-child(0) {
     width: 20%;
+    padding: 0 0 0 15px;
 }
 
 .match-table-info-row-cell:nth-child(1) {
     width: 20%;
+    padding: 0 0 0 15px;
 }
 
 .match-table-info-row-cell:nth-child(2) {
     width: 20%;
+    padding: 0 0 0 15px;
 }
 
 .match-table-info-row-cell:nth-child(3) {
     width: 20%;
+    padding: 0 0 0 15px;
 }
 
 .btn-icon {

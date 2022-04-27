@@ -51,14 +51,15 @@ const HomeScreen = () => {
             translucent: true,
           }
         }
-        containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+        // containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
+        containerStyle={{ margin: 0, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
         backgroundColor='#1375BC'
         ViewComponent={LinearGradient} // Don't forget this!
         linearGradientProps={{
           colors: ['#1375BC', '#1794e8'],
           start: { x: 0.1, y: 0.5 },
           end: { x: 1, y: 0.5 },
-        }}
+      }}
         leftComponent={{ text: 'Competições', style: { fontSize: 20, fontWeight: 'bold', flexDirection: 'row', alignSelf: 'baseline', width: 130, marginLeft: 10, color: 'white' } }}
       />
 
