@@ -63,7 +63,6 @@ const HomeScreen = (props) => {
 
   // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
   const escolherCompeticao = (val) => {
-    console.log(val)
     navigation.navigate('Competition', { idComp: val })
   }
 

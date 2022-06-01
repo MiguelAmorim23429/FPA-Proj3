@@ -1,11 +1,13 @@
 import { Pressable, StyleSheet, Text, View, TouchableOpacity, Animated, Alert } from 'react-native'
 import React, { useState, useEffect, useRef } from 'react'
-import Icon from 'react-native-vector-icons/Ionicons';
+import IoniIcon from 'react-native-vector-icons/Ionicons';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
 import { useNavigation } from '@react-navigation/native';
 
 import { getDatabase, ref, onValue, query, equalTo, orderByChild } from "firebase/database"
 
 import useParticipants from './useParticipants';
+import ExpandedResultCard from './ExpandedResultCard';
 
 const Accordion = (props) => {
 
@@ -13,21 +15,24 @@ const Accordion = (props) => {
 
     const [listExpanded, setListExpanded] = useState(false);
     const [indexList, setIndexList] = useState(-1);
+    const [showExpandedResult, setShowExpandedResult] = useState(false);
+    const [expandedEnrolled, setExpandedEnrolled] = useState([])
+
     const heightAnim = useRef(new Animated.Value(0)).current;
     const paddingTopAnim = useRef(new Animated.Value(0)).current;
     const topPositionAnim = useRef(new Animated.Value(0)).current;
 
-    const matchId = props.matchId
-    const modalidadeId = props.sportModalityId
-    const competitionId = props.competitionId
+    const { matchId, sportModalityId, competitionId } = props
 
-    const [enrolled] = useParticipants({ matchId: matchId, modalidadeId: modalidadeId })
+    const [enrolled, sportModality] = useParticipants({ matchId: matchId, modalidadeId: sportModalityId })
     const db = getDatabase();
     const matchesRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(competitionId))
 
     const [matchesById, setMatches] = useState([])
 
     useEffect(() => {
+
+        console.log(sportModality)
         // Busca das provas existentes na competicao que selecionamos no ecrã anterior
         onValue(matchesRef, (snapshot) => {
             let matchesArray = []
@@ -78,13 +83,14 @@ const Accordion = (props) => {
                                     heightAnim,
                                     {
                                         toValue: 222,
+                                        // toValue: 280,
                                         duration: 250,
                                         useNativeDriver: false,
                                     }),
                                 Animated.timing(
                                     paddingTopAnim,
                                     {
-                                        toValue: 30,
+                                        toValue: 20,
                                         duration: 250,
                                         useNativeDriver: false
                                     }),
@@ -160,7 +166,7 @@ const Accordion = (props) => {
 
     return (
         <View>
-            <Pressable style={{justifyContent: 'center', alignSelf: 'center', width: '95%', height: 84, padding: 0, margin: 0, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}>
+            <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 84, padding: 0, margin: 0, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}>
                 <View style={styles.listRowsContainer}>
 
                     <Text style={styles.listInfoHourText}>{props.hora}H</Text>
@@ -174,27 +180,38 @@ const Accordion = (props) => {
                     </View>
 
                     <TouchableOpacity style={styles.listChevronIconContainer} onPress={() => { console.log(`CHEVRON and ${props.cardIndex}`); showList(props.cardIndex, props.matchId, props.sportModalityId) }}>
-                        <Icon name='chevron-down' style={listExpanded ? styles.chevronIconActive : styles.chevronIcon} size={24} />
+                        <IoniIcon name='chevron-down' style={listExpanded ? styles.chevronIconActive : styles.chevronIcon} size={24} />
                     </TouchableOpacity>
                 </View>
 
             </Pressable>
             <Animated.View style={{ ...styles.accordionContentActive, height: heightAnim, paddingTop: paddingTopAnim }}>
                 {Object.entries(enrolled).map(([key, value], index) => {
-                    return (
-
-                        <View key={key} style={styles.participantsTopThreeCard}>
+                    return {
+                        "Salto em comprimento": <View key={key} style={styles.participantsTopThreeCard}>
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
-                            <Text style={styles.participantsText}>{value[1].nome}</Text>
-                            <Text style={styles.participantsText}>{value[1].clube}</Text>
-                            <Text style={styles.participantsText}>{value[1].resultado || ''}</Text>
-
+                            <Text style={styles.nameText}>{value[1].nome}</Text>
+                            <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
+                            <Text style={styles.resultText}>{value[1].resultado[index].marca}</Text>
+                            {index === 0 && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
+                            {index === 1 && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
+                            {index === 2 && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
+                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => {setShowExpandedResult(true); setExpandedEnrolled(value)}} />
+                        </View>,
+                        "Corrida 100 metros": <View key={key} style={styles.participantsTopThreeCard}>
+                            <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
+                            <Text style={styles.nameText}>{value[1].nome}</Text>
+                            <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
+                            <Text style={styles.resultText}>{value[1].resultado || ''}</Text>
+                            {index === 0 && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
+                            {index === 1 && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
+                            {index === 2 && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
                         </View>
-                    )
-
+                    }[sportModality.nome]
 
                 }).slice(0, 3)}
             </Animated.View>
+            {showExpandedResult && <ExpandedResultCard setShowExpandedResult={setShowExpandedResult} matchId={matchId} sportModalityId={sportModalityId} expandedEnrolled={expandedEnrolled} />}
         </View>
 
     )
@@ -208,11 +225,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         height: 64,
         paddingLeft: 8,
-        backgroundColor: '#ff7700',
+        // backgroundColor: '#ff7700',
+        backgroundColor: '#464646',
         width: '100%',
         borderRadius: 16,
         position: 'relative',
-        top: 0,elevation: 4, shadowColor: "#000" 
+        top: 0, elevation: 4, shadowColor: "#000"
     },
     infoTextContainer: {
         flex: 1,
@@ -261,14 +279,14 @@ const styles = StyleSheet.create({
         transform: [{ rotate: '180deg' }],
     },
     accordionContentActive: {
-        backgroundColor: '#ff8f2d',
+        backgroundColor: '#5a5a5a',
         width: '95%',
         alignSelf: 'center',
         borderRadius: 16,
         borderTopStartRadius: 0,
         borderTopEndRadius: 0,
         position: 'relative',
-        top: -30,
+        top: -20,
         zIndex: -1,
     },
     participantsTopThreeCard: {
@@ -285,9 +303,34 @@ const styles = StyleSheet.create({
         color: 'white',
         marginEnd: 8,
     },
-    participantsText: {
+    nameText: {
         fontSize: 16,
         color: 'white',
-        width: '33%',
+        // position: 'absolute'
+        // width: '33%',
+    },
+    clubText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        left: 180,
+        // marginLeft: 16,
+        // width: '33%',
+    },
+    resultText: {
+        fontSize: 16,
+        color: 'white',
+        position: 'absolute',
+        left: 240,
+        // marginLeft: 16,
+        // width: '33%',
+    },
+    resultIcon: {
+        position: 'absolute',
+        left: 310,
+    },
+    expandIcon: {
+        position: 'absolute',
+        left: 350,
     },
 })

@@ -7,18 +7,18 @@ import * as IoIcons from 'react-icons/io'
 
 const ParticipantsProva = () => {
 
-    const { state } = useLocation()
+    const { state } = useLocation();
 
     const { idMatch } = state; // recebemos o valor do idProva que enviamos do ecrã das provas quando clicamos na prova
 
-    const db = getDatabase()
-    const participantsRef = ref(db, `/provas/${idMatch}/participantes/`) // referência à base de dados para ir buscar os participantes da prova que clicamos
-    const matchRef = ref(db, `/provas/${idMatch}`) // referência à base de dados para ir buscar a prova que clicamos
-    const athletesRef = ref(db, '/atletas') // referência à base de dados para ir buscar os atletas
+    const db = getDatabase();
+    const participantsRef = ref(db, `/provas/${idMatch}/participantes/`); // referência à base de dados para ir buscar os participantes da prova que clicamos
+    const matchRef = ref(db, `/provas/${idMatch}`); // referência à base de dados para ir buscar a prova que clicamos
+    const athletesRef = ref(db, '/atletas'); // referência à base de dados para ir buscar os atletas
+    const clubsRef = ref(db, '/clubes/');
 
     const [match, setMatch] = useState(null)
     const [{ enrolled, notEnrolled }, setAthletes] = useState({ enrolled: {}, notEnrolled: {} })
-
     const [indexBtn, setIndexBtn] = useState(-1);
 
     const showButton = (index) => {
@@ -66,16 +66,31 @@ const ParticipantsProva = () => {
 
         const handler = async (snapshot) => {
             console.log(match)
-            let athletesSnapshot = await get(athletesRef) // Buscar os atletas à base de dados
+            let athletesSnapshot = await get(athletesRef); // Buscar os atletas à base de dados
+            let clubsSnapshot = await get(clubsRef);
 
             let athletes = {}
+            let clubs = {}
+
+            clubsSnapshot.forEach((childSnapshot) => {
+                const childKey = childSnapshot.key;
+                const childData = childSnapshot.val();
+                clubs[childKey] = childData;
+            })
+
+            // console.log(clubs);
 
             athletesSnapshot.forEach((childSnapshot) => { // Percorrer os atletas obtidos da BD, e inseri-los num objeto se o seu genero for igual ao genero da prova
                 const childKey = childSnapshot.key;
+                console.log("AAA", childSnapshot.val().clube)
                 const childData = childSnapshot.val();
                 if (childData.genero === match.genero && childData.escalao === match.escalao) {
-                    athletes[childKey] = childData
+                    athletes[childKey] = childData;
+                    athletes[childKey].clube = clubs[childData.clube];
                 }
+
+                // console.log("BBB: ", clubs[childData.clube])
+                // athletes[childKey].clube = clubs[childData.clube].sigla;
             });
 
             let enrolled = {}
@@ -110,16 +125,16 @@ const ParticipantsProva = () => {
 
         updates[`/provas/${idMatch}/estado/`] = "ativa"
 
-        if(match.estado === 'emInscricoes' && Object.entries(enrolled).length !== 0) {
+        if (match.estado === 'emInscricoes' && Object.entries(enrolled).length !== 0) {
             update(ref(db), updates)
         }
-        if(match.estado === 'ativa') {
+        if (match.estado === 'ativa') {
             window.alert("Esta prova já está a decorrer.")
         }
-        if(match.estado === 'finalizada') {
+        if (match.estado === 'finalizada') {
             window.alert("Esta prova já terminou.")
         }
-        if(Object.entries(enrolled).length === 0) {
+        if (Object.entries(enrolled).length === 0) {
             window.alert("Tem de adicionar pelo menos um atleta para iniciar a prova.")
         }
 
@@ -162,6 +177,9 @@ const ParticipantsProva = () => {
             </div>
             <div className='lists-container'>
                 <div className='main-participant-container'>
+
+                    <h2>Não inscritos</h2>
+
                     {Object.entries(notEnrolled).map(([key, value], index) => {
 
                         const genders = {
@@ -177,16 +195,20 @@ const ParticipantsProva = () => {
                                     <li className='participant-list-item'>{value.nome}</li>
                                     <li className='participant-list-item'>{genders[value.genero]}</li>
                                     <li className='participant-list-item'>{value.escalao}</li>
-                                    <li className='participant-list-item'>{value.clube}</li>
+                                    <li className='participant-list-item'>{value.clube.sigla}</li>
                                 </ul>
                                 <div className='participant-list-btn-container'>
                                     <button className={indexBtn === index ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => addParticipant(key)}>Adicionar</button>
                                 </div>
                             </div>
+
                         )
                     })}
                 </div>
                 <div className='main-participant-container'>
+
+                    <h2>Inscritos</h2>
+                    
                     {Object.entries(enrolled).map(([key, atleta]) => {
 
                         const genders = {
@@ -200,14 +222,15 @@ const ParticipantsProva = () => {
                                     <li className='participant-list-item'>{atleta.nome}</li>
                                     <li className='participant-list-item'>{genders[atleta.genero]}</li>
                                     <li className='participant-list-item'>{atleta.escalao}</li>
-                                    <li className='participant-list-item'>{atleta.clube}</li>
+                                    <li className='participant-list-item'>{atleta.clube.sigla}</li>
                                 </ul>
                             </div>
+
                         )
                     })}
                 </div>
             </div>
-        </div>
+        </div >
     )
 };
 

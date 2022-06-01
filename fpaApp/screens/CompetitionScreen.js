@@ -38,7 +38,6 @@ const CompetitionScreen = ({ route }) => {
 
     // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
     const escolherProva = (val) => {
-        console.log(val)
         navigation.navigate('AthleticsTest', { idProva: val })
     }
 

@@ -16,7 +16,7 @@ const AthleticsTestScreen = ({ route }) => {
 
     const navigation = useNavigation()
 
-    const [participants] = useParticipants({ matchId: idMatch, modalidadeId: idSportModality })
+    const [enrolled, sportModality] = useParticipants({ matchId: idMatch, modalidadeId: idSportModality })
 
     const goToPreviousScreen = () => {
         navigation.goBack()
@@ -49,16 +49,23 @@ const AthleticsTestScreen = ({ route }) => {
             />
 
             <ScrollView style={styles.listContainer}>
-                {Object.entries(participants).map(([key, value], index) => {
-                    return (
-                        <ParticipantResultCard
-                            key={key}
+                {enrolled.map((enrolled, index) => {
+                    return {
+                        "Salto em comprimento": < ParticipantResultCard
+                            key={index}
                             position={index}
-                            name={value[1].nome}
-                            club={value[1].clube}
-                            ageGroup={value[1].escalao.substring(0, 3)}
-                            result={value[1].resultado} />
-                    )
+                            name={enrolled[1].nome}
+                            club={enrolled[1].clube.sigla}
+                            ageGroup={enrolled[1].escalao.substring(0, 3)}
+                            result={enrolled[1].resultado[index].marca} />,
+                        "Corrida 100 metros": < ParticipantResultCard
+                            key={index}
+                            position={index}
+                            name={enrolled[1].nome}
+                            club={enrolled[1].clube.sigla}
+                            ageGroup={enrolled[1].escalao.substring(0, 3)}
+                            result={enrolled[1].resultado} />
+                    }[sportModality.nome]
                 })}
             </ScrollView>
         </View>

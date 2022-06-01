@@ -1,32 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/addathlete.css'
-import { getDatabase, ref, push } from "firebase/database"
+import { getDatabase, ref, push, onValue, get, child } from "firebase/database"
 import { useNavigate } from 'react-router-dom';
 
 const AddAthlete = () => {
 
-    const [clube, setClube] = useState('');
-    const [dtNasc, setDtNasc] = useState('');
-    const [escalao, setEscalao] = useState('');
-    const [genero, setGenero] = useState('');
-    const [nFederacao, setNFederacao] = useState('');
-    const [nome, setNome] = useState('');
+    const [club, setClub] = useState('');
+    const [birthDate, setBirthDate] = useState('');
+    const [ageGroup, setAgeGroup] = useState('');
+    const [gender, setGender] = useState('');
+    const [federationNumber, setFederationNumber] = useState('');
+    const [name, setName] = useState('');
 
-    const navigate = useNavigate()
+    const [clubs, setClubs] = useState([]);
 
-    const db = getDatabase()
+    const navigate = useNavigate();
 
-    const atletasRef = ref(db, '/atletas/')
+    const db = getDatabase();
+
+    const athletesRef = ref(db, '/atletas/');
+
+    useEffect(() => {
+        const clubsRef = ref(db, '/clubes/');
+
+        const handler = async (snapshot) => {
+            let clubsArray = []
+            // let clubsObj = {}
+
+            let clubsSnapshot = await get(clubsRef);
+
+            // clubsSnapshot.forEach((childSnapshot) => {
+            //     const childKey = childSnapshot.key;
+            //     const childData = childSnapshot.val();
+            //     clubsArray.push([childKey, childData]);
+            // });
+
+            snapshot.forEach((childSnapshot) => {
+                const childKey = childSnapshot.key;
+                const childData = childSnapshot.val();
+                clubsArray.push([childKey, childData])
+                // clubsObj[childKey] = childData;
+            });
+            setClubs(clubsArray)
+
+            console.log("aa", clubsArray)
+        }
+
+        const closeFetchClubs = onValue(clubsRef, handler)
+
+        // clubs.map(([key, value]) => {
+        //     console.log(`aa: ${key}`, `bb: ${value.nome}`);
+        // })
+        // console.log(clubs)
+        return () => {
+            closeFetchClubs()
+        }
+    }, [])
+
 
     const adicionarAtleta = () => {
 
-        const newAtletaRef = push(atletasRef, {
-            clube: clube,
-            dtNascimento: dtNasc,
-            escalao: escalao,
-            genero: genero,
-            nFederacao: nFederacao,
-            nome: nome,
+        const newAtletaRef = push(athletesRef, {
+            clube: club,
+            dtNascimento: birthDate,
+            escalao: ageGroup,
+            genero: gender,
+            nFederacao: federationNumber,
+            nome: name,
         })
 
         const atletaId = newAtletaRef.key
@@ -35,26 +75,81 @@ const AddAthlete = () => {
     }
 
     return (
-        <div className='main-addathlete-container'>
-            <form className='addathlete-form' onSubmit={adicionarAtleta}>
-                <input className='addathlete-input' placeholder='Nome' onChange={event => setNome(event.target.value)}></input>
-                <input className='addathlete-input' placeholder='Número Federação' onChange={event => setNFederacao(event.target.value)}></input>
-                <input className='addathlete-input' placeholder='Clube' onChange={event => setClube(event.target.value)}></input>
-                <input className='addathlete-input' placeholder='Data Nascimento' type='date' onChange={event => setDtNasc(event.target.value)}></input>
-                <div className='select-container'>
-                    <select onChange={event => setGenero(event.target.value)}>
-                        <option className='select-default' value="0">Género</option>
+        <div className='main-add-athlete-container'>
+            <form className='add-athlete-form' onSubmit={adicionarAtleta}>
+
+                <div className='add-athlete-input-container'>
+                    <div className='input-value-box'>
+                        <label className='add-athlete-label'>Nome</label>
+                        <input className='add-athlete-input' placeholder='Nome' type='text' value={name}
+                            onChange={event => setName(event.target.value)}></input>
+                    </div>
+
+                    {/* <div className='input-validation-box'>
+                        <label className='validation-label'></label>
+                    </div> */}
+                </div>
+
+                <div className='add-athlete-input-container'>
+                    <div className='input-value-box'>
+                        <label className='add-athlete-label'>Número de federação</label>
+                        <input className='add-athlete-input' placeholder='Número de federação' type='text' value={federationNumber}
+                            onChange={event => setFederationNumber(event.target.value)}></input>
+                    </div>
+
+                    {/* <div className='input-validation-box'>
+                        <label className='validation-label'></label>
+                    </div> */}
+                </div>
+
+                {/* <div className='add-athlete-input-container'>
+                    <div className='input-value-box'>
+                        <label className='add-athlete-label'>Clube</label>
+                        <input className='add-athlete-input' placeholder='Clube' type='text' value={club}
+                            onChange={event => setClub(event.target.value)}></input>
+                    </div>
+
+                    {/* <div className='input-validation-box'>
+                        <label className='validation-label'></label>
+                    </div> */}
+                {/* </div>  */}
+
+                <div className='add-athlete-input-container'>
+                    <div className='input-value-box'>
+                        <label className='add-athlete-label'>Data de nascimento</label>
+                        <input className='add-athlete-input' type='date' value={birthDate} onChange={event => setBirthDate(event.target.value)}></input>
+                    </div>
+
+                    {/* <div className='input-validation-box'>
+                        <label className='validation-label'></label>
+                    </div> */}
+                </div>
+                {/* <input className='add-athlete-input' placeholder='Nome' onChange={event => setNome(event.target.value)}></input> */}
+                {/* <input className='add-athlete-input' placeholder='Número Federação' onChange={event => setFederationNumber(event.target.value)}></input>
+                <input className='add-athlete-input' placeholder='Clube' onChange={event => setClub(event.target.value)}></input>
+                <input className='add-athlete-input' placeholder='Data Nascimento' type='date' onChange={event => setBirthDate(event.target.value)}></input> */}
+                {/* <div className='select-div'> */}
+                    <select required onChange={event => setGender(event.target.value)}>
+                        <option selected hidden disabled value="">Género</option>
                         <option value="Masculino">Masculino</option>
                         <option value="Feminino">Feminino</option>
                     </select>
-                    <select onChange={event => setEscalao(event.target.value)}>
-                        <option className='select-default' value="0">Escalão</option>
-                        <option value="INICIADOS">INICIADOS</option>
-                        <option value="JUNIORES">JUNIORES</option>
-                    </select>
-                </div>
+                {/* </div> */}
 
-                <button className='addathlete-btn' type='submit'>Adicionar</button>
+                <select required onChange={event => setClub(event.target.value)}>
+                    <option selected hidden disabled value="">Clube</option>
+                    {clubs.map(([key, value]) => {
+                        return (<option value={key}>{value.nome} - {value.sigla}</option>)
+                    })}
+                </select>
+
+                <select required onChange={event => setAgeGroup(event.target.value)}>
+                    <option selected hidden disabled value="">Escalão</option>
+                    <option value="INICIADOS">INICIADOS</option>
+                    <option value="JUNIORES">JUNIORES</option>
+                </select>
+
+                <button className='add-athlete-btn' type='submit'>Adicionar</button>
             </form>
         </div>
     )

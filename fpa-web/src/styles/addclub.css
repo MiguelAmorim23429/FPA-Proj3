@@ -39,6 +39,8 @@
     font-family: 'QuicksandRegular', sans-serif;
     height: 56px;
     padding-left: 8px;
+    border: 1px solid #777;
+    border-radius: 4px;
 }
 
 .add-club-input:focus {

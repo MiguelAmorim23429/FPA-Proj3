@@ -7,7 +7,6 @@ const MatchCard = (props) => {
     const navigation = useNavigation();
 
     const escolherProva = (val) => {
-        console.log(val)
         navigation.navigate('AthleticsTest', { idProva: val })
     }
 

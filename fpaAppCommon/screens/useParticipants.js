@@ -19,7 +19,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
   const [results, setResults] = useState({})
   const [sportModality, setSportModality] = useState('')
   const [match, setMatch] = useState(null)
-  const [enrolled, setAthletes] = useState({})
+  const [enrolled, setEnrolled] = useState([])
 
   const sortFunction = ([, a], [, b]) => {
     if (sportModality?.unidade === "segundos") {
@@ -37,7 +37,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   useEffect(() => {
     const matchRef = ref(db, `/provas/${matchId}`)
-    
+
     const handlerMatch = (snapshot) => {
       const matchObj = snapshot.val()
       setMatch(matchObj)
@@ -61,41 +61,52 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   useEffect(() => {
     const athletesRef = ref(db, '/atletas')
+    const clubsRef = ref(db, '/clubes/')
     const participantsRef = ref(db, '/provas/' + matchId + '/participantes/')
-
-    let atletas = {}
-    let enrolledResults = {}
-    let enrolledResultsArray = []
 
     const handler = async (snapshot) => {
 
-      let atletasSnapshot = await get(athletesRef)
+      let athletesSnapshot = await get(athletesRef);
+      let clubsSnapshot = await get(clubsRef);
 
-      atletasSnapshot.forEach((childSnapshot) => {
+      let athletes = {}
+      let clubs = {}
+
+      clubsSnapshot.forEach((childSnapshot) => {
+        const childKey = childSnapshot.key;
+        const childData = childSnapshot.val();
+        clubs[childKey] = childData;
+      })
+
+      athletesSnapshot.forEach((childSnapshot) => {
         const childKey = childSnapshot.key;
         const childData = childSnapshot.val();
         if (childData.genero === match.genero) {
-          atletas[childKey] = childData
+          athletes[childKey] = childData;
+          athletes[childKey].clube = clubs[childData.clube];
         }
       });
+
+      let enrolledResults = {}
+      let enrolledResultsArray = []
 
       snapshot.forEach((childSnapshot) => {
         const idParticipant = childSnapshot.key
         const idAthlete = childSnapshot.val().atleta;
         const result = childSnapshot.val().resultado
 
-        atletas[idAthlete].resultado = result || ''
-        enrolledResults[idParticipant] = atletas[idAthlete]
+        athletes[idAthlete].resultado = result || ''
+        enrolledResults[idParticipant] = athletes[idAthlete]
 
         enrolledResultsArray = Object.entries(enrolledResults)
 
-        for (let i = 0; i < enrolledResultsArray.length; i++) {
-          // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
-          enrolledResultsArray.sort(sortFunction)
-        }
+        // for (let i = 0; i < enrolledResultsArray.length; i++) {
+        //   // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
+        //   enrolledResultsArray.sort(sortFunction)
+        // }
       });
 
-      setAthletes(enrolledResultsArray)
+      setEnrolled(enrolledResultsArray)
 
     }
 
@@ -163,7 +174,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
   //   })
   // }, [sportModality, match])
 
-  return [enrolled]
+  return [enrolled, sportModality]
 }
 
 export default useParticipants

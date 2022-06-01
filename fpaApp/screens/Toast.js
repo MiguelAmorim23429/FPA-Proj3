@@ -7,16 +7,12 @@ const Toast = (props) => {
 
     const toastTrigger = props.toastTrigger
 
-    
-
     const mounted = useRef(false);
     const bottomAnim = useRef(new Animated.Value(-68)).current;
 
     useEffect(() => {
-        console.log("a", mounted)
         mounted.current = true;
-        console.log("b", mounted)
-        console.log('CASDA', props.toastTrigger)
+
         const closeTimeout = setTimeout(() => {
             toastTrigger && (
                 Animated.sequence([
@@ -44,7 +40,6 @@ const Toast = (props) => {
         return () => {
             mounted.current = false;
             clearTimeout(closeTimeout)
-            console.log("c", mounted)
         }
     }, [toastTrigger])
 

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, ScrollView, TextInput, Alert, Animated, Keyboard } from 'react-native'
-import MaskInput, { createNumberMask } from 'react-native-mask-input';
-import { Header } from 'react-native-elements'
+import { StyleSheet, Text, View, ScrollView, TextInput, Alert, Pressable, Keyboard } from 'react-native'
+import MaskInput from 'react-native-mask-input';
+import { Button, Header } from 'react-native-elements'
 import { getDatabase, ref, onValue, get, update } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 
@@ -10,6 +10,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Toast from './Toast';
 import useSportModalities from './useSportModalities';
+
+import LongJumpComponent from './LongJumpComponent';
 
 const AthleticsTestScreen = ({ route }) => {
 
@@ -23,22 +25,26 @@ const AthleticsTestScreen = ({ route }) => {
     const participantsRef = ref(db, '/provas/' + idMatch + '/participantes/')
     const athletesRef = ref(db, '/atletas')
     const matchRef = ref(db, `/provas/${idMatch}`) // referência à base de dados para ir buscar a prova que clicamos
-    const userRef = ref(db, `/users/${auth.currentUser.uid}`)
+    const userRef = ref(db, `/users/${auth.currentUser.uid}`);
+    const clubsRef = ref(db, '/clubes/')
 
-
-    const [results, setResults] = useState({})
+    const [numberOfJumps, setNumberOfJumps] = useState(0);
 
     const [match, setMatch] = useState(null)
     const [user, setUser] = useState(null)
-    const [inscritos, setAtletas] = useState({})
+
+    const [enrolled, setEnrolled] = useState([])
+    const [enrolledKey, setEnrolledKey] = useState('')
+    const [enrolledIndex, setEnrolledIndex] = useState(-1)
 
     const [sportModality] = useSportModalities({ sportModalityId: match?.modalidade })
 
     const [inputChanged, setInputChanged] = useState(false);
     const [resultsChanged, setResultsChanged] = useState(false);
 
-    useEffect(() => {
+    const [showLongJumpComponent, setShowLongJumpComponent] = useState(false);
 
+    useEffect(() => {
         const handlerMatch = (snapshot) => {
             const matchObj = snapshot.val()
             setMatch(matchObj)
@@ -79,50 +85,46 @@ const AthleticsTestScreen = ({ route }) => {
 
         const handler = async (snapshot) => {
 
-            let atletasSnapshot = await get(athletesRef)
+            let athletesSnapshot = await get(athletesRef);
+            let clubsSnapshot = await get(clubsRef);
 
-            let atletas = {}
+            let athletes = {}
+            let clubs = {}
 
-            atletasSnapshot.forEach((childSnapshot) => {
+            clubsSnapshot.forEach((childSnapshot) => {
+                const childKey = childSnapshot.key;
+                const childData = childSnapshot.val();
+                clubs[childKey] = childData;
+            })
+
+            athletesSnapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
                 if (childData.genero === match.genero) {
-                    atletas[childKey] = childData
+                    athletes[childKey] = childData;
+                    athletes[childKey].clube = clubs[childData.clube];
                 }
             });
 
-            let inscritos = {}
-            let newResultados = {}
-
-            // NOVA VERSÃO!!!!!
-            let enrolledResultsArray = []
             let enrolledResults = {}
+            let enrolledResultsArray = []
 
             snapshot.forEach((childSnapshot) => {
                 const idParticipant = childSnapshot.key
                 const idAthlete = childSnapshot.val().atleta;
                 const result = childSnapshot.val().resultado
 
-                newResultados[idParticipant] = result || ''
-                inscritos[idParticipant] = atletas[idAthlete]
-
-                // NOVA VERSÃO!!!!!
-                atletas[idAthlete].resultado = result || ''
-                enrolledResults[idParticipant] = atletas[idAthlete]
+                athletes[idAthlete].resultado = result || ''
+                enrolledResults[idParticipant] = athletes[idAthlete]
 
                 enrolledResultsArray = Object.entries(enrolledResults)
 
-                for (let i = 0; i < enrolledResultsArray.length; i++) {
-                    // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
-                    enrolledResultsArray.sort(sortFunction)
-                }
+                // for (let i = 0; i < enrolledResultsArray.length; i++) {
+                //     enrolledResultsArray.sort(sortFunction)
+                // }
             });
 
-            // setAtletas(inscritos)
-            setResults(newResultados)
-
-            // NOVA VERSÃO!!!!!
-            setAtletas(enrolledResultsArray)
+            setEnrolled(enrolledResultsArray)
 
         }
 
@@ -156,19 +158,25 @@ const AthleticsTestScreen = ({ route }) => {
         }
     }
 
-    const addResult = (enrolledResults) => {
+    const addResult = (enrolledResultsArray) => {
 
         const updates = {}
         let resultsArray = []
 
-        const enrolledResultsArray = Object.entries(enrolledResults)
+        // const enrolledResultsArray = Object.entries(enrolledResults)
 
         enrolledResultsArray.forEach((enrolledResult) => {
 
-            const idParticipant = enrolledResult[1][0]
-            const result = enrolledResult[1][1].resultado
+            const idParticipant = enrolledResult[0]
+            const result = enrolledResult[1].resultado
+
+            // console.log("id: ", idParticipant)
+            // console.log("resultado: ", result)
+            // console.log("resultado: ", enrolledResult[1].resultado)
 
             updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result
+
+            console.log("AA", updates)
 
             resultsArray.push(result)
         })
@@ -190,67 +198,52 @@ const AthleticsTestScreen = ({ route }) => {
             setResultsChanged(false)
         }, 1500);
 
-        // Alert.alert('Resultados adicionados com sucesso.')
+        Alert.alert('Resultados adicionados com sucesso.')
     }
 
-    const setResultOnIndex = (valResultado, index, mask) => {
-        // let newResult = Object.assign({}, results)
-        console.log(mask)
-        let regex = new RegExp(mask)
+    const setResultOnIndex = (valResultado, index) => {
         setInputChanged(true)
-        let newResult = Object.assign({}, inscritos)
+        let newResult = Object.assign({}, enrolled)
         // console.log(valResultado, index, results, inscritos)
         // newResult[index] = valResultado;
 
         newResult[index][1].resultado = valResultado
 
-        if(regex.test(valResultado)) {
-            console.log("igual", valResultado, mask)
-        } else {
-            console.log("nao igual", valResultado, mask)
-        }
-
-        setAtletas(newResult)
+        setEnrolled(newResult)
     }
 
-    const maskInputCreator = (key) => {
+    const maskInputCreator = (key, index) => {
         let sportModalityMaskInput;
-
-        let secondsMask = "[d, d, ':', d, d, 's']$"
-
-        // [/\d/, /\d/, ':', /\d/, /\d/, 's']
-        // let secondsMask = `${}`
-
-        // let aa = /(\d\d:\d\ds)/
-        // let bb = /\d\d:\d\ds/
 
         if (match.estado === "ativa") {
             if (sportModality.unidade === "segundos") {
+                // sportModalityMaskInput = <Pressable onPress={() => { setShowLongJumpComponent(true)}}><Text>CLICK</Text></Pressable>
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={inscritos[key][1].resultado || ''}
+                    value={enrolled[index][1].resultado || ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
-                    onChangeText={text => setResultOnIndex(text, key, secondsMask)}
+                    onChangeText={text => setResultOnIndex(text, index)}
                     mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
                     placeholder='00:00s' />
 
             } else if (sportModality.unidade === 'metros') {
-                sportModalityMaskInput = <MaskInput
-                    style={styles.textInput}
-                    value={inscritos[key][1].resultado || ''}
-                    editable={user.autorizado ? true : false}
-                    selectTextOnFocus={user.autorizado ? true : false}
-                    onChangeText={text => setResultOnIndex(text, key)}
-                    mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']}
-                    placeholder='00.00m' />
+                sportModalityMaskInput = <Pressable style={styles.textInput} onPress={() => { setShowLongJumpComponent(true); setEnrolledKey(key); setEnrolledIndex(index) }} ><Text>CLICK</Text></Pressable>
+                // sportModalityMaskInput = <MaskInput
+                //     style={styles.textInput}
+                //     value={inscritos[key][1].resultado || ''}
+                //     editable={user.autorizado ? true : false}
+                //     selectTextOnFocus={user.autorizado ? true : false}
+                //     onChangeText={text => setResultOnIndex(text, key)}
+                //     mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']}
+                //     placeholder='00.00m' />
 
             }
         } else if (match.estado === "finalizada") {
             if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={inscritos[key][1].resultado || ''}
+                    value={enrolled[index][1].resultado || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00:00s' />
@@ -258,7 +251,7 @@ const AthleticsTestScreen = ({ route }) => {
             } else if (sportModality.unidade === 'metros') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={inscritos[key][1].resultado || ''}
+                    value={enrolled[index][1].resultado[0].marca || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00.00m' />
@@ -273,11 +266,14 @@ const AthleticsTestScreen = ({ route }) => {
                     placeholder='00:00s' />
 
             } else if (sportModality.unidade === 'metros') {
-                sportModalityMaskInput = <TextInput
-                    style={styles.textInput}
-                    editable={false}
-                    selectTextOnFocus={false}
-                    placeholder='00.00m' />
+                // sportModalityMaskInput = <Pressable style={{ width: 100, height: 32, backgroundColor: 'white', }} onPress={() => { setShowLongJumpComponent(true) }} ><Text>CLICK</Text></Pressable>
+                sportModalityMaskInput = <Pressable style={styles.textInput} disabled onPress={() => { setShowLongJumpComponent(true) }} ><Text>CLICK</Text></Pressable>
+                // sportModalityMaskInput = <Button title='CLICK' onPress={() => { setShowLongJumpComponent(true) }}>CLICK</Button>
+                // sportModalityMaskInput = <TextInput
+                //     style={styles.textInput}
+                //     editable={false}
+                //     selectTextOnFocus={false}
+                //     placeholder='00.00m' />
             }
         }
 
@@ -285,7 +281,7 @@ const AthleticsTestScreen = ({ route }) => {
     }
 
     return (
-        Object.entries(inscritos).length == 0 ? (
+        Object.entries(enrolled).length == 0 ? (
             <View style={styles.container}>
                 <Header
                     statusBarProps={
@@ -344,42 +340,57 @@ const AthleticsTestScreen = ({ route }) => {
                     rightComponent={
                         inputChanged &&
                         <View style={styles.headerContainer}>
-                            <Icon name='checkmark-sharp' style={styles.headerIcon} size={24} onPress={() => addResult(inscritos)} />
+                            <Icon name='checkmark-sharp' style={styles.headerIcon} size={24} onPress={() => addResult(enrolled)} />
                         </View>
                     }
                 />
 
+                {showLongJumpComponent && <LongJumpComponent enrolled={enrolled} setEnrolled={setEnrolled} enrolledKey={enrolledKey}
+                    enrolledIndex={enrolledIndex} setShowLongJumpComponent={setShowLongJumpComponent} numberOfJumps={numberOfJumps}
+                    inputChanged={inputChanged} setInputChanged={setInputChanged} />}
+
+                {sportModality.unidade === 'metros' &&
+                    <View style={styles.numberOfJumpsContainer}>
+                        <Text style={styles.numberOfJumpsLabel}>Número de saltos: {numberOfJumps}</Text>
+                        <View style={styles.numberOfJumpsButtonsContainer}>
+                            <Pressable style={styles.numberOfJumpsButton} onPress={() => setNumberOfJumps(3)}>
+                                <Text style={styles.numberOfJumpsButtonText}>3</Text>
+                            </Pressable>
+                            <Pressable style={styles.numberOfJumpsButton} onPress={() => setNumberOfJumps(6)}>
+                                <Text style={styles.numberOfJumpsButtonText}>6</Text>
+                            </Pressable>
+                            {/* <Button style={styles.numberOfJumpsButton} onPress={() => setNumberOfJumps(3)} title="3" />
+                            <Button style={styles.numberOfJumpsButton} onPress={() => setNumberOfJumps(6)} title="6" /> */}
+                        </View>
+
+                        {/* <TextInput style={{ backgroundColor: 'grey', width: 80 }} onChangeText={text => setNumberOfJumps(text)} /> */}
+                    </View>
+                }
+
                 <ScrollView style={styles.listContainer}>
 
-                    {Object.entries(inscritos).map(([key, value], index) => {
+                    {enrolled.map((enrolled, index) => {
                         return (
-                            <View key={key} style={styles.cardsContainer}>
+                            <View key={index} style={styles.cardsContainer}>
                                 <View style={styles.listRowsContainer}>
 
-
                                     <Text style={styles.listInfoParticipantTablePositionText}>{index + 1}º</Text>
-
-                                    <Text style={styles.listInfoNameText}>{value[1].nome}</Text>
-
-                                    <Text style={styles.listInfoClubText}>{value[1].clube}</Text>
-
-                                    <Text style={styles.listInfoAgeGroupText}>{value[1].escalao.substring(0, 3)}</Text>
-
-                                    {maskInputCreator(key)}
-
+                                    <Text style={styles.listInfoNameText}>{enrolled[1].nome}</Text>
+                                    <Text style={styles.listInfoClubText}>{enrolled[1].clube.sigla}</Text>
+                                    <Text style={styles.listInfoAgeGroupText}>{enrolled[1].escalao.substring(0, 3)}</Text>
+                                    {maskInputCreator(enrolled[0], index)}
 
                                     {/* <Text style={styles.listInfoResultText}>{props.result}</Text> */}
 
                                     {/* <View style={styles.listGenderIconContainer}>
-            {props.genero}
-        </View> */}
+                            {props.genero}
+                        </View> */}
                                 </View>
-
-
                             </View>
                         )
                     })}
                 </ScrollView>
+
                 <Toast toastTrigger={resultsChanged} />
             </View>
         )
@@ -419,6 +430,35 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         width: '100%',
+        height: '100%',
+    },
+    numberOfJumpsLabel: {
+        fontSize: 18,
+        color: 'black',
+        marginVertical: 8,
+    },
+    numberOfJumpsContainer: {
+    },
+    numberOfJumpsButtonsContainer: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginBottom: 8,
+    },
+    numberOfJumpsButton: {
+        width: 40,
+        height: 40,
+        borderRadius: 24,
+        backgroundColor: 'grey', 
+    },
+    numberOfJumpsButtonText: {
+        width: 40,
+        height: 40,
+        borderRadius: 16,
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        fontSize: 16,
+        color: 'white',
     },
     cardsContainer: {
         justifyContent: 'center',
@@ -517,59 +557,4 @@ const styles = StyleSheet.create({
         paddingStart: 8,
         // borderRadius: 16,
     },
-    // listContainer: {
-    //     width: '100%',
-    // },
-    // listCard: {
-    //     borderWidth: 1,
-    //     borderColor: 'rgb(200,200,200)',
-    // },
-    // listRowsContainer: {
-    //     flexDirection: 'row',
-    // },
-    // listName: {
-    //     flex: 2,
-    // },
-    // listRow: {
-    //     flex: 1,
-    //     textAlign: 'center',
-    // },
-    // textInput: {
-    //     borderWidth: 0.5,
-    //     // borderRadius: 4,
-    //     borderColor: 'rgb(120, 120, 120)',
-    //     flex: 0.8,
-    //     padding: 5,
-    //     height: 30,
-    // },
-    // labelContainer: {
-    //     flexDirection: 'row',
-    //     justifyContent: 'flex-start',
-    // },
-    // labelNome: {
-    //     marginStart: 24,
-    //     marginEnd: 128,
-    // },
-    // labelRow: {
-    //     marginEnd: 32,
-    //     textAlign: 'center',
-    // },
-    // btnPressable: {
-    //     marginTop: 50,
-    //     alignSelf: 'center',
-    //     alignItems: 'center',
-    //     justifyContent: 'center',
-    //     backgroundColor: '#5A79BA',
-    //     height: 40,
-    //     width: 150,
-    //     borderRadius: 5,
-    // },
-    // btnPressableHide: {
-    //     display: 'none',
-    // },
-    // textPressable: {
-    //     color: 'white',
-    //     fontSize: 18,
-    //     fontWeight: 'bold'
-    // },
 })

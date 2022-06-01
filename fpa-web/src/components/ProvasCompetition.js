@@ -66,7 +66,7 @@ const ProvasCompetition = () => {
         const idMatch = key;
 
         const updates = {}
-        updates[`/provas/${idMatch}/ativa`] = false
+        updates[`/provas/${idMatch}/estado/`] = 'removida'
 
         update(ref(db), updates)
     }
@@ -127,42 +127,46 @@ const ProvasCompetition = () => {
                                     "Masculino": <IoIcons.IoMdMale className='icon-match-male-gender' color={addNewMatchForm ? 'rgba(3, 163, 255, 0.65)' : 'rgba(3, 163, 255, 1)'} />,
                                     "Feminino": <IoIcons.IoMdFemale className='icon-match-female-gender' color={addNewMatchForm ? 'rgba(236, 73, 167, 0.35)' : 'rgba(236, 73, 167, 1)'} />,
                                 }
-                                return (
-                                    // <div>
-                                    <tr className='match-table-info-row' onMouseEnter={() => showButton(index)}
-                                        onMouseLeave={hideButton}>
-                                        <td className='match-table-info-row-cell'>{value.hora}</td>
-                                        <td className='match-table-info-row-cell'>
-                                            <div>
+
+                                if (value.estado !== 'removida') {
+                                    return (
+                                        // <div>
+                                        <tr className='match-table-info-row' onMouseEnter={() => showButton(index)}
+                                            onMouseLeave={hideButton}>
+                                            <td className='match-table-info-row-cell'>{value.hora}</td>
+                                            <td className='match-table-info-row-cell'>
                                                 <div>
-                                                    {value.nome}
+                                                    <div>
+                                                        {value.nome}
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className='match-table-info-row-cell'>
-                                            <div>
-                                                {value.escalao}
-                                            </div>
-                                        </td>
-                                        <td className='match-table-info-row-cell'>{genders[value.genero]}</td>
-                                        <td className='match-table-info-row-cell'>
-                                            <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'}
-                                                id='goto-participants-btn'
-                                                onClick={() => goToParticipantsProva(key)}>
-                                                <BsIcons.BsPeopleFill className='btn-icon' />
-                                                Participantes
-                                            </button>
-                                        </td>
-                                        <td className='match-table-info-row-cell'>
-                                            <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'}
-                                                id='apagar-prova-btn'
-                                                onClick={() => window.confirm("Deseja mesmo remover?") && deleteMatch(key)}>
-                                                <BsIcons.BsTrash className='btn-icon' />
-                                                Remover
-                                            </button>
-                                        </td>
-                                    </tr>
-                                )
+                                            </td>
+                                            <td className='match-table-info-row-cell'>
+                                                <div>
+                                                    {value.escalao}
+                                                </div>
+                                            </td>
+                                            <td className='match-table-info-row-cell'>{genders[value.genero]}</td>
+                                            <td className='match-table-info-row-cell'>
+                                                <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'}
+                                                    id='goto-participants-btn'
+                                                    onClick={() => goToParticipantsProva(key)}>
+                                                    <BsIcons.BsPeopleFill className='btn-icon' />
+                                                    Participantes
+                                                </button>
+                                            </td>
+                                            <td className='match-table-info-row-cell'>
+                                                <button className={indexBtn == index ? 'prova-btn-show' : 'prova-btn-hide'}
+                                                    id='apagar-prova-btn'
+                                                    onClick={() => window.confirm("Deseja mesmo remover?") && deleteMatch(key)}>
+                                                    <BsIcons.BsTrash className='btn-icon' />
+                                                    Remover
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+
                             })}
                         </tbody>
                     </table>

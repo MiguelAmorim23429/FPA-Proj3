@@ -67,7 +67,7 @@ const HomeScreen = () => {
         {competicoes.map(([key, value]) => {
           if (value.ativa) {
             return (
-              <View style={{ justifyContent: 'center', alignSelf: 'center', width: '100%', height: 200, padding: 0, margin: 0, borderRadius: 16 }} key={key}>
+              <View style={{ justifyContent: 'center', alignSelf: 'center', width: '100%', height: 160, padding: 0, margin: 0, borderRadius: 16 }} key={key}>
 
                 <Card containerStyle={styles.card}>
                   <Pressable onPress={() => escolherCompeticao(key)}>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '90%',
     alignSelf: 'center',
-    height: 180,
+    height: 140,
     borderWidth: 0,
     elevation: 4,
     shadowColor: "#000",
