@@ -251,7 +251,7 @@ const AthleticsTestScreen = ({ route }) => {
             } else if (sportModality.unidade === 'metros') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={enrolled[index][1].resultado[0].marca || ''}
+                    value={enrolled[index][1].resultado.length === 0 ? '' : enrolled[index][1].resultado[0].marca || ''}
                     editable={false}
                     selectTextOnFocus={false}
                     placeholder='00.00m' />

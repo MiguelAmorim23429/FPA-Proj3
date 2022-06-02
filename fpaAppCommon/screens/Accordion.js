@@ -17,18 +17,18 @@ const Accordion = (props) => {
     const [indexList, setIndexList] = useState(-1);
     const [showExpandedResult, setShowExpandedResult] = useState(false);
     const [expandedEnrolled, setExpandedEnrolled] = useState([])
+    const [matchesById, setMatches] = useState([])
+
+    const [accordionOpen, setAccordionOpen] = useState(false)
 
     const heightAnim = useRef(new Animated.Value(0)).current;
     const paddingTopAnim = useRef(new Animated.Value(0)).current;
-    const topPositionAnim = useRef(new Animated.Value(0)).current;
 
     const { matchId, sportModalityId, competitionId } = props
 
     const [enrolled, sportModality] = useParticipants({ matchId: matchId, modalidadeId: sportModalityId })
     const db = getDatabase();
     const matchesRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(competitionId))
-
-    const [matchesById, setMatches] = useState([])
 
     useEffect(() => {
 
@@ -71,9 +71,9 @@ const Accordion = (props) => {
                                     {
                                         toValue: 0,
                                         duration: 250,
-                                        useNativeDriver: false
+                                        useNativeDriver: false,
                                     }),
-
+                                setAccordionOpen(false)
                             ]).start()
                         )
                         :
@@ -82,7 +82,7 @@ const Accordion = (props) => {
                                 Animated.timing(
                                     heightAnim,
                                     {
-                                        toValue: 222,
+                                        toValue: 200,
                                         // toValue: 280,
                                         duration: 250,
                                         useNativeDriver: false,
@@ -90,11 +90,11 @@ const Accordion = (props) => {
                                 Animated.timing(
                                     paddingTopAnim,
                                     {
-                                        toValue: 20,
+                                        toValue: 10,
                                         duration: 250,
                                         useNativeDriver: false
                                     }),
-
+                                setAccordionOpen(true)
                             ]).start()
                         )
                 } else if (match[1].estado === "ativa") {
@@ -104,49 +104,6 @@ const Accordion = (props) => {
                 }
             }
         }
-        // setIndexList(index);
-        // setListExpanded(!listExpanded);
-
-        // listExpanded ?
-        //     (
-        //         Animated.parallel([
-        //             Animated.timing(
-        //                 heightAnim,
-        //                 {
-        //                     toValue: 0,
-        //                     duration: 250,
-        //                     useNativeDriver: false,
-        //                 }),
-        //             Animated.timing(
-        //                 paddingTopAnim,
-        //                 {
-        //                     toValue: 0,
-        //                     duration: 250,
-        //                     useNativeDriver: false
-        //                 }),
-
-        //         ]).start()
-        //     )
-        //     :
-        //     (
-        //         Animated.parallel([
-        //             Animated.timing(
-        //                 heightAnim,
-        //                 {
-        //                     toValue: 222,
-        //                     duration: 250,
-        //                     useNativeDriver: false,
-        //                 }),
-        //             Animated.timing(
-        //                 paddingTopAnim,
-        //                 {
-        //                     toValue: 30,
-        //                     duration: 250,
-        //                     useNativeDriver: false
-        //                 }),
-
-        //         ]).start()
-        //     )
     }
 
     const escolherProva = (matchKey, sportModalityKey) => {
@@ -166,7 +123,8 @@ const Accordion = (props) => {
 
     return (
         <View>
-            <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 84, padding: 0, margin: 0, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}>
+            {/* <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 64, padding: 0, marginLeft: 0, marginTop: 0, marginRight: 0, marginBottom: 8, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}> */}
+            <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 64, padding: 0, margin: 0, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}>
                 <View style={styles.listRowsContainer}>
 
                     <Text style={styles.listInfoHourText}>{props.hora}H</Text>
@@ -192,25 +150,26 @@ const Accordion = (props) => {
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
                             <Text style={styles.nameText}>{value[1].nome}</Text>
                             <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{value[1].resultado[index].marca}</Text>
-                            {index === 0 && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
-                            {index === 1 && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
-                            {index === 2 && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
-                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => {setShowExpandedResult(true); setExpandedEnrolled(value)}} />
+                            <Text style={styles.resultText}>{value[1].resultado.length === 0 ? '' : value[1].resultado[index].marca}</Text>
+                            {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
+                            {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
+                            {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
+                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => { setShowExpandedResult(true); setExpandedEnrolled(value) }} />
                         </View>,
                         "Corrida 100 metros": <View key={key} style={styles.participantsTopThreeCard}>
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
                             <Text style={styles.nameText}>{value[1].nome}</Text>
                             <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
                             <Text style={styles.resultText}>{value[1].resultado || ''}</Text>
-                            {index === 0 && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
-                            {index === 1 && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
-                            {index === 2 && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
+                            {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
+                            {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
+                            {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
                         </View>
                     }[sportModality.nome]
 
                 }).slice(0, 3)}
             </Animated.View>
+            <View style={{ paddingVertical: 8 }}></View>
             {showExpandedResult && <ExpandedResultCard setShowExpandedResult={setShowExpandedResult} matchId={matchId} sportModalityId={sportModalityId} expandedEnrolled={expandedEnrolled} />}
         </View>
 
@@ -225,12 +184,12 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-start',
         height: 64,
         paddingLeft: 8,
-        // backgroundColor: '#ff7700',
         backgroundColor: '#464646',
         width: '100%',
         borderRadius: 16,
         position: 'relative',
-        top: 0, elevation: 4, shadowColor: "#000"
+        elevation: 4,
+        shadowColor: "#000",
     },
     infoTextContainer: {
         flex: 1,

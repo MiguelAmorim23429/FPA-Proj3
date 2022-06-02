@@ -28,6 +28,11 @@ const ExpandedResultCard = (props) => {
             </View>
 
             <View style={styles.jumpsContainer}>
+                <View style={styles.jumpLineHeaders}>
+                    <Text style={{...styles.jumpInfo, fontWeight: 'bold'}}> </Text>
+                    <Text style={{...styles.jumpInfo, fontWeight: 'bold'}}>Marca</Text>
+                    <Text style={{...styles.jumpInfo, fontWeight: 'bold'}}>Vento</Text>
+                </View>
                 {jumps.map((jump, index) => {
                     return (
                         <View key={index} style={styles.jumpLine}>
@@ -38,7 +43,6 @@ const ExpandedResultCard = (props) => {
 
                     )
                 })}
-                <Text></Text>
             </View>
         </View>
     )
@@ -70,6 +74,7 @@ const styles = StyleSheet.create({
     },
     enrolledNameTitle: {
         fontSize: 16,
+        fontWeight: 'bold',
     },
     closeWindowIcon: {
         position: 'absolute',
@@ -77,7 +82,11 @@ const styles = StyleSheet.create({
         right: 8,
     },
     jumpsContainer: {
-        marginTop: 16,
+        paddingVertical: 8,
+    },
+    jumpLineHeaders: {
+        flexDirection: 'row',
+        justifyContent: 'space-around'
     },
     jumpLine: {
         flexDirection: 'row',
