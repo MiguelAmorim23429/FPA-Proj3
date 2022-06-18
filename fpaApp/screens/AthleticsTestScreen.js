@@ -7,11 +7,13 @@ import { getDatabase, ref, onValue, get, update } from "firebase/database";
 import { getAuth } from 'firebase/auth';
 
 import { LinearGradient } from 'expo-linear-gradient';
-import Icon from 'react-native-vector-icons/Ionicons';
+import IoniIcon from 'react-native-vector-icons/Ionicons';
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import Toast from './Toast';
 import useSportModalities from './useSportModalities';
 
 import LongJumpComponent from './LongJumpComponent';
+import HighJumpComponent from './HighJumpComponent';
 
 const AthleticsTestScreen = ({ route }) => {
 
@@ -42,7 +44,9 @@ const AthleticsTestScreen = ({ route }) => {
     const [inputChanged, setInputChanged] = useState(false);
     const [resultsChanged, setResultsChanged] = useState(false);
 
-    const [showLongJumpComponent, setShowLongJumpComponent] = useState(false);
+    // const [showLongJumpComponent, setShowLongJumpComponent] = useState(false);
+    // const [showInsertResultsComponent, setShowInsertResultsComponent] = useState(false);
+    const [showInsertResultsComponent, setShowInsertResultsComponent] = useState(false);
 
     useEffect(() => {
         const handlerMatch = (snapshot) => {
@@ -198,22 +202,46 @@ const AthleticsTestScreen = ({ route }) => {
             setResultsChanged(false)
         }, 1500);
 
-        Alert.alert('Resultados adicionados com sucesso.')
+        // Alert.alert('Resultados adicionados com sucesso.')
     }
 
-    const setResultOnIndex = (valResultado, index) => {
+    const setResultOnIndex = (result, index) => {
         setInputChanged(true)
-        let newResult = Object.assign({}, enrolled)
+        let clonedEnrolled = [...enrolled]
+        // let newResult = Object.assign({}, enrolled)
         // console.log(valResultado, index, results, inscritos)
         // newResult[index] = valResultado;
 
-        newResult[index][1].resultado = valResultado
+        clonedEnrolled[index][1].resultado = result
 
-        setEnrolled(newResult)
+        setEnrolled(clonedEnrolled)
+    }
+
+    const openComponentToInsertResults = (enrolledKey, enrolledIndex) => {
+
+        if (sportModality.nome === 'Salto em comprimento') {
+            if (numberOfJumps !== 0) {
+                // setShowLongJumpComponent(true)
+                setShowInsertResultsComponent(true)
+                setEnrolledKey(enrolledKey)
+                setEnrolledIndex(enrolledIndex)
+            } else {
+                Alert.alert('Selecione o número de saltos da prova.')
+            }
+        }
+
+        if (sportModality.nome === 'Salto em altura') {
+            // setShowLongJumpComponent(true)
+            setShowInsertResultsComponent(true)
+            setEnrolledKey(enrolledKey)
+            setEnrolledIndex(enrolledIndex)
+        }
     }
 
     const maskInputCreator = (key, index) => {
         let sportModalityMaskInput;
+
+        // console.log("enrolled", enrolled[index][1].resultado, "key", key, "index", index)
 
         if (match.estado === "ativa") {
             if (sportModality.unidade === "segundos") {
@@ -226,9 +254,21 @@ const AthleticsTestScreen = ({ route }) => {
                     onChangeText={text => setResultOnIndex(text, index)}
                     mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
                     placeholder='00:00s' />
-
-            } else if (sportModality.unidade === 'metros') {
-                sportModalityMaskInput = <Pressable style={styles.textInput} onPress={() => { setShowLongJumpComponent(true); setEnrolledKey(key); setEnrolledIndex(index) }} ><Text>CLICK</Text></Pressable>
+            }
+            else if (sportModality.unidade === "horas") {
+                sportModalityMaskInput = <MaskInput
+                    style={styles.textInput}
+                    value={enrolled[index][1].resultado ? enrolled[index][1].resultado : ''}
+                    editable={user.autorizado ? true : false}
+                    selectTextOnFocus={user.autorizado ? true : false}
+                    onChangeText={text => setResultOnIndex(text, index)}
+                    mask={[/\d/, /\d/, ':', /\d/, /\d/, ':', /\d/, /\d/]}
+                    placeholder='hh:mm:ss' />
+            }
+            else if (sportModality.unidade === 'metros') {
+                sportModalityMaskInput = <MaterialIcon style={styles.showAddResultsIcon} name='post-add' color='white' size={32} 
+                onPress={() => openComponentToInsertResults(key, index)} />
+                // sportModalityMaskInput = <Pressable style={styles.textInput} onPress={() => openComponentToInsertResults(key, index)} ><Text>CLICK</Text></Pressable>
                 // sportModalityMaskInput = <MaskInput
                 //     style={styles.textInput}
                 //     value={inscritos[key][1].resultado || ''}
@@ -301,7 +341,7 @@ const AthleticsTestScreen = ({ route }) => {
                     }}
                     leftComponent={
                         <View style={styles.headerContainer}>
-                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
+                            <IoniIcon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
                             <Text style={styles.headerTitle}>Participantes</Text>
                         </View>
                     }
@@ -333,23 +373,30 @@ const AthleticsTestScreen = ({ route }) => {
                     leftComponent={
                         <View style={styles.headerContainer}>
                             {/* <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => { inputChanged ? console.log("QUER VOLTAR ATRÁS?") : goToPreviousScreen() }} /> */}
-                            <Icon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
+                            <IoniIcon name='arrow-back' style={styles.headerIcon} size={24} onPress={() => goToPreviousScreen()} />
                             <Text style={styles.headerTitle}>Participantes</Text>
                         </View>
                     }
                     rightComponent={
                         inputChanged &&
                         <View style={styles.headerContainer}>
-                            <Icon name='checkmark-sharp' style={styles.headerIcon} size={24} onPress={() => addResult(enrolled)} />
+                            <IoniIcon name='checkmark-sharp' style={styles.headerIcon} size={24} onPress={() => addResult(enrolled)} />
                         </View>
                     }
                 />
 
-                {showLongJumpComponent && <LongJumpComponent enrolled={enrolled} setEnrolled={setEnrolled} enrolledKey={enrolledKey}
-                    enrolledIndex={enrolledIndex} setShowLongJumpComponent={setShowLongJumpComponent} numberOfJumps={numberOfJumps}
-                    inputChanged={inputChanged} setInputChanged={setInputChanged} />}
+                {/* {showLongJumpComponent && { */}
 
-                {sportModality.unidade === 'metros' &&
+                {showInsertResultsComponent && {
+                    "Salto em altura": <HighJumpComponent enrolled={enrolled} setEnrolled={setEnrolled} enrolledIndex={enrolledIndex}
+                        inputChanged={inputChanged} setInputChanged={setInputChanged} setShowInsertResultsComponent={setShowInsertResultsComponent} />,
+                    "Salto em comprimento": <LongJumpComponent enrolled={enrolled} setEnrolled={setEnrolled} enrolledKey={enrolledKey}
+                        enrolledIndex={enrolledIndex} setShowInsertResultsComponent={setShowInsertResultsComponent} numberOfJumps={numberOfJumps}
+                        inputChanged={inputChanged} setInputChanged={setInputChanged} />
+
+                }[sportModality.nome]}
+
+                {sportModality.nome === 'Salto em comprimento' &&
                     <View style={styles.numberOfJumpsContainer}>
                         <Text style={styles.numberOfJumpsLabel}>Número de saltos: {numberOfJumps}</Text>
                         <View style={styles.numberOfJumpsButtonsContainer}>
@@ -449,7 +496,7 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 24,
-        backgroundColor: 'grey', 
+        backgroundColor: 'grey',
     },
     numberOfJumpsButtonText: {
         width: 40,
@@ -523,11 +570,17 @@ const styles = StyleSheet.create({
         top: 22,
         left: 270,
     },
+    showAddResultsIcon: {
+        position: 'absolute',
+        top: 15,
+        left: 320,
+    },
     textInput: {
         borderBottomWidth: 3,
         borderColor: 'white',
         // borderColor: 'rgba(255, 246, 0, 0.5)',
-        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        // backgroundColor: 'rgba(255, 255, 255, 0.25)',
+        backgroundColor: '#464646',
         // backgroundColor: 'rgba(255, 246, 0, 0.5)',
         fontSize: 16,
         color: 'white',
@@ -537,7 +590,7 @@ const styles = StyleSheet.create({
         left: 300,
         width: 80,
         height: 40,
-        paddingStart: 8,
+        // paddingStart: 8,
         // borderRadius: 16,
     },
     textInputFocused: {

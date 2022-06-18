@@ -18,7 +18,14 @@ const ExpandedResultCard = (props) => {
 
     useEffect(() => {
         console.log(jumps)
+        getMaxResult()
     }, [])
+
+    const getMaxResult = () => {
+        const max = Math.max(...jumps)
+
+        console.log(max)
+    }
 
     return (
         <View style={styles.container}>

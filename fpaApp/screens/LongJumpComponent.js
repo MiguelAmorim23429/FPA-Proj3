@@ -3,10 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { Divider } from 'react-native-elements';
 import MaskInput from 'react-native-mask-input';
 
-import Icon from 'react-native-vector-icons/AntDesign'
+import AntDesignIcon from 'react-native-vector-icons/AntDesign'
 
 const LongJumpComponent = (props) => {
-    const { enrolled, enrolledKey, enrolledIndex, setEnrolled, setShowLongJumpComponent, numberOfJumps, inputChanged, setInputChanged } = props
+    // const { enrolled, enrolledKey, enrolledIndex, setEnrolled, setShowLongJumpComponent, numberOfJumps, inputChanged, setInputChanged } = props
+    const { enrolled, enrolledKey, enrolledIndex, setEnrolled, setShowInsertResultsComponent, numberOfJumps, inputChanged, setInputChanged } = props
 
     const [validJump, setValidJump] = useState(false)
     const [jumpsArray, setJumpsArray] = useState(enrolled[enrolledIndex][1].resultado || [])
@@ -28,10 +29,6 @@ const LongJumpComponent = (props) => {
         } else {
             setJumpsArray(enrolled[enrolledIndex][1].resultado)
         }
-
-        console.log("AAASCASC", newJumpsArray)
-        console.log("AAA", jumpsArray)
-        console.log("XXX", enrolled[enrolledIndex][1].resultado)
     }
 
     const handleResultInputValue = (resultInputValue, inputIndex, field) => {
@@ -55,12 +52,7 @@ const LongJumpComponent = (props) => {
 
         setJumpsArray(newJumpsArray)
 
-        console.log("ARRAY", jumpsArray)
-
         clonedEnrolled[enrolledIndex][1].resultado = newJumpsArray
-
-        console.log("todos", clonedEnrolled)
-        console.log("pistola", clonedEnrolled[enrolledIndex])
 
         setEnrolled(clonedEnrolled)
     }
@@ -124,7 +116,7 @@ const LongJumpComponent = (props) => {
                             let clonedEnrolled = [...enrolled]
                             clonedEnrolled[enrolledIndex][1].resultado = ''
                             setEnrolled(clonedEnrolled)
-                            setShowLongJumpComponent(false)
+                            setShowInsertResultsComponent(false)
                         },
                     },
                     {
@@ -133,7 +125,7 @@ const LongJumpComponent = (props) => {
                 ]
             )
         } else {
-            setShowLongJumpComponent(false)
+            setShowInsertResultsComponent(false)
         }
     }
 
@@ -143,7 +135,7 @@ const LongJumpComponent = (props) => {
             jumpsArray.push(
                 <View style={styles.jumpInfoContainer} key={i} >
 
-                    <View key={i} style={{ marginRight: 8, }}>
+                    <View key={i} style={{ marginRight: 32, }}>
                         <Text style={{ fontSize: 16, }}> {i + 1}º salto </Text>
                         <MaskInput
                             style={styles.textInput}
@@ -153,17 +145,16 @@ const LongJumpComponent = (props) => {
                             onChangeText={text => handleResultInputValue(text, i, "comprimento")}
                             mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']}
                             placeholder='00.00m' />
-                        {/* <TextInput style={styles.jumpsScoreInput} onChangeText={text => { console.log(text, i + 1) }} /> */}
                     </View>
 
-                    <View style={{ marginRight: 8, }}>
+                    <View style={{ marginRight: 32,}}>
                         <Text style={{ fontSize: 16, }}>Vento</Text>
                         <TextInput style={styles.textInput}
                             value={enrolled[enrolledIndex][1].resultado.length === 0 ? '' : enrolled[enrolledIndex][1].resultado[i].vento}
                             onChangeText={text => handleWindInputValue(text, i, "vento")} />
                     </View>
 
-                    <View style={{ marginRight: 8, }}>
+                    <View style={{ marginRight: 0,}}>
                         <Text style={{ fontSize: 16, }}>Válido</Text>
                         <Switch
                             trackColor={{ false: "#767577", true: "#81b0ff" }}
@@ -190,7 +181,12 @@ const LongJumpComponent = (props) => {
     return (
         <View style={styles.container}>
 
-            <Icon name='close' color='#000' size={24} style={styles.closeWindowIcon} onPress={() => closeLongJumpComponent()} />
+            <View style={styles.header}>
+                <Text style={styles.enrolledNameTitle}>{enrolled[enrolledIndex][1].nome}</Text>
+                <AntDesignIcon name='close' color='#000' size={24} style={styles.closeWindowIcon} onPress={() => closeLongJumpComponent()} />
+            </View>
+
+            {/* <AntDesignIcon name='close' color='#000' size={24} style={styles.closeWindowIcon} onPress={() => closeLongJumpComponent()} /> */}
 
             <ScrollView style={styles.firstSection}>
                 {createInputsByNumberOfJumps(numberOfJumps)}
@@ -199,7 +195,8 @@ const LongJumpComponent = (props) => {
             <Divider width={1} style={styles.divider} />
 
             <View style={styles.secondSection}>
-                <Pressable style={styles.confirmButton} onPress={() => setShowLongJumpComponent(false)}>
+                {/* <Pressable style={styles.confirmButton} onPress={() => setShowLongJumpComponent(false)}> */}
+                <Pressable style={styles.confirmButton} onPress={() => setShowInsertResultsComponent(false)}>
                     <Text style={styles.confirmButtonText}>Confirmar</Text>
                 </Pressable>
             </View>
@@ -215,7 +212,6 @@ const styles = StyleSheet.create({
         padding: 0,
         width: '90%',
         height: '70%',
-        // flex: 1,
         zIndex: 1,
         backgroundColor: 'white',
         flexDirection: 'column',
@@ -224,14 +220,24 @@ const styles = StyleSheet.create({
         borderRadius: 16,
         position: 'absolute',
         top: 132,
-        // marginTop: -32,
         elevation: 4,
         shadowColor: "#000",
     },
+    header: {
+        flexDirection: 'row',
+        backgroundColor: '#D8D8D8',
+        borderTopLeftRadius: 16,
+        borderTopRightRadius: 16,
+        padding: 8,
+    },
+    enrolledNameTitle: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
     closeWindowIcon: {
-        alignSelf: 'flex-end',
-        paddingTop: 16,
-        paddingRight: 16,
+        position: 'absolute',
+        top: 8,
+        right: 8,
     },
     divider: {
         width: '90%',
@@ -241,16 +247,13 @@ const styles = StyleSheet.create({
         width: '100%',
         display: 'flex',
         alignContent: 'flex-start',
-        // flexWrap: 'wrap',
-        // flexDirection: 'row',
-        marginTop: 16,
+        paddingTop: 16,
     },
     jumpInfoContainer: {
-        // height: '100%',
         flexDirection: 'row',
         justifyContent: 'center',
+        // alignItems: 'center',
         marginBottom: 8,
-        // backgroundColor: 'red'
     },
     secondSection: {
         width: '100%',
