@@ -171,6 +171,10 @@ const HighJumpComponent = (props) => {
 
   const handleFailedAttempt = (jumpIndex) => {
 
+    if (!inputChanged) {
+      setInputChanged(true)
+    }
+
     let clonedEnrolled = [...enrolled]
 
     let clonedJumps = [...jumps]
@@ -188,16 +192,14 @@ const HighJumpComponent = (props) => {
 
         if (attempts.length === 3) {
           let isAllFailedAttempts = attempts.every(attempt => attempt === false)
+
           if (isAllFailedAttempts) {
             clonedDisabledButtons.push(jumpIndex)
             setDisabledButtons(clonedDisabledButtons)
             setButtonDisabled(true)
           }
         }
-
       }
-
-      console.log(jumpElement)
 
       return jumpElement
     })
@@ -209,6 +211,10 @@ const HighJumpComponent = (props) => {
   }
 
   const handleSuccessfulAttempt = (jumpIndex) => {
+
+    if (!inputChanged) {
+      setInputChanged(true)
+    }
 
     let clonedEnrolled = [...enrolled]
 
@@ -229,11 +235,9 @@ const HighJumpComponent = (props) => {
             attempts.push(true)
             jumpElement.ultrapassada = true
           }
-
         }
       }
 
-      console.log(jumpElement)
       return jumpElement
     })
 
@@ -246,69 +250,46 @@ const HighJumpComponent = (props) => {
 
     clonedEnrolled[enrolledIndex][1].resultado = newJumpsArray
     setEnrolled(clonedEnrolled)
-
-    console.log("success: ", clonedDisabledButtons)
   }
 
   const handleRemoveAttempt = (jumpIndex) => {
+
+    if (!inputChanged) {
+      setInputChanged(true)
+    }
+
     let clonedEnrolled = [...enrolled]
 
     let clonedJumps = [...jumps]
+    let jump = clonedJumps[jumpIndex]
+    let attempts = jump.tentativas
 
     let clonedDisabledButtons = [...disabledButtons]
 
-    let newJumpsArray = clonedJumps.filter((jumpElement, mapJumpIndex) => {
+    if (attempts.length === 0) {
+      clonedJumps.splice(jumpIndex, 1)
+    } else {
+      const indexBtn = clonedDisabledButtons.indexOf(jumpIndex)
 
-      if (mapJumpIndex === jumpIndex) {
-        let attempts = jumpElement.tentativas
+      if (indexBtn !== undefined) {
+        attempts.pop()
 
-        if (attempts.length !== 0) {
-          let foundDisabledButton = clonedDisabledButtons.find(disabledButtonsIndex => disabledButtonsIndex === jumpIndex)
-
-          const indexBtn = clonedDisabledButtons.indexOf(jumpIndex)
-
-          if (foundDisabledButton !== undefined) {
-            attempts.pop()
-
-            if (jumpElement.ultrapassada === true) {
-              jumpElement.ultrapassada = false
-            }
-
-            clonedDisabledButtons.splice(indexBtn, 1)
-            console.log("ENCONTROU", foundDisabledButton, "XXX", jumpIndex, "BLA BLA", indexBtn)
-            console.log(clonedDisabledButtons)
-          } else {
-            attempts.pop()
-
-            console.log("ENCONTROU", foundDisabledButton, "XXX", jumpIndex, "BLA BLA", indexBtn)
-            console.log(clonedDisabledButtons)
-          }
-          return jumpElement
+        if (jump.ultrapassada === true) {
+          jump.ultrapassada = false
         }
 
-        // console.log(clonedJumps)
-
-        // else if (attempts.length < 3) {
-        //   const successfulAttempt = attempts.find(attempt => attempt === true)
-
-        //   if (!successfulAttempt) {
-        //     attempts.push(true)
-        //     jumpElement.ultrapassada = true
-        //   }s
-
-        // }
-        
+        clonedDisabledButtons.splice(indexBtn, 1)
+      } else {
+        attempts.pop()
       }
-
-      // console.log(jumpElement)
-    })
+    }
 
     setDisabledButtons(clonedDisabledButtons)
     setButtonDisabled(false)
 
-    setJumps(newJumpsArray)
+    setJumps(clonedJumps)
 
-    clonedEnrolled[enrolledIndex][1].resultado = newJumpsArray
+    clonedEnrolled[enrolledIndex][1].resultado = clonedJumps
     setEnrolled(clonedEnrolled)
   }
 

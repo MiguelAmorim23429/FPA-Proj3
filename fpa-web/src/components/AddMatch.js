@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { UserAuthContext } from '../context/AuthContextProvider';
-import { getDatabase, onValue, push, ref, set } from 'firebase/database';
+import { getDatabase, onValue, push, ref } from 'firebase/database';
 import { useNavigate } from 'react-router-dom';
+import '../styles/addmatch.css'
 
 import * as AiIcons from 'react-icons/ai'
 

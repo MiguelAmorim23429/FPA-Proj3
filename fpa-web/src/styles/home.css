@@ -34,6 +34,8 @@
 }
 
 .cabecalho-loggedUser {
+    display: flex;
+    justify-content: flex-end;
     color: white;
     margin-right: 32px;
     font-family: 'QuicksandMedium';

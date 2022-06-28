@@ -266,8 +266,8 @@ const AthleticsTestScreen = ({ route }) => {
                     placeholder='hh:mm:ss' />
             }
             else if (sportModality.unidade === 'metros') {
-                sportModalityMaskInput = <MaterialIcon style={styles.showAddResultsIcon} name='post-add' color='white' size={32} 
-                onPress={() => openComponentToInsertResults(key, index)} />
+                sportModalityMaskInput = <MaterialIcon style={styles.showAddResultsIcon} name='post-add' color='white' size={32}
+                    onPress={() => openComponentToInsertResults(key, index)} />
                 // sportModalityMaskInput = <Pressable style={styles.textInput} onPress={() => openComponentToInsertResults(key, index)} ><Text>CLICK</Text></Pressable>
                 // sportModalityMaskInput = <MaskInput
                 //     style={styles.textInput}
@@ -286,16 +286,30 @@ const AthleticsTestScreen = ({ route }) => {
                     value={enrolled[index][1].resultado || ''}
                     editable={false}
                     selectTextOnFocus={false}
-                    placeholder='00:00s' />
-
-            } else if (sportModality.unidade === 'metros') {
+                />
+            } else if (sportModality.unidade === 'horas') {
+                sportModalityMaskInput = <MaskInput
+                    style={styles.textInput}
+                    value={enrolled[index][1].resultado || ''}
+                    editable={false}
+                    selectTextOnFocus={false}
+                />
+            }
+            else if (sportModality.unidade === 'metros' && sportModality.nome === 'Salto em comprimento') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
                     value={enrolled[index][1].resultado.length === 0 ? '' : enrolled[index][1].resultado[0].marca || ''}
                     editable={false}
                     selectTextOnFocus={false}
-                    placeholder='00.00m' />
-
+                />
+            }
+            else if (sportModality.unidade === 'metros' && sportModality.nome === 'Salto em altura') {
+                sportModalityMaskInput = <MaskInput
+                    style={styles.textInput}
+                    value={enrolled[index][1].resultado.length === 0 ? '' : enrolled[index][1].resultado[0].altura + ' m' || ''}
+                    editable={false}
+                    selectTextOnFocus={false}
+                />
             }
         } else if (match.estado === "emInscricoes") {
             if (sportModality.unidade === "segundos") {
@@ -519,7 +533,6 @@ const styles = StyleSheet.create({
     listRowsContainer: {
         height: 64,
         paddingLeft: 8,
-        // backgroundColor: '#ff7700',
         backgroundColor: '#464646',
         width: '100%',
         borderRadius: 16,
@@ -578,36 +591,26 @@ const styles = StyleSheet.create({
     textInput: {
         borderBottomWidth: 3,
         borderColor: 'white',
-        // borderColor: 'rgba(255, 246, 0, 0.5)',
-        // backgroundColor: 'rgba(255, 255, 255, 0.25)',
         backgroundColor: '#464646',
-        // backgroundColor: 'rgba(255, 246, 0, 0.5)',
         fontSize: 16,
         color: 'white',
-        // opacity: 1,
         position: 'absolute',
         top: 12,
         left: 300,
         width: 80,
         height: 40,
-        // paddingStart: 8,
-        // borderRadius: 16,
     },
     textInputFocused: {
         borderBottomWidth: 3,
         borderColor: '#00D448',
-        // borderColor: 'rgba(255, 246, 0, 0.5)',
         backgroundColor: 'rgba(255, 255, 255, 0.25)',
-        // backgroundColor: 'rgba(255, 246, 0, 0.5)',
         fontSize: 16,
         color: 'white',
-        // opacity: 1,
         position: 'absolute',
         top: 12,
         left: 300,
         width: 80,
         height: 40,
         paddingStart: 8,
-        // borderRadius: 16,
     },
 })
