@@ -250,9 +250,9 @@ function AddMatch(props) {
                             onChange={event => handleChangeWithValidation(event)}></input>
                     </div>
 
-                    <div className='input-validation-box'>
+                    {/* <div className='input-validation-box'>
                         <label className='validation-label'>bbb</label>
-                    </div>
+                    </div> */}
 
                 </div>
 
@@ -274,41 +274,29 @@ function AddMatch(props) {
 
                 <div className='select-box-container'>
                     <div className='single-select-container'>
-                        <select className='info-match-select-box'
-                            value={gender}
-                            onChange={event => setGender(event.target.value)}>
-
-                            <option className='select-default' value="0">Género</option>
+                        <select className='info-match-select-box' value={gender} onChange={event => setGender(event.target.value)}>
+                            <option className='select-default' selected value="0">Género</option>
                             <option value="Masculino">Masculino</option>
                             <option value="Feminino">Feminino</option>
-
                         </select>
                     </div>
 
                     <div className='single-select-container'>
-                        <select className='info-match-select-box'
-                            value={sportModality}
-                            onChange={event => setSportModality(event.target.value)}>
-
-                            <option className='select-default' value="0">Modalidade</option>
+                        <select className='info-match-select-box' value={sportModality} onChange={event => setSportModality(event.target.value)}>
+                            <option className='select-default' selected value="0">Modalidade</option>
                             {modalities.map(([key, value]) => {
                                 return (
                                     <option key={key} value={key}>{value.nome}</option>
                                 )
                             })}
-
                         </select>
                     </div>
 
                     <div className='single-select-container'>
-                        <select className='info-match-select-box'
-                            value={ageGroup}
-                            onChange={event => setAgeGroup(event.target.value)}>
-
-                            <option className='select-default' value="0">Escalão</option>
+                        <select className='info-match-select-box' value={ageGroup} onChange={event => setAgeGroup(event.target.value)}>
+                            <option className='select-default' selected value="0">Escalão</option>
                             <option value="INICIADOS">INICIADOS</option>
                             <option value="JUNIORES">JUNIORES</option>
-
                         </select>
                     </div>
                 </div>

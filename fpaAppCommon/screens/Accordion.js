@@ -25,13 +25,12 @@ const Accordion = (props) => {
 
     const { matchId, sportModalityId, competitionId } = props
 
-    const [enrolled, sportModality] = useParticipants({ matchId: matchId, modalidadeId: sportModalityId })
+    const [participants, sportModality] = useParticipants({ matchId: matchId, modalidadeId: sportModalityId })
     const db = getDatabase();
     const matchesRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(competitionId))
 
     useEffect(() => {
 
-        console.log(sportModality)
         // Busca das provas existentes na competicao que selecionamos no ecrã anterior
         onValue(matchesRef, (snapshot) => {
             let matchesArray = []
@@ -119,6 +118,29 @@ const Accordion = (props) => {
         // navigation.navigate('AthleticsTest', { idMatch: matchKey, idSportModality: sportModalityKey })
     }
 
+    const getHighestValueOfJump = (results) => {
+        let highestLegalResult = 0
+
+        if (sportModality.nome === 'Salto em altura') {
+            const failedAttempt = results.find(result => {
+                const attempts = result.tentativas
+                const failedAttemptsHeight = attempts.every(attempt => !attempt)
+                if (failedAttemptsHeight) return result
+            })
+
+            // if (results.length !== 1) {
+            // }
+
+            if (results.length === 1 && results.length !== 0) {
+                highestLegalResult = results[results.length - 1].altura
+            } else {
+                failedAttempt ? highestLegalResult = results[results.length - 2].altura : highestLegalResult = results[results.length - 1].altura
+            }
+            return highestLegalResult
+            // failedAttempt ? results[0].altura :  results[1].altura
+        }
+    }
+
     return (
         <View>
             {/* <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 64, padding: 0, marginLeft: 0, marginTop: 0, marginRight: 0, marginBottom: 8, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}> */}
@@ -142,48 +164,43 @@ const Accordion = (props) => {
 
             </Pressable>
             <Animated.View style={{ ...styles.accordionContentActive, height: heightAnim, paddingTop: paddingTopAnim }}>
-                {Object.entries(enrolled).map(([key, value], index) => {
-                        // console.log("key", key, "valueCOMPRIMENTO", value[1].resultado[index]?.marca)
-                        // console.log("key", key, "valueALTURA", value[1].resultado[index]?.altura)
-
-                        if (sportModality.nome === 'Salto em altura') console.log("ASDSADAWFS", enrolled)
-                        
-                    
+                {Object.entries(participants).map(([participantKey, participant], index) => {
                     return {
-                        "Salto em comprimento": <View key={key} style={styles.participantsTopThreeCard}>
+                        "Salto em comprimento": <View key={participantKey} style={styles.participantsTopThreeCard}>
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
-                            <Text style={styles.nameText}>{value[1].nome}</Text>
-                            <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{value[1].resultado.length === 0 ? '' : value[1].resultado[index]?.marca}</Text>
+                            <Text style={styles.nameText}>{participant[1].nome}</Text>
+                            <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : participant[1].resultado[0]?.marca}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
-                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => { setShowExpandedResult(true); setExpandedEnrolled(value) }} />
+                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => { setShowExpandedResult(true); setExpandedEnrolled(participant) }} />
                         </View>,
-                        "Salto em altura": <View key={key} style={styles.participantsTopThreeCard}>
+                        "Salto em altura": <View key={participantKey} style={styles.participantsTopThreeCard}>
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
-                            <Text style={styles.nameText}>{value[1].nome}</Text>
-                            <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{value[1].resultado.length === 0 ? '' : value[1].resultado[index]?.altura}</Text>
+                            <Text style={styles.nameText}>{participant[1].nome}</Text>
+                            <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
+                            {/* <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : participant[1].resultado[0]?.altura}</Text> */}
+                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : getHighestValueOfJump(participant[1].resultado)}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
-                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => { setShowExpandedResult(true); setExpandedEnrolled(value) }} />
+                            <IoniIcon name='expand' style={styles.expandIcon} color='white' size={24} onPress={() => { setShowExpandedResult(true); setExpandedEnrolled(participant) }} />
                         </View>,
-                        "Corrida 100 metros": <View key={key} style={styles.participantsTopThreeCard}>
+                        "Corrida 100 metros": <View key={participantKey} style={styles.participantsTopThreeCard}>
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
-                            <Text style={styles.nameText}>{value[1].nome}</Text>
-                            <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{value[1].resultado || ''}</Text>
+                            <Text style={styles.nameText}>{participant[1].nome}</Text>
+                            <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado || ''}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
                         </View>,
-                        "Maratona": <View key={key} style={styles.participantsTopThreeCard}>
+                        "Maratona": <View key={participantKey} style={styles.participantsTopThreeCard}>
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
-                            <Text style={styles.nameText}>{value[1].nome}</Text>
-                            <Text style={styles.clubText}>{value[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{value[1].resultado || ''}</Text>
+                            <Text style={styles.nameText}>{participant[1].nome}</Text>
+                            <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado || ''}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
@@ -193,7 +210,7 @@ const Accordion = (props) => {
                 }).slice(0, 3)}
             </Animated.View>
             <View style={{ paddingVertical: 8 }}></View>
-            {showExpandedResult && <ExpandedResultCard setShowExpandedResult={setShowExpandedResult} matchId={matchId} sportModalityId={sportModalityId} expandedEnrolled={expandedEnrolled} />}
+            {showExpandedResult && <ExpandedResultCard setShowExpandedResult={setShowExpandedResult} matchId={matchId} sportModality={sportModality} expandedEnrolled={expandedEnrolled} />}
         </View>
 
     )
@@ -226,7 +243,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     listInfoCategoryText: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'white',
         position: 'absolute',
         top: 32,
@@ -237,12 +254,12 @@ const styles = StyleSheet.create({
         color: 'white',
         position: 'absolute',
         top: 22,
-        left: 180,
+        left: 220,
     },
     listGenderIconContainer: {
         position: 'absolute',
         top: 20,
-        left: 270,
+        left: 310,
     },
     listChevronIconContainer: {
         width: 64,

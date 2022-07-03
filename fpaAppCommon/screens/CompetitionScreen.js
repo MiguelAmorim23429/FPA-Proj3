@@ -122,19 +122,22 @@ const CompetitionScreen = ({ route }) => {
                             "Masculino": <Icon name='male-sharp' size={24} color='#03A3FF' />,
                             "Feminino": <Icon name='female-sharp' size={24} color='#EC49A7' />,
                         }
-                        return (
-                            <View key={key}>
-                                <Accordion
-                                    cardIndex={index}
-                                    competitionId={idCompetition}
-                                    matchId={key}
-                                    sportModalityId={value.modalidade}
-                                    hora={value.hora}
-                                    categoria={value.categoria}
-                                    escalao={value.escalao}
-                                    genero={genders[value.genero]} />
-                            </View>
-                        )
+
+                        if (value.estado !== 'removida') {
+                            return (
+                                <View key={key}>
+                                    <Accordion
+                                        cardIndex={index}
+                                        competitionId={idCompetition}
+                                        matchId={key}
+                                        sportModalityId={value.modalidade}
+                                        hora={value.hora}
+                                        categoria={value.categoria}
+                                        escalao={value.escalao}
+                                        genero={genders[value.genero]} />
+                                </View>
+                            )
+                        }
                     })
                     }
                 </ScrollView>

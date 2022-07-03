@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     listInfoCategoryText: {
-        fontSize: 18,
+        fontSize: 16,
         color: 'white',
         position: 'absolute',
         top: 32,

@@ -72,8 +72,14 @@
 }
 
 .participant-list-btn-container {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    margin: auto;
+    width: 30%;
+}
+
+#remove-participant-btn {
+    background-color: white;
+    cursor: pointer;
+}
+
+#remove-participant-btn:hover {
+    background-color: #FEF2F3;
 }

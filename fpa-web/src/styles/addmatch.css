@@ -6,5 +6,28 @@
 }
 
 .main-add-new-match-container {
-    
+
+}
+
+.select-box-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-items: auto;
+    gap: 8px;
+}
+
+.single-select-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.info-match-select-box {
+    width: 90%;
+    height: 32px;
+}
+
+.select-default {
+    display: none;
 }

@@ -1,0 +1,125 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.container {
+    min-height: 100vh;
+    display: flex;
+    padding: 0 16px;
+    flex-direction: column;
+    transition: 850ms;
+}
+
+.shadowed-container {
+    min-height: 100vh;
+    display: flex;
+    padding: 0 16px;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: 350ms;
+}
+
+.main-add-athlete-container {
+    top: 0;
+    right: 0;
+    transition: 350ms;
+    position: absolute;
+    width: calc(100vw / 3);
+    height: 100vh;
+    z-index: 1;
+    background-color: white;
+}
+
+.hidden-main-add-athlete-container {
+    top: 0;
+    right: calc(-100vw - (100vw / 3));
+    position: absolute;
+    position: fixed;
+    transition: 850ms;
+    width: 560px;
+    height: 100vh;
+    z-index: 1;
+}
+
+.add-athlete-btn {
+    width: 180px;
+    height: 48px;
+    color: white;
+    background-color: #1375BC;
+    border-radius: 24px;
+    border-style: none;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    font-family: 'QuicksandSemiBold';
+    font-size: 16px;
+    transition: 850ms;
+}
+
+.shadowed-add-athlete-btn {
+    width: 180px;
+    height: 48px;
+    color: rgba(255,255,255, 0.5);
+    border-radius: 24px;
+    border-style: none;
+    margin-top: 16px;
+    font-family: 'QuicksandSemiBold';
+    font-size: 16px;
+    background: rgba(19, 117, 188, 0.5);
+    /* opacity: 0.5; */
+    transition: 350ms;
+}
+
+.athlete-headers {
+    display: flex;
+    flex-direction: row;
+    margin-top: 16px;
+    padding-left: 8px;
+    padding-right: 8px;
+    font-family: 'QuicksandBold';
+}
+
+.athlete-line-header {
+    width: 25%;
+}
+
+.athletes-list {
+    display: flex;
+    flex-direction: column;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 8px;
+    border-color: rgba(0, 0, 0, 0.5);
+    /* margin-top: 8px; */
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* .athletes-list:last-child {
+    border-width: 0;
+} */
+
+.athlete-line {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    list-style-type: none;
+    height: 32px;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.25);
+    font-family: 'QuicksandMedium';
+
+}
+
+.athlete-line:last-child {
+    border-width: 0;
+}
+
+.athlete-line-item {
+    width: 25%;
+}

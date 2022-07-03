@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/addathlete.css'
-import { getDatabase, ref, push, onValue, get, child } from "firebase/database"
+import { getDatabase, ref, push, onValue, get } from "firebase/database"
 import { useNavigate } from 'react-router-dom';
 
-const AddAthlete = () => {
+import * as AiIcons from 'react-icons/ai'
+
+const AddAthlete = (props) => {
+
+    const { showAddAthleteComponent, setShowAddAthleteComponent } = props
 
     const [club, setClub] = useState('');
     const [birthDate, setBirthDate] = useState('');
@@ -75,7 +79,8 @@ const AddAthlete = () => {
     }
 
     return (
-        <div className='main-add-athlete-container'>
+        <div className='add-athlete-form-container'>
+            <AiIcons.AiOutlineClose className='form-closebtn' onClick={() => setShowAddAthleteComponent(false)} />
             <form className='add-athlete-form' onSubmit={adicionarAtleta}>
 
                 <div className='add-athlete-input-container'>
@@ -124,17 +129,13 @@ const AddAthlete = () => {
                         <label className='validation-label'></label>
                     </div> */}
                 </div>
-                {/* <input className='add-athlete-input' placeholder='Nome' onChange={event => setNome(event.target.value)}></input> */}
-                {/* <input className='add-athlete-input' placeholder='Número Federação' onChange={event => setFederationNumber(event.target.value)}></input>
-                <input className='add-athlete-input' placeholder='Clube' onChange={event => setClub(event.target.value)}></input>
-                <input className='add-athlete-input' placeholder='Data Nascimento' type='date' onChange={event => setBirthDate(event.target.value)}></input> */}
-                {/* <div className='select-div'> */}
-                    <select required onChange={event => setGender(event.target.value)}>
-                        <option selected hidden disabled value="">Género</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Feminino">Feminino</option>
-                    </select>
-                {/* </div> */}
+
+
+                <select required onChange={event => setGender(event.target.value)}>
+                    <option selected hidden disabled value="">Género</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                </select>
 
                 <select required onChange={event => setClub(event.target.value)}>
                     <option selected hidden disabled value="">Clube</option>

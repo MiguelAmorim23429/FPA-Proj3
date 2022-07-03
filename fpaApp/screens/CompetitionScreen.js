@@ -18,7 +18,7 @@ const CompetitionScreen = ({ route }) => {
     const db = getDatabase();
     const matchesRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(idCompetition))
 
-    const [match, setMatch] = useState([])
+    const [matches, setMatches] = useState([])
 
     useEffect(() => {
         // Busca das provas existentes na competicao que selecionamos no ecrã anterior
@@ -30,7 +30,7 @@ const CompetitionScreen = ({ route }) => {
                 const childData = childSnapshot.val();
                 matchesArray.push([childKey, childData])
             });
-            setMatch(matchesArray)
+            setMatches(matchesArray)
         }, {
             onlyOnce: true
         });
@@ -73,7 +73,7 @@ const CompetitionScreen = ({ route }) => {
             />
 
             <ScrollView style={styles.listContainer}>
-                {match.map(([key, value], index) => {
+                {matches.map(([matchKey, match], index) => {
 
                     const genders = {
                         "Masculino": <Icon name='male-sharp' size={24} color='#00B2FF' />,
@@ -82,20 +82,20 @@ const CompetitionScreen = ({ route }) => {
 
 
 
-                    // if(value.ativa) {
-                    return (
-                        <View key={key}>
-                            <MatchCard
-                                cardIndex={index}
-                                chaveId={key}
-                                hora={value.hora}
-                                categoria={value.categoria}
-                                escalao={value.escalao}
-                                genero={genders[value.genero]}
-                                onPress={() => { escolherProva(key) }} />
-                        </View>
-                    )
-                    // }
+                    if (match.estado !== 'removida') {
+                        return (
+                            <View key={matchKey}>
+                                <MatchCard
+                                    cardIndex={index}
+                                    chaveId={matchKey}
+                                    hora={match.hora}
+                                    categoria={match.categoria}
+                                    escalao={match.escalao}
+                                    genero={genders[match.genero]}
+                                    onPress={() => { escolherProva(matchKey) }} />
+                            </View>
+                        )
+                    }
                 })
                 }
             </ScrollView>

@@ -1,7 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { getDatabase, ref, onValue, off, get, update } from "firebase/database";
-import useSportModalities from './useSportModalities';
+import { getDatabase, ref, onValue, get } from "firebase/database";
 
 const useParticipants = ({ matchId, modalidadeId }) => {
 
@@ -14,24 +12,77 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   // const sportModality = match && useSportModalities({ sportModalityId: match.modalidade })
 
-
-
-  const [results, setResults] = useState({})
   const [sportModality, setSportModality] = useState('')
   const [match, setMatch] = useState(null)
   const [enrolled, setEnrolled] = useState([])
 
-  const sortFunction = ([, a], [, b]) => {
-    if (sportModality?.unidade === "segundos") {
-      if (a.resultado === "" || a.resultado === null) return 1;
-      if (b.resultado === "" || b.resultado === null) return -1;
-      if (a.resultado === b.resultado) return 0;
-      return a.resultado < b.resultado ? -1 : 1;
-    } else if (sportModality?.unidade === "metros") {
+  const sortResultsEachAthlete = (a, b) => {
+    if (sportModality.nome === "Salto em altura") {
+      if (a.altura < b.altura) return -1
+      if (a.altura > b.altura) return 1
+    }
+    // return a.altura > b.altura ? -1 : 1
+  }
+
+  const sortHighestResultsTablePosition = ([, a], [, b]) => {
+
+    if (sportModality.unidade === 'segundos' || sportModality.unidade === 'horas') {
       if (a.resultado === "" || a.resultado === null) return 1;
       if (b.resultado === "" || b.resultado === null) return -1;
       if (a.resultado === b.resultado) return 0;
       return a.resultado > b.resultado ? -1 : 1;
+    }
+
+    if (sportModality.nome === 'Salto em comprimento') {
+      const resultsA = a.resultado
+      const resultsB = b.resultado
+
+      console.log("A", resultsA, "B", resultsB) 
+    }
+
+    if (sportModality.nome === 'Salto em altura') {
+
+      const resultsA = a.resultado
+      const resultsB = b.resultado
+
+      const failedAttemptA = resultsA.find(result => {
+        const attempts = result.tentativas
+        const failedAttemptsHeight = attempts.every(attempt => !attempt)
+        if (failedAttemptsHeight) return result
+      })
+
+      const failedAttemptB = resultsB.find(result => {
+        const attempts = result.tentativas
+        const failedAttemptsHeight = attempts.every(attempt => !attempt)
+        if (failedAttemptsHeight) return result
+      })
+
+      // console.log("A", failedAttemptA, "B", failedAttemptB)
+      // if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsB.length - 1] !== failedAttemptB) {
+      //   if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+      //   if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+      //   console.log("BB", failedAttemptA, "FF", failedAttemptB)
+      // } else {
+      //   console.log("minecraft", resultsA[resultsA.length - 2].altura)
+      //   if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+      //   if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+      // }
+
+      if (resultsA.length !== 1 && resultsB.length !== 1) {
+        if (failedAttemptA && failedAttemptB) {
+          console.log("AA", resultsA[resultsA.length - 2].altura, "BB", resultsB[resultsB.length - 2].altura)
+
+          if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+          if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+        }
+      }
+
+      // if (resultsB.length !== 1) {
+      //   console.log("BB", resultsB.length)
+      // }
+
+      if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+      if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
     }
   }
 
@@ -89,6 +140,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
       let enrolledResults = {}
       let enrolledResultsArray = []
+      let resultsArray = []
 
       snapshot.forEach((childSnapshot) => {
         const idParticipant = childSnapshot.key
@@ -100,12 +152,38 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
         enrolledResultsArray = Object.entries(enrolledResults)
 
-        // for (let i = 0; i < enrolledResultsArray.length; i++) {
-        //   // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
-        //   enrolledResultsArray.sort(sortFunction)
-        // }
+        enrolledResultsArray.map(enrolledResult => {
+          const result = enrolledResult[1].resultado
+          // let sortedResultsOfEachAthlete = []
+          // sortedResultsOfEachAthlete = 
+
+          if (sportModality.unidade === 'metros') result.sort(sortResultsEachAthlete)
+
+          // console.log("xx", result)
+          // sortedResultsOfEachAthlete.sort(sortHighestResultsTablePosition)
+          // console.log("SSS", sortedResultsOfEachAthlete)
+          return enrolledResult
+        })
+
+        for (let i = 0; i < enrolledResultsArray.length; i++) {
+          // enrolledResultsArray.sort(sortFunction)
+          enrolledResultsArray.sort(sortHighestResultsTablePosition)
+        }
+        // enrolledResultsArray.map((enrolledResult) => {
+        //   const result = enrolledResult[1].resultado
+
+        //   // if (result) {
+        //     let sortedResultsOfEachAthlete = []
+        //     sortedResultsOfEachAthlete = result.sort(sortResultsEachAthlete)
+        //     // console.log("sorted", sortedResultsOfEachAthlete)
+        //     resultsArray.push(sortedResultsOfEachAthlete)
+
+        //     resultsArray.sort(sortHighestResultsTablePosition)
+        //   // }
+        // })
       });
 
+      // console.log("bb", sorted)
       setEnrolled(enrolledResultsArray)
 
     }
@@ -118,65 +196,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   }, [match, sportModality])
 
-  // useEffect(() => {
-  //   const athletesRef = ref(db, '/atletas')
-  //   const participantsRef = ref(db, '/provas/' + matchId + '/participantes/')
-
-  //   let atletas = {}
-  //   let newResults = {}
-  //   let enrolledResultsArray = []
-  //   let enrolledResults = {}
-
-  //   const handler = async (snapshot) => {
-  //     let atletasSnapshot = await get(athletesRef)
-
-  //     atletasSnapshot.forEach((childSnapshot) => {
-  //       const childKey = childSnapshot.key;
-  //       const childData = childSnapshot.val();
-
-  //       if (childData.genero === match.genero) {
-  //         atletas[childKey] = childData
-  //       }
-
-  //     })
-
-  //     snapshot.forEach((childSnapshot) => {
-  //       const idParticipant = childSnapshot.key
-  //       const idAthlete = childSnapshot.val().atleta;
-  //       const result = childSnapshot.val().resultado;
-  //       // const { atleta: idAthlete, resultado: result } = childSnapshot.val();
-
-  //       newResults[idParticipant] = result || ''
-  //       // inscritos[idParticipant] = atletas[idAthlete]
-
-  //       // athletes = atletas[idAthlete]
-
-  //       console.log(`aaa`, atletas, atletas[idAthlete], idAthlete, result)
-
-  //       atletas[idAthlete].resultado = result || '';
-  //       enrolledResults[idParticipant] = atletas[idAthlete]
-  //       enrolledResultsArray = Object.entries(enrolledResults)
-
-  //       for (let i = 0; i < enrolledResultsArray.length; i++) {
-  //         // enrolledResultsArray.sort(([,a], [,b]) => a.resultado>b.resultado)
-  //         enrolledResultsArray.sort(sortFunction)
-  //       }
-  //     });
-
-  //     setAthletes(enrolledResultsArray)
-
-  //   }
-
-  //   const fetchParticipants = match && onValue(participantsRef, handler)
-
-  //   return (() => {
-  //     match && fetchParticipants()
-  //   })
-  // }, [sportModality, match])
-
   return [enrolled, sportModality]
 }
 
 export default useParticipants
-
-const styles = StyleSheet.create({})

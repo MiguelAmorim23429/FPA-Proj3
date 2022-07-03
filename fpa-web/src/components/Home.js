@@ -92,16 +92,16 @@ const Home = () => {
               <button className='side-bar-btn' onClick={() => navigate('/addcomp')}>Adicionar Competição</button>
             </li>
             <li>
-              <button className='side-bar-btn' onClick={() => navigate('/addathlete')}>Adicionar Atleta</button>
+              <button className='side-bar-btn' onClick={() => navigate('/addathlete')}>Atletas</button>
             </li>
             <li>
-              <button className='side-bar-btn' onClick={() => navigate('/addmanager')}>Adicionar Gestor</button>
+              <button className='side-bar-btn' onClick={() => navigate('/addmanager')}>Gestores</button>
             </li>
             <li>
               <button className='side-bar-btn' onClick={() => navigate('/permissionsmanager')}>Permissões Gestor</button>
             </li>
             <li>
-              <button className='side-bar-btn' onClick={() => navigate('/addclub')}>Adicionar Clube</button>
+              <button className='side-bar-btn' onClick={() => navigate('/addclub')}>Clubes</button>
             </li>
           </ul>
         </nav>

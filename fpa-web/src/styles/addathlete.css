@@ -5,9 +5,18 @@
     text-decoration: none;
 }
 
-.main-add-athlete-container {
+.add-athlete-form-container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 100%;
+    padding: 16px;
+}
+
+.form-closebtn {
+    width: 32px;
+    height: 32px;
+    color: black;
+    cursor: pointer;
 }
 
 .add-athlete-form {
@@ -15,17 +24,15 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    align-items: center;
     justify-content: center;
-    padding-top: 24px;
+    padding-top: 8px;
 }
 
 .add-athlete-input-container {
-    width: 90%;
     display: flex;
     flex-direction: row;
     gap: 16px;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .add-athlete-label {
@@ -58,4 +65,27 @@
     margin-top: 16px;
     cursor: pointer;
     font-family: 'QuicksandSemiBold';
+}
+
+.select-box-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-items: auto;
+    gap: 8px;
+}
+
+.single-select-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.info-match-select-box {
+    width: 90%;
+    height: 32px;
+}
+
+.select-default {
+    display: none;
 }

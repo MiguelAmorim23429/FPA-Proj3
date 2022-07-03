@@ -164,21 +164,18 @@
 
 .prova-btn-hide {
     display: none;
-    /* width: 100%; */
 }
 
 .prova-btn-show {
     display: flex;
     visibility: visible;
     width: 100%;
-    /* height: 28px; */
     height: 100%;
     border-style: none;
     align-items: center;
     justify-content: center;
     font-family: 'QuicksandMedium', sans-serif;
     font-size: 16px;
-
 }
 
 #goto-participants-btn {
@@ -193,10 +190,6 @@
 #goto-participants-btn:hover .btn-icon {
     color: #1375BC;
 }
-
-/* #goto-participants-btn:hover {
-    cursor: pointer;
-} */
 
 #apagar-prova-btn {
     background-color: white;

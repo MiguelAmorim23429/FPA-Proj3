@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { get, getDatabase, off, onValue, push, ref, set, update } from 'firebase/database';
+import { get, getDatabase, off, onValue, push, ref, remove, set, update } from 'firebase/database';
 import { useLocation } from 'react-router-dom';
 import '../styles/participantsprova.css'
 
@@ -29,20 +29,35 @@ const ParticipantsProva = () => {
         setIndexBtn(-1)
     }
 
-    const addParticipant = async (atletaKey) => {
+    const addParticipant = async (athleteKey) => {
 
-        const provasAtletaRef = ref(db, `/atletas/${atletaKey}/provas/${idMatch}`)
+        const athleteMatchesRef = ref(db, `/atletas/${athleteKey}/provas/${idMatch}`)
 
         if (match.estado === "emInscricoes") {
-            await set(provasAtletaRef, true) // adicionar uma prova à lista de provas do atleta que escolhemos na lista
+            await set(athleteMatchesRef, true) // adicionar uma prova à lista de provas do atleta que escolhemos na lista
 
             await push(participantsRef, { // adicionar este atleta como participante da prova que clicamos anteriomente
-                atleta: atletaKey
+                atleta: athleteKey
             })
         } else if (match.estado === "ativa") {
             window.alert("Esta prova já está a decorrer. Não pode adicionar mais participantes.")
         } else if (match.estado === "finalizada") {
             window.alert("Esta prova já terminou. Não pode adicionar mais participantes.")
+        }
+    }
+
+    const removeParticipant = async (athleteKey, participantKey) => {
+
+        const athleteMatchesRef = ref(db, `/atletas/${athleteKey}/provas/${idMatch}`)
+
+        const participantToRemoveRef = ref(db, `/provas/${idMatch}/participantes/${participantKey}`)
+
+        if (match.estado === "emInscricoes") {
+            await remove(athleteMatchesRef)
+            await remove(participantToRemoveRef)
+            console.log("REMOVEU", participantKey)
+        } else {
+            alert("Já não é possível remover participantes.")
         }
     }
 
@@ -65,7 +80,6 @@ const ParticipantsProva = () => {
     useEffect(() => {
 
         const handler = async (snapshot) => {
-            console.log(match)
             let athletesSnapshot = await get(athletesRef); // Buscar os atletas à base de dados
             let clubsSnapshot = await get(clubsRef);
 
@@ -78,18 +92,14 @@ const ParticipantsProva = () => {
                 clubs[childKey] = childData;
             })
 
-            // console.log(clubs);
-
             athletesSnapshot.forEach((childSnapshot) => { // Percorrer os atletas obtidos da BD, e inseri-los num objeto se o seu genero for igual ao genero da prova
                 const childKey = childSnapshot.key;
-                console.log("AAA", childSnapshot.val().clube)
                 const childData = childSnapshot.val();
                 if (childData.genero === match.genero && childData.escalao === match.escalao) {
                     athletes[childKey] = childData;
                     athletes[childKey].clube = clubs[childData.clube];
                 }
 
-                // console.log("BBB: ", clubs[childData.clube])
                 // athletes[childKey].clube = clubs[childData.clube].sigla;
             });
 
@@ -98,8 +108,15 @@ const ParticipantsProva = () => {
 
             snapshot.forEach((childSnapshot) => { // Percorrer os participantes obtidos da BD e inserir num objeto, as keys do atleta participante e a sua informação
                 const athleteId = childSnapshot.val().atleta;
-                enrolled[athleteId] = athletes[athleteId]
+                const participantKey = childSnapshot.key
+                // enrolled.idParticipante = participantId
+                enrolled[athleteId] = {
+                    participantKey: participantKey,
+                    athlete: athletes[athleteId]
+                }
             });
+
+            // console.log("aa", enrolled, "xx")
 
             for (let athleteId of Object.keys(athletes)) { // Percorrer os id's dos atletas, se exister um atleta com id diferente desses, inserir esse atleta num objeto
                 if (!enrolled[athleteId]) {
@@ -118,8 +135,6 @@ const ParticipantsProva = () => {
     }, [match])
 
     const updateMatchState = () => {
-
-        console.log(idMatch)
 
         const updates = {}
 
@@ -180,8 +195,7 @@ const ParticipantsProva = () => {
 
                     <h2>Não inscritos</h2>
 
-                    {Object.entries(notEnrolled).map(([key, value], index) => {
-
+                    {Object.entries(notEnrolled).map(([key, value], indexEnrolled) => {
                         const genders = {
                             "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
                             "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
@@ -189,7 +203,7 @@ const ParticipantsProva = () => {
 
                         return (
                             <div key={key} className='participant-container'
-                                onMouseEnter={() => showButton(index)} // quando metemos o rato por cima atribui este index à variável "indexBtn"
+                                onMouseEnter={() => showButton(indexEnrolled)} // quando metemos o rato por cima atribui este index à variável "indexBtn"
                                 onMouseLeave={hideButton}>
                                 <ul className='participant-list'>
                                     <li className='participant-list-item'>{value.nome}</li>
@@ -198,7 +212,7 @@ const ParticipantsProva = () => {
                                     <li className='participant-list-item'>{value.clube.sigla}</li>
                                 </ul>
                                 <div className='participant-list-btn-container'>
-                                    <button className={indexBtn === index ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => addParticipant(key)}>Adicionar</button>
+                                    <button className={indexBtn === indexEnrolled ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => addParticipant(key)}>Adicionar</button>
                                 </div>
                             </div>
 
@@ -208,22 +222,26 @@ const ParticipantsProva = () => {
                 <div className='main-participant-container'>
 
                     <h2>Inscritos</h2>
-                    
-                    {Object.entries(enrolled).map(([key, atleta]) => {
 
+                    {Object.entries(enrolled).map(([athleteKey, participant], index) => {
                         const genders = {
                             "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
                             "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
                         }
 
                         return (
-                            <div key={key} className='participant-container'>
+                            <div key={athleteKey} className='participant-container'
+                                onMouseEnter={() => showButton(index + "a")} // quando metemos o rato por cima atribui este index à variável "indexBtn"
+                                onMouseLeave={hideButton}>
                                 <ul className='participant-list'>
-                                    <li className='participant-list-item'>{atleta.nome}</li>
-                                    <li className='participant-list-item'>{genders[atleta.genero]}</li>
-                                    <li className='participant-list-item'>{atleta.escalao}</li>
-                                    <li className='participant-list-item'>{atleta.clube.sigla}</li>
+                                    <li className='participant-list-item'>{participant.athlete.nome}</li>
+                                    <li className='participant-list-item'>{genders[participant.athlete.genero]}</li>
+                                    <li className='participant-list-item'>{participant.athlete.escalao}</li>
+                                    <li className='participant-list-item'>{participant.athlete.clube.sigla}</li>
                                 </ul>
+                                <div className='participant-list-btn-container'>
+                                    <button className={indexBtn === index + "a" ? 'prova-btn-show' : 'prova-btn-hide'} id='remove-participant-btn' onClick={() => removeParticipant(athleteKey, participant.participantKey)}>Remover</button>
+                                </div>
                             </div>
 
                         )

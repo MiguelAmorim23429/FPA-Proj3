@@ -10,6 +10,7 @@ import ProvasCompetition from './components/ProvasCompetition';
 import Master from './components/Master';
 import ParticipantsProva from './components/ParticipantsProva';
 import AddAthlete from './components/AddAthlete';
+import AthletesList from './components/AthletesList';
 import AddManagers from './components/AddManagers';
 import ManagerPermissions from './components/ManagerPermissions';
 import AddClub from './components/AddClub';
@@ -65,7 +66,7 @@ function App() {
           element={
             <PrivateRoute>
               <Master>
-                <AddAthlete />
+                <AthletesList />
               </Master>
             </PrivateRoute>
           } />

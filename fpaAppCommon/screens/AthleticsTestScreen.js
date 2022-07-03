@@ -57,7 +57,14 @@ const AthleticsTestScreen = ({ route }) => {
                             name={enrolled[1].nome}
                             club={enrolled[1].clube.sigla}
                             ageGroup={enrolled[1].escalao.substring(0, 3)}
-                            result={enrolled[1].resultado[index].marca} />,
+                            result={enrolled[1].resultado[0].marca} />,
+                        "Salto em altura": < ParticipantResultCard
+                            key={index}
+                            position={index}
+                            name={enrolled[1].nome}
+                            club={enrolled[1].clube.sigla}
+                            ageGroup={enrolled[1].escalao.substring(0, 3)}
+                            result={enrolled[1].resultado[0].altura} />,
                         "Corrida 100 metros": < ParticipantResultCard
                             key={index}
                             position={index}
