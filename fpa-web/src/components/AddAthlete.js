@@ -89,10 +89,6 @@ const AddAthlete = (props) => {
                         <input className='add-athlete-input' placeholder='Nome' type='text' value={name}
                             onChange={event => setName(event.target.value)}></input>
                     </div>
-
-                    {/* <div className='input-validation-box'>
-                        <label className='validation-label'></label>
-                    </div> */}
                 </div>
 
                 <div className='add-athlete-input-container'>
@@ -101,54 +97,51 @@ const AddAthlete = (props) => {
                         <input className='add-athlete-input' placeholder='Número de federação' type='text' value={federationNumber}
                             onChange={event => setFederationNumber(event.target.value)}></input>
                     </div>
-
-                    {/* <div className='input-validation-box'>
-                        <label className='validation-label'></label>
-                    </div> */}
                 </div>
-
-                {/* <div className='add-athlete-input-container'>
-                    <div className='input-value-box'>
-                        <label className='add-athlete-label'>Clube</label>
-                        <input className='add-athlete-input' placeholder='Clube' type='text' value={club}
-                            onChange={event => setClub(event.target.value)}></input>
-                    </div>
-
-                    {/* <div className='input-validation-box'>
-                        <label className='validation-label'></label>
-                    </div> */}
-                {/* </div>  */}
 
                 <div className='add-athlete-input-container'>
                     <div className='input-value-box'>
                         <label className='add-athlete-label'>Data de nascimento</label>
                         <input className='add-athlete-input' type='date' value={birthDate} onChange={event => setBirthDate(event.target.value)}></input>
                     </div>
+                </div>
 
-                    {/* <div className='input-validation-box'>
-                        <label className='validation-label'></label>
-                    </div> */}
+                <div className='select-box-container'>
+                    <div className='single-select-container'>
+                        <select className='info-match-select-box' required onChange={event => setGender(event.target.value)}>
+                            <option className='select-default' selected disabled value="">Género</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Feminino">Feminino</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div className='select-box-container'>
+                    <div className='single-select-container'>
+                        <select className='info-match-select-box' required onChange={event => setClub(event.target.value)}>
+                            <option className='select-default' selected disabled value="">Clube</option>
+                            {clubs.map(([key, value]) => {
+                                return (<option value={key}>{value.nome} - {value.sigla}</option>)
+                            })}
+                        </select>
+                    </div>
+                </div>
+
+                <div className='select-box-container'>
+                    <div className='single-select-container'>
+                        <select className='info-match-select-box' required onChange={event => setAgeGroup(event.target.value)}>
+                            <option className='select-default' selected disabled value="">Escalão</option>
+                            <option value="INICIADOS">INICIADOS</option>
+                            <option value="JUNIORES">JUNIORES</option>
+                        </select>
+                    </div>
                 </div>
 
 
-                <select required onChange={event => setGender(event.target.value)}>
-                    <option selected hidden disabled value="">Género</option>
-                    <option value="Masculino">Masculino</option>
-                    <option value="Feminino">Feminino</option>
-                </select>
 
-                <select required onChange={event => setClub(event.target.value)}>
-                    <option selected hidden disabled value="">Clube</option>
-                    {clubs.map(([key, value]) => {
-                        return (<option value={key}>{value.nome} - {value.sigla}</option>)
-                    })}
-                </select>
 
-                <select required onChange={event => setAgeGroup(event.target.value)}>
-                    <option selected hidden disabled value="">Escalão</option>
-                    <option value="INICIADOS">INICIADOS</option>
-                    <option value="JUNIORES">JUNIORES</option>
-                </select>
+
+
 
                 <button className='add-athlete-btn' type='submit'>Adicionar</button>
             </form>

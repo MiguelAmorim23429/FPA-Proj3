@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import { ref, getDatabase, push } from 'firebase/database';
 
 import '../styles/addclub.css'
+import * as AiIcons from 'react-icons/ai'
 
-function AddClub() {
+function AddClub(props) {
+
+    const { showAddClubComponent, setShowAddClubComponent } = props
 
     const [name, setName] = useState('');
     const [initials, setInitials] = useState('');
@@ -27,9 +30,9 @@ function AddClub() {
     }
 
     return (
-        <div className='main-add-club-container'>
+        <div className='add-club-form-container'>
 
-            <h1 className='add-info-page-title'>Adicionar um clube</h1>
+            <AiIcons.AiOutlineClose className='form-closebtn' onClick={() => setShowAddClubComponent(false)} />
             <form className='add-club-form' onSubmit={addClub}>
 
                 <div className='add-club-input-container'>
@@ -56,7 +59,7 @@ function AddClub() {
                     </div> */}
                 </div>
 
-                <button className='add-new-club-btn' type='submit'>Adicionar</button>
+                <button className='add-club-btn' type='submit'>Adicionar</button>
 
             </form>
         </div>

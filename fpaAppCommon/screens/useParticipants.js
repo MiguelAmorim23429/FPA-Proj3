@@ -14,7 +14,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   const [sportModality, setSportModality] = useState('')
   const [match, setMatch] = useState(null)
-  const [enrolled, setEnrolled] = useState([])
+  const [participants, setEnrolled] = useState([])
 
   const sortResultsEachAthlete = (a, b) => {
     if (sportModality.nome === "Salto em altura") {
@@ -57,17 +57,6 @@ const useParticipants = ({ matchId, modalidadeId }) => {
         if (failedAttemptsHeight) return result
       })
 
-      // console.log("A", failedAttemptA, "B", failedAttemptB)
-      // if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsB.length - 1] !== failedAttemptB) {
-      //   if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-      //   if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
-      //   console.log("BB", failedAttemptA, "FF", failedAttemptB)
-      // } else {
-      //   console.log("minecraft", resultsA[resultsA.length - 2].altura)
-      //   if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-      //   if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
-      // }
-
       if (resultsA.length !== 1 && resultsB.length !== 1) {
         if (failedAttemptA && failedAttemptB) {
           console.log("AA", resultsA[resultsA.length - 2].altura, "BB", resultsB[resultsB.length - 2].altura)
@@ -76,10 +65,6 @@ const useParticipants = ({ matchId, modalidadeId }) => {
           if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
         }
       }
-
-      // if (resultsB.length !== 1) {
-      //   console.log("BB", resultsB.length)
-      // }
 
       if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
       if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
@@ -196,7 +181,7 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
   }, [match, sportModality])
 
-  return [enrolled, sportModality]
+  return [participants, sportModality]
 }
 
 export default useParticipants

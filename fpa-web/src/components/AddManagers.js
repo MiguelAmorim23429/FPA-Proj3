@@ -5,7 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { authRegister } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 
-const AddManagers = () => {
+import * as AiIcons from 'react-icons/ai'
+
+const AddManagers = (props) => {
+
+    const { showAddManagerComponent, setShowAddManagerComponent } = props
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -153,13 +157,14 @@ const AddManagers = () => {
     }
 
     return (
-        <div className='main-add-manager-container'>
+        <div className='add-manager-form-container'>
+            <AiIcons.AiOutlineClose className='form-closebtn' onClick={() => setShowAddManagerComponent(false)} />
             <form className='add-manager-form' onSubmit={addManager}>
 
-                <div className='input-container'>
+                <div className='add-manager-input-container'>
                     <div className='input-value-box'>
-                        <label>Nome</label>
-                        <input className='update-comp-input' placeholder='Nome de Utilizador' type='text' value={username}
+                        <label className='add-manager-label'>Nome</label>
+                        <input className='add-manager-input' placeholder='Nome de Utilizador' type='text' value={username}
                             onChange={event => setUsername(event.target.value)}></input>
                     </div>
 
@@ -170,10 +175,10 @@ const AddManagers = () => {
 
                 </div>
 
-                <div className='input-container'>
+                <div className='add-manager-input-container'>
                     <div className='input-value-box'>
-                        <label>Email</label>
-                        <input className='update-comp-input' placeholder='Email' type='email' value={email}
+                        <label className='add-manager-label'>Email</label>
+                        <input className='add-manager-input' placeholder='Email' type='email' value={email}
                             onChange={event => setEmail(event.target.value)}></input>
                     </div>
 
@@ -184,10 +189,10 @@ const AddManagers = () => {
 
                 </div>
 
-                <div className='input-container'>
+                <div className='add-manager-input-container'>
                     <div className='input-value-box'>
-                        <label>Password</label>
-                        <input className='update-comp-input' placeholder='Palavra-Passe' type='password' value={password}
+                        <label className='add-manager-label'>Password</label>
+                        <input className='add-manager-input' placeholder='Palavra-Passe' type='password' value={password}
                             onChange={event => setPassword(event.target.value)}></input>
                     </div>
 

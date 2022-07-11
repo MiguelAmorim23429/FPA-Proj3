@@ -4,18 +4,44 @@ import { getDatabase, ref, onValue, get } from "firebase/database";
 const useFetch = ({ matchId, sportModalityId }) => {
 
 
-    const [sportModality, setSportModality] = useState('')
+    const [sportModality, setSportModality] = useState({})
+    const [competitions, setCompetitions] = useState([])
     const [match, setMatch] = useState({})
-    const [enrolled, setEnrolled] = useState([])
+    const [participants, setEnrolled] = useState([])
     const [athletes, setAthletes] = useState([])
+    const [clubs, setClubs] = useState([])
 
     const db = getDatabase()
+
+    useEffect(() => {
+        const competitionsRef = ref(db, '/competicoes/')
+        const handler = (snapshot) => {
+
+            let competitionsArray = []
+
+            snapshot.forEach((childSnapshot) => {
+                const childKey = childSnapshot.key;
+                const childData = childSnapshot.val();
+                competitionsArray.push([childKey, childData])
+            });
+            console.log(competitionsArray)
+
+            setCompetitions(competitionsArray)
+        }
+
+        const closeFetchCompetitions = onValue(competitionsRef, handler)
+    
+      return () => {
+        closeFetchCompetitions()
+      }
+    }, [])
 
     useEffect(() => {
         const clubsRef = ref(db, '/clubes/')
         const athletesRef = ref(db, '/atletas')
 
-        let clubs = {}
+        let clubsObj = {}
+        let clubsArray = []
         let athletesObj = {}
         let athletesArray = []
 
@@ -23,8 +49,14 @@ const useFetch = ({ matchId, sportModalityId }) => {
             clubsSnapshot.forEach((childSnapshot) => {
                 const childKey = childSnapshot.key
                 const childData = childSnapshot.val()
-                clubs[childKey] = childData
+                clubsObj[childKey] = childData
+
+                console.log(clubsObj)
+
+                clubsArray = Object.entries(clubsObj)
             })
+
+            setClubs(clubsArray)
         })
 
         get(athletesRef).then((athletesSnapshot) => {
@@ -32,7 +64,7 @@ const useFetch = ({ matchId, sportModalityId }) => {
                 const childKey = childSnapshot.key
                 const childData = childSnapshot.val()
                 athletesObj[childKey] = childData
-                athletesObj[childKey].clube = clubs[childData.clube]
+                athletesObj[childKey].clube = clubsObj[childData.clube]
 
                 athletesArray = Object.entries(athletesObj)
             })
@@ -65,6 +97,7 @@ const useFetch = ({ matchId, sportModalityId }) => {
             get(sportModalitiesRef).then((childSnapshot) => {
                 setSportModality(childSnapshot.val())
             })
+
         }
     }, [])
 
@@ -107,9 +140,9 @@ const useFetch = ({ matchId, sportModalityId }) => {
             })
         }
 
-    }, [match, sportModality])
+    }, [match])
 
-    return [athletes, sportModality, enrolled]
+    return [athletes, clubs, sportModality, participants, competitions]
 }
 
 export default useFetch

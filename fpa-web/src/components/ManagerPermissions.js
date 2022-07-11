@@ -1,13 +1,26 @@
 import React, { useState, useEffect, useContext } from 'react'
-import '../styles/managerpermissions.css'
+import { useNavigate } from 'react-router-dom';
 import { getDatabase, ref, onValue, update, off } from "firebase/database"
 import { UserAuthContext } from '../context/AuthContextProvider';
 
+import '../styles/managerpermissions.css'
+
+
 import * as BsIcons from 'react-icons/bs'
+import * as IoIcons from 'react-icons/io'
+import * as AiIcons from 'react-icons/ai'
+import * as FaIcons from 'react-icons/fa'
+
+import AddManagers from './AddManagers'
 
 function ManagerPermissions() {
 
+    const [showAddManagerComponent, setShowAddManagerComponent] = useState(false)
     const [users, setUsers] = useState([])
+    const [sidebar, setSidebar] = useState(false);
+
+    const showSideBar = () => { setSidebar(!sidebar) }
+    const navigate = useNavigate()
 
     const db = getDatabase()
 
@@ -18,7 +31,7 @@ function ManagerPermissions() {
     console.log(user)
 
     useEffect(() => {
-        
+
         const handler = (snapshot) => {
             let usersArray = []
             let userObj = {}
@@ -27,7 +40,7 @@ function ManagerPermissions() {
                 const childKey = childSnapshot.key;
                 const childData = childSnapshot.val();
                 userObj = JSON.parse(localStorage.getItem("logged-user"))
-                if(userObj.uid != childKey) {
+                if (userObj.uid !== childKey) {
                     usersArray.push([childKey, childData])
                 }
             });
@@ -62,32 +75,68 @@ function ManagerPermissions() {
 
 
     return (
-        users.length == 0 ? (
-            <div className='main-managerpermissions-container'>
-                <div className='users-list-container'>
-                    <div className='users-container' style={{ justifyContent: 'center', alignItems: 'center', height: '180px' }}>
-                        <p>Não existem utilizadores inscritos. <br/>
-                        Adicione utilizadores</p>
-                    </div>
+        users.length === 0 ? (
+            <div className={showAddManagerComponent ? 'shadowed-container' : 'container'}>
+                <div className='no-users-found-container'>
+                    <h1>Sem Resultados</h1>
+                    <p>Adicione um gestor novo.</p>
                 </div>
             </div>
         ) : (
-            <div className='main-managerpermissions-container'>
-                <div className='users-list-container'>
-                    {users.map(([key, user], index) => {
+            <div className={showAddManagerComponent ? 'shadowed-container' : 'container'}>
+
+                <div className={showAddManagerComponent ? 'main-add-manager-container' : 'hidden-main-add-manager-container'}>
+                    <AddManagers showAddManagerComponent={showAddManagerComponent} setShowAddManagerComponent={setShowAddManagerComponent} />
+                </div>
+
+                <div>
+                    <FaIcons.FaBars className='side-bar-openbtn' onClick={showSideBar} />
+                    <nav className={sidebar ? 'side-bar-show' : 'side-bar-hide'}>
+                        <ul className='side-bar-menu-times'>
+                            <li>
+                                <AiIcons.AiOutlineClose className='side-bar-closebtn' onClick={showSideBar} />
+                            </li>
+                            <li>
+                                <button className='side-bar-btn' onClick={() => navigate('/atletas')}>Atletas</button>
+                            </li>
+                            <li>
+                                <button className='side-bar-btn' onClick={() => navigate('/gestores')}>Gestores</button>
+                            </li>
+                            <li>
+                                <button className='side-bar-btn' onClick={() => navigate('/clubes')}>Clubes</button>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+
+                <button className={showAddManagerComponent ? 'shadowed-show-add-manager-btn' : 'show-add-manager-btn'} onClick={() => setShowAddManagerComponent(true)}>Adicionar gestor</button>
+
+                <div className='user-headers'>
+                    <h4 className='user-line-header'>Nome</h4>
+                    <h4 className='user-line-header'>Email</h4>
+                    <h4 className='user-line-header'>Status</h4>
+                    <h4 className='user-line-header'></h4>
+                </div>
+
+                <div className='users-list'>
+                    {users.map(([userKey, user], index) => {
                         const authorization = {
-                            false: <label className='status-label'>Não Autorizado <BsIcons.BsXCircle id='not-authorized-icon'/> </label>,
-                            true: <label className='status-label'>Autorizado <BsIcons.BsCheckCircle id='authorized-icon'/></label>
+                            false: <label className='status-label'>Não Autorizado <BsIcons.BsXCircle id='not-authorized-icon' /> </label>,
+                            true: <label className='status-label'>Autorizado <BsIcons.BsCheckCircle id='authorized-icon' /></label>
                         }
                         return (
-                            <div key={key} className='users-container'>
-                                <ul className='users-info-list'>
-                                    <li className='users-list-item'>{user.username}</li>
-                                    <li className='users-list-item'>{user.email}</li>
-                                    <li className='users-list-item' id={user.autorizado == false ? 'label-not-authorized' : 'label-authorized'}>{authorization[user.autorizado]}</li>
-                                    <button className={user.autorizado == false ? 'update-btn-autorizar' : 'update-btn-naoautorizar'} onClick={user.autorizado == false ? () => window.confirm("Deseja mesmo dar permissões a este utilizador?") && givePermissions(key) : () => window.confirm("Deseja mesmo retirar permissões a este utilizador?") && removePermissions(key)}>{user.autorizado == false ? "Dar Permissões" : "Tirar Permissões"}</button>
-                                </ul>
-                            </div>
+                            <ul key={userKey} className='user-line'>
+                                <li className='users-line-item'>{user.username}</li>
+                                <li className='users-line-item'>{user.email}</li>
+                                <li className='users-line-item' id={user.autorizado === false ? 'label-not-authorized' : 'label-authorized'}>{authorization[user.autorizado]}</li>
+                                <li className='users-line-item'>
+                                    <button className={showAddManagerComponent ? 'shadowed-update-btn' : 'update-btn'}
+                                    // <button className={user.autorizado === false ? 'update-btn-autorizar' : 'update-btn-naoautorizar'}
+                                        onClick={user.autorizado === false ? () => window.confirm("Deseja mesmo dar permissões a este utilizador?") && givePermissions(userKey) :
+                                            () => window.confirm("Deseja mesmo retirar permissões a este utilizador?") && removePermissions(userKey)}>
+                                        {user.autorizado === false ? "Dar Permissões" : "Tirar Permissões"}</button>
+                                </li>
+                            </ul>
                         )
                     })}
                 </div >

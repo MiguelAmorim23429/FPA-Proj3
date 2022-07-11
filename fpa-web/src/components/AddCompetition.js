@@ -5,7 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import { storage } from '../firebase';
 import { uploadBytes, ref as sref, getDownloadURL } from 'firebase/storage';
 
-const AddCompetition = () => {
+import * as AiIcons from 'react-icons/ai'
+
+const AddCompetition = (props) => {
+
+    const { showAddCompetitionComponent, setShowAddCompetitionComponent } = props
 
     const [name, setName] = useState('');
     const [date, setDate] = useState('');
@@ -174,49 +178,45 @@ const AddCompetition = () => {
         )
     }, [name, date, location]);
 
-
-
     return (
         <div className='main-add-comp-container'>
+            <AiIcons.AiOutlineClose className='form-closebtn' onClick={() => setShowAddCompetitionComponent(false)} />
             <form className='add-comp-form' onSubmit={handleSubmit}>
 
-                <div className='input-container'>
+                <div className='add-comp-input-container'>
                     <div className='input-value-box'>
-                        <label>Nome</label>
-                        <input className='update-comp-input' type='text' value={name}
+                        <label className='add-comp-label'>Nome</label>
+                        <input className='add-comp-input' type='text' value={name}
                             onChange={event => setName(event.target.value)}></input>
                     </div>
 
                     <div className='input-validation-box'>
-                        {/* <label className='validation-label'>aaa</label> */}
                         <label className='validation-label'>{!errors.name.valid && errors.name.message}</label>
                     </div>
 
                 </div>
 
-                <div className='input-container'>
+                <div className='add-comp-input-container'>
                     <div className='input-value-box'>
-                        <label>Data</label>
-                        <input className='update-comp-input' type='date' value={date}
+                        <label className='add-comp-label'>Data</label>
+                        <input className='add-comp-input' type='date' value={date}
                             onChange={event => setDate(event.target.value)}></input>
                     </div>
 
                     <div className='input-validation-box'>
-                        {/* <label className='validation-label'>bbb</label> */}
                         <label className='validation-label'>{!errors.date.valid && errors.date.message}</label>
                     </div>
 
                 </div>
 
-                <div className='input-container'>
+                <div className='add-comp-input-container'>
                     <div className='input-value-box'>
-                        <label>Local</label>
-                        <input className='update-comp-input' type='text' value={location}
+                        <label className='add-comp-label'>Local</label>
+                        <input className='add-comp-input' placeholder='Cidade, Localização ...' type='text' value={location}
                             onChange={event => setLocation(event.target.value)}></input>
                     </div>
 
                     <div className='input-validation-box'>
-                        {/* <label className='validation-label'>ccc</label> */}
                         <label className='validation-label'>{!errors.location.valid && errors.location.message}</label>
                     </div>
 

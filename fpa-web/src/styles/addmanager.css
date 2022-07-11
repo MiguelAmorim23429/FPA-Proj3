@@ -5,21 +5,54 @@
     text-decoration: none;
 }
 
-.main-add-manager-container {
-    min-height: 100%;
+.add-manager-form-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    padding: 16px;
+}
+
+.form-closebtn {
+    width: 32px;
+    height: 32px;
+    color: black;
+    cursor: pointer;
 }
 
 .add-manager-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
-    width: 50%;
-    height: 100%;
-    align-items: center;
-    margin-top: 48px;
-    padding: 24px 0;
+    width: 100%;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.add-manager-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: flex-start;
+}
+
+.add-manager-label {
+    font-size: 16px;
+    font-family: 'QuicksandMedium', sans-serif;
+    padding-left: 4px;
+    padding-bottom: 4px;
+}
+
+.add-manager-input {
+    font-size: 16px;
+    font-family: 'QuicksandRegular', sans-serif;
+    height: 56px;
+    padding-left: 8px;
+    border: 1px solid #777;
+    border-radius: 4px;
+}
+
+.add-manager-input:focus {
+    outline: none;
 }
 
 .add-manager-btn {
@@ -30,8 +63,7 @@
     height: 40px;
     font-size: 16px;
     margin-top: 16px;
-}
-
-.add-manager-btn:hover {
     cursor: pointer;
+    font-family: 'QuicksandSemiBold';
+    align-self: center;
 }

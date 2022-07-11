@@ -22,29 +22,7 @@
     transition: 350ms;
 }
 
-.main-add-athlete-container {
-    top: 0;
-    right: 0;
-    transition: 350ms;
-    position: absolute;
-    width: calc(100vw / 3);
-    height: 100vh;
-    z-index: 1;
-    background-color: white;
-}
-
-.hidden-main-add-athlete-container {
-    top: 0;
-    right: calc(-100vw - (100vw / 3));
-    position: absolute;
-    position: fixed;
-    transition: 850ms;
-    width: 560px;
-    height: 100vh;
-    z-index: 1;
-}
-
-.show-add-athlete-btn {
+.show-add-club-btn {
     width: 180px;
     height: 48px;
     color: white;
@@ -59,21 +37,42 @@
     transition: 850ms;
 }
 
-.shadowed-show-add-athlete-btn {
+.shadowed-show-add-club-btn {
     width: 180px;
     height: 48px;
-    color: rgba(255,255,255, 0.5);
+    color: rgba(255, 255, 255, 0.5);
     border-radius: 24px;
     border-style: none;
     margin-top: 16px;
     font-family: 'QuicksandSemiBold';
     font-size: 16px;
     background: rgba(19, 117, 188, 0.5);
-    /* opacity: 0.5; */
     transition: 350ms;
 }
 
-.athlete-headers {
+.main-add-club-container {
+    top: 0;
+    right: 0;
+    transition: 350ms;
+    position: absolute;
+    width: calc(100vw / 3);
+    height: 100vh;
+    z-index: 1;
+    background-color: white;
+}
+
+.hidden-main-add-club-container {
+    top: 0;
+    right: calc(-100vw - (100vw / 3));
+    position: absolute;
+    position: fixed;
+    transition: 850ms;
+    width: 560px;
+    height: 100vh;
+    z-index: 1;
+}
+
+.club-headers {
     display: flex;
     flex-direction: row;
     margin-top: 16px;
@@ -82,11 +81,11 @@
     font-family: 'QuicksandBold';
 }
 
-.athlete-line-header {
+.club-line-header {
     width: 25%;
 }
 
-.athletes-list {
+.clubs-list {
     display: flex;
     flex-direction: column;
     border-width: 1px;
@@ -104,7 +103,7 @@
     border-width: 0;
 } */
 
-.athlete-line {
+.club-line {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -116,10 +115,10 @@
     font-family: 'QuicksandMedium';
 }
 
-.athlete-line:last-child {
+.club-line:last-child {
     border-width: 0;
 }
 
-.athlete-line-item {
+.club-line-item {
     width: 25%;
 }

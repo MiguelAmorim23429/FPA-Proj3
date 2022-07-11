@@ -1,12 +1,15 @@
-.main-add-club-container {
+.add-club-form-container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    height: 100%;
+    padding: 16px;
 }
 
-.add-info-page-title {
-    text-align: center;
-    margin-top: 56px;
-    font-family: 'QuicksandBold';
+.form-closebtn {
+    width: 32px;
+    height: 32px;
+    color: black;
+    cursor: pointer;
 }
 
 .add-club-form {
@@ -14,17 +17,15 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    align-items: center;
     justify-content: center;
-    padding-top: 24px;
+    padding-top: 8px;
 }
 
 .add-club-input-container {
-    width: 90%;
     display: flex;
     flex-direction: row;
     gap: 16px;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .add-club-label {
@@ -47,7 +48,7 @@
     outline: none;
 }
 
-.add-new-club-btn {
+.add-club-btn {
     border-radius: 1em;
     border-style: none;
     /* background-color: white; */
@@ -57,4 +58,5 @@
     margin-top: 16px;
     cursor: pointer;
     font-family: 'QuicksandSemiBold';
+    align-self: center;
 }

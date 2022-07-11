@@ -46,6 +46,14 @@
     z-index: 1;
 }
 
+.no-matches-found-container {
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .add-btn-container {
     display: flex;
     flex-direction: row;
@@ -201,7 +209,8 @@
 }
 
 #apagar-prova-btn:hover .btn-icon {
-    color: #E81123;;
+    color: #E81123;
+    ;
 }
 
 .add-new-match-form-closebtn {
@@ -215,8 +224,11 @@
     cursor: pointer;
 }
 
-.main-add-new-match-container {
+.add-match-form-container {
+    display: flex;
+    flex-direction: column;
     width: 100%;
+    padding: 16px;
 }
 
 .add-new-match-form {
@@ -224,22 +236,34 @@
     flex-direction: column;
     gap: 16px;
     width: 100%;
-    align-items: center;
-    padding-top: 24px;
+    justify-content: center;
+    padding-top: 8px;
 }
 
-.add-new-match-input {
-    width: 100%;
-    height: 32px;
+.add-match-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: flex-start;
+}
+
+.add-match-label {
     font-size: 16px;
-    padding: 0 4px;
-    border-width: 1px;
-    border-style: solid;
-    border-radius: 4px;
-    color: rgb(40, 40, 40);
+    font-family: 'QuicksandMedium', sans-serif;
+    padding-left: 4px;
+    padding-bottom: 4px;
 }
 
-.add-new-match-input:focus {
+.add-match-input {
+    font-size: 16px;
+    font-family: 'QuicksandRegular', sans-serif;
+    height: 56px;
+    padding-left: 8px;
+    border: 1px solid #777;
+    border-radius: 4px;
+}
+
+.add-match-input:focus {
     outline: none;
 }
 
@@ -251,8 +275,7 @@
     height: 40px;
     font-size: 16px;
     margin-top: 16px;
-}
-
-.add-new-match-btn:hover {
     cursor: pointer;
+    font-family: 'QuicksandSemiBold';
+    align-self: center;
 }

@@ -218,15 +218,15 @@ function AddMatch(props) {
     }
 
     return (
-        <div className='main-add-new-match-container'>
+        <div className='add-match-form-container'>
             <AiIcons.AiOutlineClose className='add-new-match-form-closebtn' onClick={showAddNewMatchForm} />
 
             <form className='add-new-match-form' onSubmit={handleSubmit}>
 
-                <div className='input-container'>
+                <div className='add-match-input-container'>
                     <div className='input-value-box'>
-                        <label>Nome</label>
-                        <input className='add-new-match-input'
+                        <label className='add-match-label'>Nome</label>
+                        <input className='add-match-input'
                             name='name'
                             value={name}
                             onChange={event => handleChangeWithValidation(event)}></input>
@@ -239,10 +239,10 @@ function AddMatch(props) {
 
                 </div>
 
-                <div className='input-container'>
+                <div className='add-match-input-container'>
                     <div className='input-value-box'>
-                        <label>Hora</label>
-                        <input className='add-new-match-input' placeholder='ex: 09:32, 13:09'
+                        <label className='add-match-label'>Hora</label>
+                        <input className='add-match-input' placeholder='ex: 09:32, 13:09'
                             name='hour'
                             type='time'
                             value={hour}
@@ -256,10 +256,10 @@ function AddMatch(props) {
 
                 </div>
 
-                <div className='input-container'>
+                <div className='add-match-input-container'>
                     <div className='input-value-box'>
-                        <label>Categoria</label>
-                        <input className='add-new-match-input'
+                        <label className='add-match-label'>Categoria</label>
+                        <input className='add-match-input'
                             name='category'
                             value={category}
                             onChange={event => handleChangeWithValidation(event)}></input>

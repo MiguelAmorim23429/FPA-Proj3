@@ -87,15 +87,9 @@ const ProvasCompetition = () => {
                 <div className={addNewMatchForm ? 'add-new-match-form-show' : 'add-new-match-form-hide'}>
                     <AddMatch addForm={addNewMatchForm} showForm={showAddNewMatchForm} />
                 </div>
-
-                <div className='main-prova-container'>
-                    <div className='prova-container' style={{ justifyContent: 'center', alignItems: 'center', height: '180px' }}>
-                        <p>
-                            Competição sem provas programadas.
-                            <br />
-                            Adicione Provas
-                        </p>
-                    </div>
+                <div className='no-matches-found-container'>
+                    <h1>Competição sem provas programadas.</h1>
+                    <p>Adicione Provas</p>
                 </div>
             </div>
         ) : (

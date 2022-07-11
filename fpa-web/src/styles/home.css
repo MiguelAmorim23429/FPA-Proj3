@@ -139,77 +139,85 @@
     width: 100%;
 }
 
-/*@media screen and (max-width: 720px) {
-/*    .main-competition-container {
-/*        display: grid;
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        grid-template-columns: minmax(360px, 1fr);
-/*        padding: 8px;
-/*        column-gap: 12px;
-/*        row-gap: 32px;
-/*    }
-/*}
-/*
-/*@media screen and (min-width: 720px) {
-/*    .main-competition-container {
-/*        display: grid;
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-/*        padding: 8px;
-/*        column-gap: 12px;
-/*        row-gap: 32px;
-/*    }
-/*}
-/*
-/*@media screen and (min-width: 1366px) {
-/*    .main-competition-container {
-/*        display: grid;
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill, 1fr); */
-/*        /* grid-template-columns: repeat(minmax(270px)); */
-/*        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-/*        padding: 8px;
-/*        column-gap: 12px;
-/*        row-gap: 32px;
-/*    }
-/*}
+.container {
+    min-height: 100vh;
+    display: flex;
+    padding: 0 16px;
+    flex-direction: column;
+    transition: 850ms;
+}
 
-/*@media screen and (min-width: 1920px) {
-/*    .main-competition-container {
-/*        display: grid;
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        /* grid-template-columns: repeat(auto-fill,minmax(360px, 1fr)); */
-/*        grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-/*        padding: 8px;
-/*        column-gap: 12px;
-/*        row-gap: 32px;
-/*    }
-}*/
+.shadowed-container {
+    min-height: 100vh;
+    display: flex;
+    padding: 0 16px;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.5);
+    transition: 350ms;
+}
+
+.main-add-competition-container {
+    top: 0;
+    right: 0;
+    transition: 350ms;
+    position: absolute;
+    width: calc(100vw / 3);
+    height: 100vh;
+    z-index: 1;
+    background-color: white;
+}
+
+.hidden-main-add-competition-container {
+    top: 0;
+    right: calc(-100vw - (100vw / 3));
+    position: absolute;
+    position: fixed;
+    transition: 850ms;
+    width: 560px;
+    height: 100vh;
+    z-index: 1;
+}
+
+.add-competition-btn {
+    width: 180px;
+    height: 48px;
+    color: white;
+    background-color: #1375BC;
+    border-radius: 24px;
+    border-style: none;
+    margin-top: 16px;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    font-family: 'QuicksandSemiBold';
+    font-size: 16px;
+    transition: 850ms;
+}
+
+.shadowed-add-competition-btn {
+    width: 180px;
+    height: 48px;
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+    border-style: none;
+    margin-top: 16px;
+    font-family: 'QuicksandSemiBold';
+    font-size: 16px;
+    background: rgba(19, 117, 188, 0.5);
+    transition: 350ms;
+}
 
 .main-competition-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
-    padding: 8px;
     column-gap: 12px;
+    margin-top: 16px;
     row-gap: 32px;
 }
 
 .competition-container {
     position: relative;
     height: 270px;
-    border-radius: 1em; 
-}
-
-
-
-.competition-container:hover {
-    cursor: pointer;
+    border-radius: 1em;
 }
 
 .competition-img {
@@ -228,6 +236,21 @@
     color: #ffffff;
     border-radius: 1em;
     box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    transition: 850ms;
+}
+
+.shadowed-competition-info {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.5);
+    border-radius: 1em;
+    box-shadow: 1px 1px 6px rgba(0, 0, 0, 0.25);
+    background-color: rgba(0, 0, 0, 0.4);
+    transition: 350ms;
 }
 
 .title-header {

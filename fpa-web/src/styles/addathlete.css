@@ -65,6 +65,7 @@
     margin-top: 16px;
     cursor: pointer;
     font-family: 'QuicksandSemiBold';
+    align-self: center;
 }
 
 .select-box-container {

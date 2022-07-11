@@ -9,11 +9,10 @@ import UpdateCompetition from './components/UpdateCompetition';
 import ProvasCompetition from './components/ProvasCompetition';
 import Master from './components/Master';
 import ParticipantsProva from './components/ParticipantsProva';
-import AddAthlete from './components/AddAthlete';
 import AthletesList from './components/AthletesList';
 import AddManagers from './components/AddManagers';
 import ManagerPermissions from './components/ManagerPermissions';
-import AddClub from './components/AddClub';
+import ClubsList from './components/ClubsList';
 
 function App() {
   return (
@@ -29,7 +28,7 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/addcomp"
+        {/* <Route path="/addcomp"
           element={
             <PrivateRoute>
               <Master>
@@ -37,7 +36,7 @@ function App() {
               </Master>
             </PrivateRoute>
           }
-        />
+        /> */}
         <Route path="/updatecomp"
           element={
             <PrivateRoute>
@@ -62,7 +61,7 @@ function App() {
               </Master>
             </PrivateRoute>
           } />
-          <Route path="/addathlete"
+          <Route path="/atletas"
           element={
             <PrivateRoute>
               <Master>
@@ -70,15 +69,7 @@ function App() {
               </Master>
             </PrivateRoute>
           } />
-          <Route path="/addmanager"
-          element={
-            <PrivateRoute>
-              <Master>
-                <AddManagers />
-              </Master>
-            </PrivateRoute>
-          } />
-          <Route path="/permissionsmanager"
+          <Route path="/gestores"
           element={
             <PrivateRoute>
               <Master>
@@ -86,11 +77,11 @@ function App() {
               </Master>
             </PrivateRoute>
           } />
-          <Route path="/addclub"
+          <Route path="/clubes"
           element={
             <PrivateRoute>
               <Master>
-                <AddClub />
+                <ClubsList />
               </Master>
             </PrivateRoute>
           } />
