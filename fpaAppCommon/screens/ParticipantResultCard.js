@@ -3,23 +3,28 @@ import React from 'react'
 
 const ParticipantResultCard = (props) => {
 
+    const { position, name, club, ageGroup, result, sportModalityMeasurementUnit } = props
+
+    let unit = ""
+
+
+
     return (
         <View style={styles.cardsContainer}>
             <View style={styles.listRowsContainer}>
+                <Text style={styles.listInfoParticipantTablePositionText}>{position + 1}º</Text>
 
-                <Text style={styles.listInfoParticipantTablePositionText}>{props.position + 1}º</Text>
+                <Text style={styles.listInfoNameText}>{name}</Text>
 
-                <Text style={styles.listInfoNameText}>{props.name}</Text>
+                <Text style={styles.listInfoClubText}>{club}</Text>
 
-                <Text style={styles.listInfoClubText}>{props.club}</Text>
+                <Text style={styles.listInfoAgeGroupText}>{ageGroup}</Text>
 
-                <Text style={styles.listInfoAgeGroupText}>{props.ageGroup}</Text>
-
-                <Text style={styles.listInfoResultText}>{props.result}</Text>
-
-                {/* <View style={styles.listGenderIconContainer}>
-            {props.genero}
-        </View> */}
+                {{
+                    "metros": <Text style={styles.listInfoResultText}>{result}m</Text>,
+                    "segundos": <Text style={styles.listInfoResultText}>{result}s</Text>,
+                    "horas": <Text style={styles.listInfoResultText}>{result}h</Text>,
+                }[sportModalityMeasurementUnit]}
             </View>
         </View>
 

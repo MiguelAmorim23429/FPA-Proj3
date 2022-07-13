@@ -214,47 +214,6 @@ const AthleticsTestScreen = ({ route }) => {
 
 
 
-    const sortHighestResultsTablePosition = ([, a], [, b]) => {
-
-        if (sportModality.unidade === 'segundos' || sportModality.unidade === 'horas') {
-            if (a.resultado === "" || a.resultado === null) return 1;
-            if (b.resultado === "" || b.resultado === null) return -1;
-            if (a.resultado === b.resultado) return 0;
-            return a.resultado > b.resultado ? -1 : 1;
-        }
-
-        if (sportModality.nome === 'Salto em altura') {
-
-            const resultsA = a.resultado
-            const resultsB = b.resultado
-
-            const failedAttemptA = resultsA.find(result => {
-                const attempts = result.tentativas
-                const failedAttemptsHeight = attempts.every(attempt => !attempt)
-                if (failedAttemptsHeight) return result
-            })
-
-            const failedAttemptB = resultsB.find(result => {
-                const attempts = result.tentativas
-                const failedAttemptsHeight = attempts.every(attempt => !attempt)
-                if (failedAttemptsHeight) return result
-            })
-
-            if (resultsA.length !== 1 && resultsB.length !== 1) {
-                if (failedAttemptA && failedAttemptB) {
-                    console.log("AA", resultsA[resultsA.length - 2].altura, "BB", resultsB[resultsB.length - 2].altura)
-
-                    if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-                    if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
-                }
-            }
-
-            if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-            if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
-        }
-
-    }
-
     const addResult = (enrolledResultsArray) => {
 
         const updates = {}
@@ -267,19 +226,8 @@ const AthleticsTestScreen = ({ route }) => {
             const idParticipant = enrolledResult[0]
             const result = enrolledResult[1].resultado
 
-            if (result) {
-
-                if (sportModality.nome === 'Salto em comprimento' || sportModality.nome === 'Salto em altura') {
-                    resultsArray.push(jumpsResultsArray)
-                    updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = jumpsResultsArray
-                }
-
-                if (sportModality?.unidade === 'segundos' || sportModality?.unidade === 'horas') {
-                    resultsArray.push(result)
-                    updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result
-                }
-
-            }
+            resultsArray.push(result)
+            updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result || ''
 
             // updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result
 
@@ -352,16 +300,12 @@ const AthleticsTestScreen = ({ route }) => {
                 if (failedAttemptsHeight) return result
             })
 
-            // if (results.length !== 1) {
-            // }
-
             if (results.length === 1 && results.length !== 0) {
                 highestLegalResult = results[results.length - 1].altura
             } else {
                 failedAttempt ? highestLegalResult = results[results.length - 2].altura : highestLegalResult = results[results.length - 1].altura
             }
             return highestLegalResult
-            // failedAttempt ? results[0].altura :  results[1].altura
         }
     }
 
@@ -372,17 +316,17 @@ const AthleticsTestScreen = ({ route }) => {
             if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado || ''}
+                    value={participants[index][1].resultado + 's' || ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
                     onChangeText={text => setResultOnIndex(text, index)}
-                    mask={[/\d/, /\d/, ':', /\d/, /\d/, 's']}
+                    mask={[/\d/, /\d/, ':', /\d/, /\d/]}
                     placeholder='00:00s' />
             }
             else if (sportModality.unidade === "horas") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado ? participants[index][1].resultado : ''}
+                    value={participants[index][1].resultado ? participants[index][1].resultado + 'h': ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
                     onChangeText={text => setResultOnIndex(text, index)}
@@ -397,14 +341,14 @@ const AthleticsTestScreen = ({ route }) => {
             if (sportModality.unidade === "segundos") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado || ''}
+                    value={participants[index][1].resultado + 's' || ''}
                     editable={false}
                     selectTextOnFocus={false}
                 />
             } else if (sportModality.unidade === 'horas') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado || ''}
+                    value={participants[index][1].resultado + 'h' || ''}
                     editable={false}
                     selectTextOnFocus={false}
                 />
@@ -412,7 +356,7 @@ const AthleticsTestScreen = ({ route }) => {
             else if (sportModality.unidade === 'metros' && sportModality.nome === 'Salto em comprimento') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado.length === 0 ? '' : participants[index][1].resultado[0].marca || ''}
+                    value={participants[index][1].resultado.length === 0 ? '' : participants[index][1].resultado[0].marca + 'm' || ''}
                     editable={false}
                     selectTextOnFocus={false}
                 />
@@ -421,7 +365,7 @@ const AthleticsTestScreen = ({ route }) => {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
                     // value={enrolled[index][1].resultado.length === 0 ? '' : enrolled[index][1].resultado[0].altura + ' m' || ''}
-                    value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) + ' m' || ''}
+                    value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) + 'm' || ''}
                     editable={false}
                     selectTextOnFocus={false}
                 />

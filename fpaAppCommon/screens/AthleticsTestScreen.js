@@ -16,10 +16,38 @@ const AthleticsTestScreen = ({ route }) => {
 
     const navigation = useNavigation()
 
-    const [enrolled, sportModality] = useParticipants({ matchId: idMatch, modalidadeId: idSportModality })
+    const [participants, sportModality] = useParticipants({ matchId: idMatch, modalidadeId: idSportModality })
 
     const goToPreviousScreen = () => {
         navigation.goBack()
+    }
+
+    const getHighestValueOfJump = (results) => {
+        let highestLegalResult = 0
+
+        if (sportModality.nome === 'Salto em altura') {
+            const failedAttempt = results.find(result => {
+                const attempts = result.tentativas
+                const failedAttemptsHeight = attempts.every(attempt => !attempt)
+                if (failedAttemptsHeight) return result
+            })
+
+            if (results.length === 1) {
+                highestLegalResult = results[results.length - 1].altura
+            } else {
+                failedAttempt ? highestLegalResult = results[results.length - 2].altura : highestLegalResult = results[results.length - 1].altura
+            }
+            return highestLegalResult
+        }
+
+        if (sportModality.nome === 'Salto em comprimento') {
+            const validJumps = results.filter(result => { if (result.valido) return result })
+            const jumpValues = validJumps.map(value => value.marca)
+            highestLegalResult = Math.max(...jumpValues)
+            console.log("xx", highestLegalResult)
+
+            return highestLegalResult
+        }
     }
 
     return (
@@ -49,29 +77,32 @@ const AthleticsTestScreen = ({ route }) => {
             />
 
             <ScrollView style={styles.listContainer}>
-                {enrolled.map((enrolled, index) => {
+                {participants.map((participant, index) => {
                     return {
                         "Salto em comprimento": < ParticipantResultCard
                             key={index}
                             position={index}
-                            name={enrolled[1].nome}
-                            club={enrolled[1].clube.sigla}
-                            ageGroup={enrolled[1].escalao.substring(0, 3)}
-                            result={enrolled[1].resultado[0].marca} />,
+                            name={participant[1].nome}
+                            club={participant[1].clube.sigla}
+                            ageGroup={participant[1].escalao.substring(0, 3)}
+                            result={getHighestValueOfJump(participant[1].resultado)}
+                            sportModalityMeasurementUnit={sportModality.unidade} />,
                         "Salto em altura": < ParticipantResultCard
                             key={index}
                             position={index}
-                            name={enrolled[1].nome}
-                            club={enrolled[1].clube.sigla}
-                            ageGroup={enrolled[1].escalao.substring(0, 3)}
-                            result={enrolled[1].resultado[0].altura} />,
+                            name={participant[1].nome}
+                            club={participant[1].clube.sigla}
+                            ageGroup={participant[1].escalao.substring(0, 3)}
+                            result={getHighestValueOfJump(participant[1].resultado)}
+                            sportModalityMeasurementUnit={sportModality.unidade} />,
                         "Corrida 100 metros": < ParticipantResultCard
                             key={index}
                             position={index}
-                            name={enrolled[1].nome}
-                            club={enrolled[1].clube.sigla}
-                            ageGroup={enrolled[1].escalao.substring(0, 3)}
-                            result={enrolled[1].resultado} />
+                            name={participant[1].nome}
+                            club={participant[1].clube.sigla}
+                            ageGroup={participant[1].escalao.substring(0, 3)}
+                            result={participant[1].resultado}
+                            sportModalityMeasurementUnit={sportModality.unidade} />
                     }[sportModality.nome]
                 })}
             </ScrollView>

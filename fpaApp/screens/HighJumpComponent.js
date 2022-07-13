@@ -12,7 +12,6 @@ const HighJumpComponent = (props) => {
   const [jumps, setJumps] = useState(enrolled[enrolledIndex][1].resultado || [])
   const [jumpHeight, setJumpHeight] = useState('')
   const [buttonDisabled, setButtonDisabled] = useState(false)
-  const [btnIndex, setBtnIndex] = useState(-1);
   const [disabledButtons, setDisabledButtons] = useState([])
 
   useEffect(() => {
@@ -45,8 +44,6 @@ const HighJumpComponent = (props) => {
       }
 
     })
-
-    console.log("disabled buttons: ", disabledButtons)
   }
 
 
@@ -146,18 +143,6 @@ const HighJumpComponent = (props) => {
             {attempts}
           </View>
           <View style={styles.buttonsContainer}>
-            {/* <Pressable style={disabledButtons.includes(i) ? styles.disabledAttemptStatusButton : styles.attemptStatusButton} disabled={disabledButtons.includes(i) && buttonDisabled} onPress={() => handleFailedAttempt(i)}>
-              <Text style={styles.attemptStatusButtonText}>Falhou</Text>
-            </Pressable>
-            <Pressable style={disabledButtons.includes(i) ? styles.disabledAttemptStatusButton : styles.attemptStatusButton} disabled={disabledButtons.includes(i) && buttonDisabled} onPress={() => handleSuccessfulAttempt(i)}>
-              <Text style={styles.attemptStatusButtonText}>Acertou</Text>
-            </Pressable>
-            <Pressable style={styles.attemptStatusButton} onPress={() => handleRemoveAttempt(i)}>
-              <Text style={styles.attemptStatusButtonText}>Remover</Text>
-            </Pressable> */}
-
-            {/* (disabledButtons.includes(i) && buttonDisabled) && */}
-
             <AntDesignIcon style={disabledButtons.includes(i) ? styles.disabledAttemptStatusButton : styles.attemptStatusButton} name='closesquare' color='red' size={24} onPress={() => !(disabledButtons.includes(i) && buttonDisabled) && handleFailedAttempt(i)} />
             <AntDesignIcon style={disabledButtons.includes(i) ? styles.disabledAttemptStatusButton : styles.attemptStatusButton} name='checksquare' color='green' size={24} onPress={() => !(disabledButtons.includes(i) && buttonDisabled) && handleSuccessfulAttempt(i)} />
             <AntDesignIcon name='delete' color='orange' size={24} onPress={() => handleRemoveAttempt(i)} />
@@ -290,22 +275,6 @@ const HighJumpComponent = (props) => {
     setJumps(clonedJumps)
 
     clonedEnrolled[enrolledIndex][1].resultado = clonedJumps
-    setEnrolled(clonedEnrolled)
-  }
-
-  const handleSwitchInput = (switchInput, switchIndex, jumpIndex) => {
-    let clonedEnrolled = [...enrolled]
-
-    let clonedJumps = [...jumps]
-
-    let newJumpsArray = clonedJumps.map((jumpElement, mapJumpIndex) => {
-      if (mapJumpIndex === jumpIndex) { jumpElement.tentativas[switchIndex] = switchInput }
-      return jumpElement
-    })
-
-    setJumps(newJumpsArray)
-
-    clonedEnrolled[enrolledIndex][1].resultado = newJumpsArray
     setEnrolled(clonedEnrolled)
   }
 

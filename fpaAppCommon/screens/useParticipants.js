@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { getDatabase, ref, onValue, get } from "firebase/database";
+import { max } from 'moment';
 
 const useParticipants = ({ matchId, modalidadeId }) => {
 
@@ -21,7 +22,9 @@ const useParticipants = ({ matchId, modalidadeId }) => {
       if (a.altura < b.altura) return -1
       if (a.altura > b.altura) return 1
     }
-    // return a.altura > b.altura ? -1 : 1
+
+    if (sportModality.nome === 'Salto em comprimento') {
+    }
   }
 
   const sortHighestResultsTablePosition = ([, a], [, b]) => {
@@ -30,14 +33,26 @@ const useParticipants = ({ matchId, modalidadeId }) => {
       if (a.resultado === "" || a.resultado === null) return 1;
       if (b.resultado === "" || b.resultado === null) return -1;
       if (a.resultado === b.resultado) return 0;
-      return a.resultado > b.resultado ? -1 : 1;
+      return a.resultado > b.resultado ? 1 : -1;
     }
 
     if (sportModality.nome === 'Salto em comprimento') {
       const resultsA = a.resultado
       const resultsB = b.resultado
 
-      console.log("A", resultsA, "B", resultsB) 
+      const validResultsA = resultsA.filter(result => { if (result.valido) return result })
+      const validResultsB = resultsB.filter(result => { if (result.valido) return result })
+
+      const jumpValuesResultsA = validResultsA.map(result => result.marca)
+      const jumpValuesResultsB = validResultsB.map(result => result.marca)
+
+      const maxJumpValueA = Math.max(...jumpValuesResultsA)
+      const maxJumpValueB = Math.max(...jumpValuesResultsB)
+
+
+      if (maxJumpValueA > maxJumpValueB) return -1
+      if (maxJumpValueA < maxJumpValueB) return 1
+
     }
 
     if (sportModality.nome === 'Salto em altura') {
@@ -56,15 +71,6 @@ const useParticipants = ({ matchId, modalidadeId }) => {
         const failedAttemptsHeight = attempts.every(attempt => !attempt)
         if (failedAttemptsHeight) return result
       })
-
-      if (resultsA.length !== 1 && resultsB.length !== 1) {
-        if (failedAttemptA && failedAttemptB) {
-          console.log("AA", resultsA[resultsA.length - 2].altura, "BB", resultsB[resultsB.length - 2].altura)
-
-          if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-          if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
-        }
-      }
 
       if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
       if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
@@ -139,36 +145,15 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
         enrolledResultsArray.map(enrolledResult => {
           const result = enrolledResult[1].resultado
-          // let sortedResultsOfEachAthlete = []
-          // sortedResultsOfEachAthlete = 
-
           if (sportModality.unidade === 'metros') result.sort(sortResultsEachAthlete)
-
-          // console.log("xx", result)
-          // sortedResultsOfEachAthlete.sort(sortHighestResultsTablePosition)
-          // console.log("SSS", sortedResultsOfEachAthlete)
           return enrolledResult
         })
 
         for (let i = 0; i < enrolledResultsArray.length; i++) {
-          // enrolledResultsArray.sort(sortFunction)
           enrolledResultsArray.sort(sortHighestResultsTablePosition)
         }
-        // enrolledResultsArray.map((enrolledResult) => {
-        //   const result = enrolledResult[1].resultado
-
-        //   // if (result) {
-        //     let sortedResultsOfEachAthlete = []
-        //     sortedResultsOfEachAthlete = result.sort(sortResultsEachAthlete)
-        //     // console.log("sorted", sortedResultsOfEachAthlete)
-        //     resultsArray.push(sortedResultsOfEachAthlete)
-
-        //     resultsArray.sort(sortHighestResultsTablePosition)
-        //   // }
-        // })
       });
 
-      // console.log("bb", sorted)
       setEnrolled(enrolledResultsArray)
 
     }

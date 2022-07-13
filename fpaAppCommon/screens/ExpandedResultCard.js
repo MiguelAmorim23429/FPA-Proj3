@@ -18,8 +18,11 @@ const ExpandedResultCard = (props) => {
         })
 
         let validJumps = jumps.filter(jump => jump !== failedAttempt)
+        console.log("valid", validJumps)
         let validJumpsHeights = validJumps.map(jump => jump.altura)
+        console.log("valores dos valid", validJumpsHeights)
         const highestJump = Math.max(...validJumpsHeights)
+        console.log("mais alto", highestJump)
         return highestJump
     }
 
@@ -42,7 +45,7 @@ const ExpandedResultCard = (props) => {
                         return (
                             <View key={index} style={styles.jumpLine}>
                                 <Text style={styles.jumpInfo}>{index + 1}º salto</Text>
-                                <Text style={styles.jumpInfo}>{jump.valido ? jump.marca : 'X'}</Text>
+                                <Text style={styles.jumpInfo}>{jump.valido ? jump.marca + 'm' : 'X'}</Text>
                                 <Text style={styles.jumpInfo}>{jump.vento} m/s</Text>
                             </View>
                         )
@@ -58,7 +61,7 @@ const ExpandedResultCard = (props) => {
                 <View style={styles.highJumpsHeaders}>
                     <View style={styles.highestJumpInfo}>
                         <Text style={{ fontWeight: 'bold' }}>Marca</Text>
-                        <Text>{getMaxResult()}</Text>
+                        <Text>{getMaxResult() + 'm'}</Text>
                     </View>
                     {jumps.map((jump, index) => {
                         let attempts = jump.tentativas

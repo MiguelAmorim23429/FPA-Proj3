@@ -18,7 +18,7 @@ const LongJumpComponent = (props) => {
 
     const jumpArrayElements = () => {
         const newJumpsArray = []
-        const jump = { marca: "", vento: "", valido: false }
+        const jump = { marca: 0, vento: "", valido: false }
 
         for (let i = 0; i < numberOfJumps; i++) {
             newJumpsArray.push(jump)
@@ -31,7 +31,7 @@ const LongJumpComponent = (props) => {
         }
     }
 
-    const handleResultInputValue = (resultInputValue, inputIndex, field) => {
+    const handleResultInputValue = (resultInputValue, inputIndex) => {
 
         if (!inputChanged) {
             setInputChanged(true)
@@ -57,7 +57,7 @@ const LongJumpComponent = (props) => {
         setEnrolled(clonedEnrolled)
     }
 
-    const handleWindInputValue = (windInputValue, inputIndex, field) => {
+    const handleWindInputValue = (windInputValue, inputIndex) => {
 
         if (!inputChanged) {
             setInputChanged(true)
@@ -142,8 +142,8 @@ const LongJumpComponent = (props) => {
                             value={enrolled[enrolledIndex][1].resultado.length === 0 ? '' : enrolled[enrolledIndex][1].resultado[i].marca}
                             // editable={user.autorizado ? true : false}
                             // selectTextOnFocus={user.autorizado ? true : false}
-                            onChangeText={text => handleResultInputValue(text, i, "comprimento")}
-                            mask={[/\d/, /\d/, '.', /\d/, /\d/, 'm']}
+                            onChangeText={text => handleResultInputValue(text, i)}
+                            mask={[/\d/, /\d/, '.', /\d/, /\d/]}
                             placeholder='00.00m' />
                     </View>
 
@@ -151,7 +151,7 @@ const LongJumpComponent = (props) => {
                         <Text style={{ fontSize: 16, }}>Vento</Text>
                         <TextInput style={styles.textInput}
                             value={enrolled[enrolledIndex][1].resultado.length === 0 ? '' : enrolled[enrolledIndex][1].resultado[i].vento}
-                            onChangeText={text => handleWindInputValue(text, i, "vento")} />
+                            onChangeText={text => handleWindInputValue(text, i)} />
                     </View>
 
                     <View style={{ marginRight: 0,}}>

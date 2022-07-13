@@ -128,16 +128,21 @@ const Accordion = (props) => {
                 if (failedAttemptsHeight) return result
             })
 
-            // if (results.length !== 1) {
-            // }
-
-            if (results.length === 1 && results.length !== 0) {
+            if (results.length === 1) {
                 highestLegalResult = results[results.length - 1].altura
             } else {
                 failedAttempt ? highestLegalResult = results[results.length - 2].altura : highestLegalResult = results[results.length - 1].altura
             }
             return highestLegalResult
-            // failedAttempt ? results[0].altura :  results[1].altura
+        }
+
+        if (sportModality.nome === 'Salto em comprimento') {
+            const validJumps = results.filter(result => { if (result.valido) return result })
+            const jumpValues = validJumps.map(value => value.marca)
+            highestLegalResult = Math.max(...jumpValues)
+            console.log("xx", highestLegalResult)
+
+            return highestLegalResult
         }
     }
 
@@ -170,7 +175,8 @@ const Accordion = (props) => {
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
                             <Text style={styles.nameText}>{participant[1].nome}</Text>
                             <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : participant[1].resultado[0]?.marca}</Text>
+                            {/* <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : participant[1].resultado[0]?.marca}</Text> */}
+                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : getHighestValueOfJump(participant[1].resultado) + 'm'}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
@@ -181,7 +187,7 @@ const Accordion = (props) => {
                             <Text style={styles.nameText}>{participant[1].nome}</Text>
                             <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
                             {/* <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : participant[1].resultado[0]?.altura}</Text> */}
-                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : getHighestValueOfJump(participant[1].resultado)}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : getHighestValueOfJump(participant[1].resultado) + 'm'}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
@@ -191,7 +197,7 @@ const Accordion = (props) => {
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
                             <Text style={styles.nameText}>{participant[1].nome}</Text>
                             <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{participant[1].resultado || ''}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado + 's' || ''}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
@@ -200,7 +206,7 @@ const Accordion = (props) => {
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
                             <Text style={styles.nameText}>{participant[1].nome}</Text>
                             <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{participant[1].resultado || ''}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado + 'h' || ''}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}
