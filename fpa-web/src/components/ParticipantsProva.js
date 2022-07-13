@@ -114,9 +114,7 @@ const ParticipantsProva = () => {
                     participantKey: participantKey,
                     athlete: athletes[athleteId]
                 }
-            });
-
-            // console.log("aa", enrolled, "xx")
+            })
 
             for (let athleteId of Object.keys(athletes)) { // Percorrer os id's dos atletas, se exister um atleta com id diferente desses, inserir esse atleta num objeto
                 if (!enrolled[athleteId]) {
@@ -153,16 +151,6 @@ const ParticipantsProva = () => {
             window.alert("Tem de adicionar pelo menos um atleta para iniciar a prova.")
         }
 
-        // if (match.estado === 'emInscricoes' && Object.entries(enrolled).length !== 0) {
-        //     update(ref(db), updates)
-        // } else if (match.estado === 'ativa') {
-        //     window.alert("Esta prova já está a decorrer.")
-        // } else if (match.estado === 'finalizada') {
-        //     window.alert("Esta prova já terminou.")
-        // } else if (Object.entries(enrolled).length === 0) {
-        //     window.alert("Tem de adicionar pelo menos um atleta para iniciar a prova.")
-        // }
-
     }
 
     const renderMatchStatusText = () => {
@@ -195,57 +183,74 @@ const ParticipantsProva = () => {
 
                     <h2>Não inscritos</h2>
 
-                    {Object.entries(notEnrolled).map(([key, value], indexEnrolled) => {
-                        const genders = {
-                            "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
-                            "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
-                        }
+                    {Object.entries(notEnrolled).length === 0 ? (
+                        <div className='no-participants-found-container'>
+                            <h2>Sem atletas do escalão {match?.escalao.toLowerCase()} e género {match?.genero.toLowerCase()}.</h2>
+                            <p>Adicione atletas</p>
+                        </div>
+                    ) : (
+                        Object.entries(notEnrolled).map(([key, value], indexNotEnrolled) => {
+                            const genders = {
+                                "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
+                                "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
+                            }
 
-                        return (
-                            <div key={key} className='participant-container'
-                                onMouseEnter={() => showButton(indexEnrolled)} // quando metemos o rato por cima atribui este index à variável "indexBtn"
-                                onMouseLeave={hideButton}>
-                                <ul className='participant-list'>
-                                    <li className='participant-list-item'>{value.nome}</li>
-                                    <li className='participant-list-item'>{genders[value.genero]}</li>
-                                    <li className='participant-list-item'>{value.escalao}</li>
-                                    <li className='participant-list-item'>{value.clube.sigla}</li>
-                                </ul>
-                                <div className='participant-list-btn-container'>
-                                    <button className={indexBtn === indexEnrolled ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => addParticipant(key)}>Adicionar</button>
+                            return (
+                                <div key={key} className='participant-container'
+                                    onMouseEnter={() => showButton(indexNotEnrolled)} // quando metemos o rato por cima atribui este index à variável "indexBtn"
+                                    onMouseLeave={hideButton}>
+                                    <ul className='participant-list'>
+                                        <li className='participant-list-item'>{value.nome}</li>
+                                        <li className='participant-list-item'>{genders[value.genero]}</li>
+                                        <li className='participant-list-item'>{value.escalao}</li>
+                                        <li className='participant-list-item'>{value.clube.sigla}</li>
+                                    </ul>
+                                    <div className='participant-list-btn-container'>
+                                        <button className={indexBtn === indexNotEnrolled ? 'prova-btn-show' : 'prova-btn-hide'} id='goto-participants-btn' onClick={() => addParticipant(key)}>Adicionar</button>
+                                    </div>
                                 </div>
-                            </div>
 
-                        )
-                    })}
+                            )
+                        })
+                    )
+                    }
+
                 </div>
                 <div className='main-participant-container'>
 
                     <h2>Inscritos</h2>
 
-                    {Object.entries(enrolled).map(([athleteKey, participant], index) => {
-                        const genders = {
-                            "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
-                            "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
-                        }
+                    {Object.entries(enrolled).length === 0 ? (
+                        <div className='no-participants-found-container'>
+                            <h2>Sem atletas inscritos.</h2>
+                            <p>Inscreva atletas</p>
+                        </div>
+                    ) : (
+                        Object.entries(enrolled).map(([athleteKey, participant], index) => {
+                            const genders = {
+                                "Masculino": <IoIcons.IoMdMale size={20} color='#03A3FF' />,
+                                "Feminino": <IoIcons.IoMdFemale size={20} color='#EC49A7' />,
+                            }
 
-                        return (
-                            <div key={athleteKey} className='participant-container'
-                                onMouseEnter={() => showButton(index + "a")} // quando metemos o rato por cima atribui este index à variável "indexBtn"
-                                onMouseLeave={hideButton}>
-                                <ul className='participant-list'>
-                                    <li className='participant-list-item'>{participant.athlete.nome}</li>
-                                    <li className='participant-list-item'>{genders[participant.athlete.genero]}</li>
-                                    <li className='participant-list-item'>{participant.athlete.escalao}</li>
-                                    <li className='participant-list-item'>{participant.athlete.clube.sigla}</li>
-                                </ul>
-                                <div className='participant-list-btn-container'>
-                                    <button className={indexBtn === index + "a" ? 'prova-btn-show' : 'prova-btn-hide'} id='remove-participant-btn' onClick={() => removeParticipant(athleteKey, participant.participantKey)}>Remover</button>
+                            return (
+                                <div key={athleteKey} className='participant-container'
+                                    onMouseEnter={() => showButton(index + "a")} // quando metemos o rato por cima atribui este index à variável "indexBtn"
+                                    onMouseLeave={hideButton}>
+                                    <ul className='participant-list'>
+                                        <li className='participant-list-item'>{participant.athlete.nome}</li>
+                                        <li className='participant-list-item'>{genders[participant.athlete.genero]}</li>
+                                        <li className='participant-list-item'>{participant.athlete.escalao}</li>
+                                        <li className='participant-list-item'>{participant.athlete.clube.sigla}</li>
+                                    </ul>
+                                    <div className='participant-list-btn-container'>
+                                        <button className={indexBtn === index + "a" ? 'prova-btn-show' : 'prova-btn-hide'} id='remove-participant-btn' onClick={() => removeParticipant(athleteKey, participant.participantKey)}>Remover</button>
+                                    </div>
                                 </div>
-                            </div>
 
-                        )
-                    })}
+                            )
+                        })
+                    )
+                    }
                 </div>
             </div>
         </div >

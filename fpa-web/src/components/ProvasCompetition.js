@@ -22,7 +22,7 @@ const ProvasCompetition = () => {
     const competitionMatchesRef = query(ref(db, '/provas/'), orderByChild('competicao'), equalTo(idComp))
     const sportModalitiesRef = ref(db, '/modalidades/') // referência à base de dados para ir buscar as modalidades
 
-    const [match, setMatch] = useState([])
+    const [matches, setMatches] = useState([])
     const [modalities, setModalities] = useState([])
 
     const [addNewMatchForm, setAddNewMatchForm] = useState(false);
@@ -48,7 +48,7 @@ const ProvasCompetition = () => {
                 const childData = childSnapshot.val();
                 matchesArray.push([childKey, childData])
             });
-            setMatch(matchesArray)
+            setMatches(matchesArray)
         }
 
         // Busca das provas existentes na competicao que selecionamos no ecrã anterior
@@ -77,7 +77,7 @@ const ProvasCompetition = () => {
     }
 
     return (
-        match.length == 0 ? ( // if there are no matches
+        matches.length == 0 ? ( // if there are no matches
             <div className={addNewMatchForm ? 'main-provascomp-container-dark' : 'main-provascomp-container'}>
 
                 <div className={addNewMatchForm ? 'add-btn-container-dark' : 'add-btn-container'}>
@@ -115,7 +115,7 @@ const ProvasCompetition = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {match.map(([key, value], index) => { // fazemos map do array prova para um array com a chave da prova, os seus dados e index
+                            {matches.map(([key, value], index) => { // fazemos map do array prova para um array com a chave da prova, os seus dados e index
 
                                 const genders = {
                                     "Masculino": <IoIcons.IoMdMale className='icon-match-male-gender' color={addNewMatchForm ? 'rgba(3, 163, 255, 0.65)' : 'rgba(3, 163, 255, 1)'} />,

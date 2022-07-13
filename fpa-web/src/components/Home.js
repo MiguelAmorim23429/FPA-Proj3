@@ -87,82 +87,117 @@ const Home = () => {
   }
 
   return (
-    <div className={showAddCompetitionComponent ? 'shadowed-container' : 'container'}>
+    competitions.length === 0 ? (
+      <div className={showAddCompetitionComponent ? 'shadowed-container' : 'container'}>
 
-      <div className={showAddCompetitionComponent ? 'main-add-athlete-container' : 'hidden-main-add-athlete-container'}>
-        <AddCompetition showAddCompetitionComponent={showAddCompetitionComponent} setShowAddCompetitionComponent={setShowAddCompetitionComponent} />
+        <div className={showAddCompetitionComponent ? 'main-add-athlete-container' : 'hidden-main-add-athlete-container'}>
+          <AddCompetition showAddCompetitionComponent={showAddCompetitionComponent} setShowAddCompetitionComponent={setShowAddCompetitionComponent} />
+        </div>
+
+        <div>
+          <FaIcons.FaBars className='side-bar-openbtn' onClick={showSideBar} />
+          <nav className={sidebar ? 'side-bar-show' : 'side-bar-hide'}>
+            <ul className='side-bar-menu-times'>
+              <li>
+                <AiIcons.AiOutlineClose className='side-bar-closebtn' onClick={showSideBar} />
+              </li>
+              <li>
+                <button className='side-bar-btn' onClick={() => navigate('/atletas')}>Atletas</button>
+              </li>
+              <li>
+                <button className='side-bar-btn' onClick={() => navigate('/gestores')}>Gestores</button>
+              </li>
+              <li>
+                <button className='side-bar-btn' onClick={() => navigate('/clubes')}>Clubes</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+
+        <button className={showAddCompetitionComponent ? 'shadowed-add-competition-btn' : 'add-competition-btn'} onClick={() => setShowAddCompetitionComponent(true)}>Adicionar competição</button>
+
+        <div className='no-matches-found-container'>
+          <h1>Sem competições programadas.</h1>
+          <p>Adicione competições</p>
+        </div>
       </div>
+    ) : (
+      <div className={showAddCompetitionComponent ? 'shadowed-container' : 'container'}>
 
-      <div>
-        <FaIcons.FaBars className='side-bar-openbtn' onClick={showSideBar} />
-        <nav className={sidebar ? 'side-bar-show' : 'side-bar-hide'}>
-          <ul className='side-bar-menu-times'>
-            <li>
-              <AiIcons.AiOutlineClose className='side-bar-closebtn' onClick={showSideBar} />
-            </li>
-            <li>
-              <button className='side-bar-btn' onClick={() => navigate('/atletas')}>Atletas</button>
-            </li>
-            {/* <li>
-              <button className='side-bar-btn' onClick={() => navigate('/addmanager')}>Gestores</button>
-            </li> */}
-            <li>
-              <button className='side-bar-btn' onClick={() => navigate('/gestores')}>Gestores</button>
-            </li>
-            <li>
-              <button className='side-bar-btn' onClick={() => navigate('/clubes')}>Clubes</button>
-            </li>
-          </ul>
-        </nav>
-      </div>
+        <div className={showAddCompetitionComponent ? 'main-add-athlete-container' : 'hidden-main-add-athlete-container'}>
+          <AddCompetition showAddCompetitionComponent={showAddCompetitionComponent} setShowAddCompetitionComponent={setShowAddCompetitionComponent} />
+        </div>
 
-      <button className={showAddCompetitionComponent ? 'shadowed-add-competition-btn' : 'add-competition-btn'} onClick={() => setShowAddCompetitionComponent(true)}>Adicionar competição</button>
+        <div>
+          <FaIcons.FaBars className='side-bar-openbtn' onClick={showSideBar} />
+          <nav className={sidebar ? 'side-bar-show' : 'side-bar-hide'}>
+            <ul className='side-bar-menu-times'>
+              <li>
+                <AiIcons.AiOutlineClose className='side-bar-closebtn' onClick={showSideBar} />
+              </li>
+              <li>
+                <button className='side-bar-btn' onClick={() => navigate('/atletas')}>Atletas</button>
+              </li>
+              <li>
+                <button className='side-bar-btn' onClick={() => navigate('/gestores')}>Gestores</button>
+              </li>
+              <li>
+                <button className='side-bar-btn' onClick={() => navigate('/clubes')}>Clubes</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
 
-      <div className='main-competition-container'>
-        {competitions.map(([key, value], index) => {
+        <button className={showAddCompetitionComponent ? 'shadowed-add-competition-btn' : 'add-competition-btn'} onClick={() => setShowAddCompetitionComponent(true)}>Adicionar competição</button>
 
-          if (value.ativa) {
-            return (
-              <div key={key} className='competition-container'
-                onMouseEnter={() => showButton(index)}
-                onMouseLeave={hideButton}
-                onClick={() => goToProvasComp(key)}>
+        <div className='main-competition-container'>
+          {competitions.map(([key, value], index) => {
 
-                {value.foto && <img className='competition-img' src={value.foto} alt='foto competição'></img>}
+            if (value.ativa) {
+              return (
+                <div key={key} className='competition-container'
+                  onMouseEnter={() => showButton(index)}
+                  onMouseLeave={hideButton}
+                  onClick={() => goToProvasComp(key)}>
 
-                <div className={showAddCompetitionComponent ? 'shadowed-competition-info' : 'competition-info'}>
+                  {value.foto && <img className='competition-img' src={value.foto} alt='foto competição'></img>}
 
-                  <h2 className='title-header'>{value.nome}</h2>
+                  <div className={showAddCompetitionComponent ? 'shadowed-competition-info' : 'competition-info'}>
 
-                  <div className='label-container'>
-                    <label>{moment(value.data).format('DD-MM-YYYY')}</label>
-                    <label>{value.local}</label>
-                  </div>
+                    <h2 className='title-header'>{value.nome}</h2>
 
-                  <div className='btn-container'>
-                    {!showAddCompetitionComponent && <button
-                      className={indexBtn === index ? 'competition-btn-show' : 'competition-btn-hide'}
-                      id='atualizar-competition-btn' onClick={(e) => {
-                        e.stopPropagation();
-                        goToUpdateComp(key, value)
-                      }}>
-                      <BsIcons.BsPencil className='btn-icon' />Atualizar
-                    </button>}
-                    {!showAddCompetitionComponent && <button className={indexBtn === index ? 'competition-btn-show' : 'competition-btn-hide'}
-                      id='apagar-competition-btn' onClick={(e) => {
-                        e.stopPropagation();
-                        window.confirm("Deseja mesmo remover?") && deleteComp(key, value)
-                      }}>
-                      <BsIcons.BsTrash className='btn-icon' /> Remover
-                    </button>}
+                    <div className='label-container'>
+                      <label>{moment(value.data).format('DD-MM-YYYY')}</label>
+                      <label>{value.local}</label>
+                    </div>
+
+                    <div className='btn-container'>
+                      {!showAddCompetitionComponent && <button
+                        className={indexBtn === index ? 'competition-btn-show' : 'competition-btn-hide'}
+                        id='atualizar-competition-btn' onClick={(e) => {
+                          e.stopPropagation();
+                          goToUpdateComp(key, value)
+                        }}>
+                        <BsIcons.BsPencil className='btn-icon' />Atualizar
+                      </button>}
+                      {!showAddCompetitionComponent && <button className={indexBtn === index ? 'competition-btn-show' : 'competition-btn-hide'}
+                        id='apagar-competition-btn' onClick={(e) => {
+                          e.stopPropagation();
+                          window.confirm("Deseja mesmo remover?") && deleteComp(key, value)
+                        }}>
+                        <BsIcons.BsTrash className='btn-icon' /> Remover
+                      </button>}
+                    </div>
                   </div>
                 </div>
-              </div>
-            )
+              )
+            }
+          })
           }
-        })}
+        </div>
       </div>
-    </div>
+    )
+
 
   )
 }

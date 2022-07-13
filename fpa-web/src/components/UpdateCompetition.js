@@ -70,78 +70,87 @@ const UpdateCompetition = () => {
                         ...prevState,
                         name: {
                             valid: false,
-                            message: emptyString,
+                            message: '',
                         }
                     }))
-                    console.log(`arroz: ${errors.name.message}`)
-                } else if (name.length < 6) {
-                    console.log(`${name} tem de ter mais de 6 caracteres`)
-                    setErrors(prevState => ({
-                        ...prevState,
-                        name: {
-                            valid: false,
-                            message: 'O nome tem de ter pelo menos 6 caracteres.',
-                        }
-                    }))
-                    console.log(`nome valido: ${errors.name.valid} / hora valida: ${errors.hour.valid} / categoria valida: ${errors.category.valid}`)
                 } else {
-                    setErrors(prevState => ({
-                        ...prevState,
-                        name: {
-                            valid: true,
-                            message: emptyString,
-                        }
-                    }))
-
-                    console.log(`nome valido: ${errors.name.valid} / hora valida: ${errors.hour.valid} / categoria valida: ${errors.category.valid}`)
+                    if (name.length < 6) {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            name: {
+                                valid: false,
+                                message: 'O nome tem de ter pelo menos 6 caracteres.',
+                            }
+                        }))
+                    } else {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            name: {
+                                valid: true,
+                                message: '',
+                            }
+                        }))
+                    }
                 }
+
                 if (date === '') {
                     setErrors(prevState => ({
                         ...prevState,
                         date: {
                             valid: false,
-                            message: emptyString,
+                            message: '',
+                        }
+                    }))
+                } else {
+
+                    let competitionChoosenStartDate = new Date(date)
+
+                    console.log(competitionChoosenStartDate)
+
+                    if (competitionChoosenStartDate < Date.now()) {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            date: {
+                                valid: false,
+                                message: 'A data tem de ser posterior à data de hoje.',
+                            }
+                        }))
+                    } else {
+                        setErrors(prevState => ({
+                            ...prevState,
+                            date: {
+                                valid: true,
+                                message: '',
+                            }
+                        }))
+                    }
+                }
+
+                if (location === '') {
+                    setErrors(prevState => ({
+                        ...prevState,
+                        location: {
+                            valid: false,
+                            message: '',
+                        }
+                    }))
+                } else if (location.length < 6) {
+                    setErrors(prevState => ({
+                        ...prevState,
+                        location: {
+                            valid: false,
+                            message: 'O local tem de ter pelo menos 6 caracteres.',
                         }
                     }))
                 } else {
                     setErrors(prevState => ({
                         ...prevState,
-                        date: {
+                        location: {
                             valid: true,
-                            message: emptyString,
+                            message: '',
                         }
                     }))
-                    console.log(errors.date.valid)
                 }
-                // if (location === '') {
-                //     setErrors(prevState => ({
-                //         ...prevState,
-                //         location: {
-                //             valid: false,
-                //             message: emptyString,
-                //         }
-                //     }))
-                // } else if (location.length < 6) {
-                //     console.log(`${location} tem de ter mais de 6 caracteres`)
-
-                //     setErrors(prevState => ({
-                //         ...prevState,
-                //         location: {
-                //             valid: false,
-                //             message: 'A categoria tem de ter pelo menos 6 caracteres.',
-                //         }
-                //     }))
-                //     console.log(errors)
-                // } else {
-                //     setErrors(prevState => ({
-                //         ...prevState,
-                //         location: {
-                //             valid: true,
-                //             message: emptyString,
-                //         }
-                //     }))
-                //     console.log(errors)
-                // }
 
             }, 500)
         )
@@ -159,7 +168,6 @@ const UpdateCompetition = () => {
                     </div>
 
                     <div className='input-validation-box'>
-                        {/* <label className='validation-label'>aaa</label> */}
                         <label className='validation-label'>{!errors.name.valid && errors.name.message}</label>
                     </div>
 
@@ -173,7 +181,6 @@ const UpdateCompetition = () => {
                     </div>
 
                     <div className='input-validation-box'>
-                        {/* <label className='validation-label'>bbb</label> */}
                         <label className='validation-label'>{!errors.date.valid && errors.date.message}</label>
                     </div>
 
@@ -187,7 +194,6 @@ const UpdateCompetition = () => {
                     </div>
 
                     <div className='input-validation-box'>
-                        {/* <label className='validation-label'>ccc</label> */}
                         <label className='validation-label'>{!errors.location.valid && errors.location.message}</label>
                     </div>
 

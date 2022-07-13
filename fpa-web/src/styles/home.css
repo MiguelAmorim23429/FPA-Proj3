@@ -178,6 +178,14 @@
     z-index: 1;
 }
 
+.no-matches-found-container {
+    /* padding: 80px; */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .add-competition-btn {
     width: 180px;
     height: 48px;

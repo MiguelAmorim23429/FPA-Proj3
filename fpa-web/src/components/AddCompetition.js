@@ -140,14 +140,8 @@ const AddCompetition = (props) => {
                             }
                         }))
                     }
-                    // setErrors(prevState => ({
-                    //     ...prevState,
-                    //     date: {
-                    //         valid: true,
-                    //         message: '',
-                    //     }
-                    // }))
                 }
+
                 if (location === '') {
                     setErrors(prevState => ({
                         ...prevState,

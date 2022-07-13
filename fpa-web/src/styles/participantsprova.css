@@ -23,6 +23,14 @@
     margin-left: 12px;
 }
 
+.no-participants-found-container {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
 .start-test-btn {
     width: 180px;
     height: 48px;
