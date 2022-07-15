@@ -35,7 +35,7 @@ const AthleticsTestScreen = ({ route }) => {
     const [match, setMatch] = useState(null)
     const [user, setUser] = useState(null)
 
-    const [participants, setEnrolled] = useState([])
+    const [participants, setParticipants] = useState([])
     const [enrolledKey, setEnrolledKey] = useState('')
     const [enrolledIndex, setEnrolledIndex] = useState(-1)
 
@@ -178,7 +178,7 @@ const AthleticsTestScreen = ({ route }) => {
                 }
             });
 
-            setEnrolled(enrolledResultsArray)
+            setParticipants(enrolledResultsArray)
 
         }
 
@@ -214,20 +214,20 @@ const AthleticsTestScreen = ({ route }) => {
 
 
 
-    const addResult = (enrolledResultsArray) => {
+    const addResult = (participants) => {
 
         const updates = {}
         let resultsArray = []
 
         // const enrolledResultsArray = Object.entries(enrolledResults)
 
-        enrolledResultsArray.forEach((enrolledResult) => {
+        participants.forEach((participant) => {
 
-            const idParticipant = enrolledResult[0]
-            const result = enrolledResult[1].resultado
+            const participantKey = participant[0]
+            const participantResult = participant[1].resultado
 
-            resultsArray.push(result)
-            updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result || ''
+            resultsArray.push(participantResult)
+            updates[`/provas/${idMatch}/participantes/${participantKey}/resultado/`] = participantResult || ''
 
             // updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result
 
@@ -266,7 +266,7 @@ const AthleticsTestScreen = ({ route }) => {
 
         clonedEnrolled[index][1].resultado = result
 
-        setEnrolled(clonedEnrolled)
+        setParticipants(clonedEnrolled)
     }
 
     const openComponentToInsertResults = (enrolledKey, enrolledIndex) => {
@@ -456,9 +456,9 @@ const AthleticsTestScreen = ({ route }) => {
                 />
 
                 {showInsertResultsComponent && {
-                    "Salto em altura": <HighJumpComponent enrolled={participants} setEnrolled={setEnrolled} enrolledIndex={enrolledIndex}
+                    "Salto em altura": <HighJumpComponent enrolled={participants} setEnrolled={setParticipants} enrolledIndex={enrolledIndex}
                         inputChanged={inputChanged} setInputChanged={setInputChanged} setShowInsertResultsComponent={setShowInsertResultsComponent} />,
-                    "Salto em comprimento": <LongJumpComponent enrolled={participants} setEnrolled={setEnrolled} enrolledKey={enrolledKey}
+                    "Salto em comprimento": <LongJumpComponent enrolled={participants} setEnrolled={setParticipants} enrolledKey={enrolledKey}
                         enrolledIndex={enrolledIndex} setShowInsertResultsComponent={setShowInsertResultsComponent} numberOfJumps={numberOfJumps}
                         inputChanged={inputChanged} setInputChanged={setInputChanged} />
 

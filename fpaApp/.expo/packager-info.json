@@ -1,10 +1,10 @@
 {
   "expoServerNgrokUrl": "https://k4-9xi.pdanielaraujo.fpaapp.exp.direct",
   "packagerNgrokUrl": "https://packager.k4-9xi.pdanielaraujo.fpaapp.exp.direct",
-  "ngrokPid": 36192,
-  "expoServerPort": 19001,
-  "devToolsPort": 19003,
-  "packagerPort": 19001,
+  "ngrokPid": 16084,
+  "expoServerPort": null,
+  "devToolsPort": 19002,
+  "packagerPort": 19000,
   "packagerPid": null,
   "webpackServerPort": null
 }
