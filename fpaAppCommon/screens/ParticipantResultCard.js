@@ -5,10 +5,6 @@ const ParticipantResultCard = (props) => {
 
     const { position, name, club, ageGroup, result, sportModalityMeasurementUnit } = props
 
-    let unit = ""
-
-
-
     return (
         <View style={styles.cardsContainer}>
             <View style={styles.listRowsContainer}>
@@ -21,7 +17,7 @@ const ParticipantResultCard = (props) => {
                 <Text style={styles.listInfoAgeGroupText}>{ageGroup}</Text>
 
                 {{
-                    "metros": <Text style={styles.listInfoResultText}>{result}m</Text>,
+                    "metros": <Text style={styles.listInfoResultText}>{result}</Text>,
                     "segundos": <Text style={styles.listInfoResultText}>{result}s</Text>,
                     "horas": <Text style={styles.listInfoResultText}>{result}h</Text>,
                 }[sportModalityMeasurementUnit]}

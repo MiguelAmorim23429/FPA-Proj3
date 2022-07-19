@@ -44,12 +44,10 @@ const AthleticsTestScreen = ({ route }) => {
     const [inputChanged, setInputChanged] = useState(false);
     const [resultsChanged, setResultsChanged] = useState(false);
 
-    // const [showLongJumpComponent, setShowLongJumpComponent] = useState(false);
     // const [showInsertResultsComponent, setShowInsertResultsComponent] = useState(false);
     const [showInsertResultsComponent, setShowInsertResultsComponent] = useState(false);
 
     const sortResultsEachAthlete = (a, b) => {
-
 
         if (sportModality?.nome === "Salto em altura") {
             if (a.altura < b.altura) return -1
@@ -66,6 +64,25 @@ const AthleticsTestScreen = ({ route }) => {
             if (b.resultado === "" || b.resultado === null) return -1;
             if (a.resultado === b.resultado) return 0;
             return a.resultado < b.resultado ? -1 : 1;
+        }
+
+        if (sportModality?.nome === 'Salto em comprimento') {
+            const resultsA = a.resultado
+            const resultsB = b.resultado
+
+            const validResultsA = resultsA.filter(result => { if (result.valido) return result })
+            const validResultsB = resultsB.filter(result => { if (result.valido) return result })
+
+            const jumpValuesResultsA = validResultsA.map(result => result.marca)
+            const jumpValuesResultsB = validResultsB.map(result => result.marca)
+
+            const maxJumpValueA = Math.max(...jumpValuesResultsA)
+            const maxJumpValueB = Math.max(...jumpValuesResultsB)
+
+
+            if (maxJumpValueA > maxJumpValueB) return -1
+            if (maxJumpValueA < maxJumpValueB) return 1
+
         }
 
         if (sportModality?.nome === 'Salto em altura') {
@@ -85,17 +102,31 @@ const AthleticsTestScreen = ({ route }) => {
                 if (failedAttemptsHeight) return result
             })
 
+            // if (resultsA.length !== 1 && resultsB.length !== 1) {
+            //     if (failedAttemptA || failedAttemptB) {
+            //         if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+            //         if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+            //     }
+            // } else if (resultsA.length === 1 && resultsB.length === 1) {
+            //     if (resultsA[resultsA.length - 1] === failedAttemptA || resultsB[resultsA.length - 1] !== failedAttemptB) return 1
+            //     if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsA.length - 1] === failedAttemptB) return -1
+            // }
+
+            // if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+            // if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+
             if (resultsA.length !== 1 && resultsB.length !== 1) {
-                if (failedAttemptA && failedAttemptB) {
-                    console.log("AA", resultsA[resultsA.length - 2].altura, "BB", resultsB[resultsB.length - 2].altura)
-
-                    if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-                    if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+                if (failedAttemptA || failedAttemptB) {
+                  if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+                  if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
                 }
-            }
-
-            if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-            if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+              } else if (resultsA.length === 1 && resultsB.length === 1) {
+                if (resultsA[resultsA.length - 1] === failedAttemptA || resultsB[resultsA.length - 1] !== failedAttemptB) return 1
+                if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsA.length - 1] === failedAttemptB) return -1
+              } else {
+                if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+                if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+              }
         }
     }
 
@@ -103,10 +134,6 @@ const AthleticsTestScreen = ({ route }) => {
         const handlerMatch = (snapshot) => {
             const matchObj = snapshot.val()
             setMatch(matchObj)
-
-            // let userObj = await get(userRef)
-
-            // setUser(userObj)
 
         }
 
@@ -155,23 +182,21 @@ const AthleticsTestScreen = ({ route }) => {
                 const idAthlete = childSnapshot.val().atleta;
                 const result = childSnapshot.val().resultado
 
-                athletes[idAthlete].resultado = result || ''
+                athletes[idAthlete].resultado = result || []
                 enrolledResults[idParticipant] = athletes[idAthlete]
 
                 enrolledResultsArray = Object.entries(enrolledResults)
 
                 enrolledResultsArray.map(enrolledResult => {
                     const result = enrolledResult[1].resultado
-                    // let sortedResultsOfEachAthlete = []
-                    // sortedResultsOfEachAthlete = 
 
-                    if (sportModality?.unidade === 'metros') result.sort(sortResultsEachAthlete)
+                    if (result.length !== 0) {
+                        if (sportModality?.nome === "Salto em altura") result.sort(sortResultsEachAthlete)
+                    }
 
-                    // console.log("xx", result)
-                    // sortedResultsOfEachAthlete.sort(sortHighestResultsTablePosition)
-                    // console.log("SSS", sortedResultsOfEachAthlete)
                     return enrolledResult
                 })
+
 
                 for (let i = 0; i < enrolledResultsArray.length; i++) {
                     enrolledResultsArray.sort(sortHighestResultsTablePositionTRUE)
@@ -229,13 +254,7 @@ const AthleticsTestScreen = ({ route }) => {
             resultsArray.push(participantResult)
             updates[`/provas/${idMatch}/participantes/${participantKey}/resultado/`] = participantResult || ''
 
-            // updates[`/provas/${idMatch}/participantes/${idParticipant}/resultado/`] = result
-
-            // resultsArray.push(result)
-
         })
-
-        console.log("blabla", resultsArray)
 
         if (resultsArray.every(result => result !== null && result !== undefined && result !== "")) {
             updates[`/provas/${idMatch}/estado/`] = "finalizada"
@@ -253,8 +272,6 @@ const AthleticsTestScreen = ({ route }) => {
         setTimeout(() => {
             setResultsChanged(false)
         }, 1500);
-
-        // Alert.alert('Resultados adicionados com sucesso.')
     }
 
     const setResultOnIndex = (result, index) => {
@@ -271,9 +288,8 @@ const AthleticsTestScreen = ({ route }) => {
 
     const openComponentToInsertResults = (enrolledKey, enrolledIndex) => {
 
-        if (sportModality.nome === 'Salto em comprimento') {
+        if (sportModality?.nome === 'Salto em comprimento') {
             if (numberOfJumps !== 0) {
-                // setShowLongJumpComponent(true)
                 setShowInsertResultsComponent(true)
                 setEnrolledKey(enrolledKey)
                 setEnrolledIndex(enrolledIndex)
@@ -282,8 +298,7 @@ const AthleticsTestScreen = ({ route }) => {
             }
         }
 
-        if (sportModality.nome === 'Salto em altura') {
-            // setShowLongJumpComponent(true)
+        if (sportModality?.nome === 'Salto em altura') {
             setShowInsertResultsComponent(true)
             setEnrolledKey(enrolledKey)
             setEnrolledIndex(enrolledIndex)
@@ -293,7 +308,7 @@ const AthleticsTestScreen = ({ route }) => {
     const getHighestValueOfJump = (results) => {
         let highestLegalResult = 0
 
-        if (sportModality.nome === 'Salto em altura') {
+        if (sportModality?.nome === 'Salto em altura') {
             const failedAttempt = results.find(result => {
                 const attempts = result.tentativas
                 const failedAttemptsHeight = attempts.every(attempt => !attempt)
@@ -301,11 +316,20 @@ const AthleticsTestScreen = ({ route }) => {
             })
 
             if (results.length === 1 && results.length !== 0) {
-                highestLegalResult = results[results.length - 1].altura
+                failedAttempt ? highestLegalResult = 'SM' : highestLegalResult = results[results.length - 1].altura + 'm'
             } else {
-                failedAttempt ? highestLegalResult = results[results.length - 2].altura : highestLegalResult = results[results.length - 1].altura
+                failedAttempt ? highestLegalResult = results[results.length - 2].altura + 'm' : highestLegalResult = results[results.length - 1].altura + 'm'
             }
             return highestLegalResult
+        }
+
+        if (sportModality?.nome === 'Salto em comprimento') {
+            const validJumps = results.filter(result => { if (result.valido) return result })
+            const jumpValues = validJumps.map(value => value.marca)
+            highestLegalResult = Math.max(...jumpValues)
+            const stringHighestResult = highestLegalResult.toString()
+
+            return stringHighestResult
         }
     }
 
@@ -326,7 +350,7 @@ const AthleticsTestScreen = ({ route }) => {
             else if (sportModality.unidade === "horas") {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado ? participants[index][1].resultado + 'h': ''}
+                    value={participants[index][1].resultado ? participants[index][1].resultado + 'h' : ''}
                     editable={user.autorizado ? true : false}
                     selectTextOnFocus={user.autorizado ? true : false}
                     onChangeText={text => setResultOnIndex(text, index)}
@@ -356,7 +380,8 @@ const AthleticsTestScreen = ({ route }) => {
             else if (sportModality.unidade === 'metros' && sportModality.nome === 'Salto em comprimento') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    value={participants[index][1].resultado.length === 0 ? '' : participants[index][1].resultado[0].marca + 'm' || ''}
+                    // value={participants[index][1].resultado.length === 0 ? '' : participants[index][1].resultado[0].marca || ''}
+                    value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) || ''}
                     editable={false}
                     selectTextOnFocus={false}
                 />
@@ -365,13 +390,13 @@ const AthleticsTestScreen = ({ route }) => {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
                     // value={enrolled[index][1].resultado.length === 0 ? '' : enrolled[index][1].resultado[0].altura + ' m' || ''}
-                    value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) + 'm' || ''}
+                    value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) || ''}
                     editable={false}
                     selectTextOnFocus={false}
                 />
             }
         } else if (match.estado === "emInscricoes") {
-            if (sportModality.unidade === "segundos") {
+            if (sportModality.unidade === "segundos" || sportModality.unidade === "horas") {
                 sportModalityMaskInput = <TextInput
                     style={styles.textInput}
                     editable={false}
@@ -379,14 +404,12 @@ const AthleticsTestScreen = ({ route }) => {
                     placeholder='00:00s' />
 
             } else if (sportModality.unidade === 'metros') {
-                // sportModalityMaskInput = <Pressable style={{ width: 100, height: 32, backgroundColor: 'white', }} onPress={() => { setShowLongJumpComponent(true) }} ><Text>CLICK</Text></Pressable>
-                sportModalityMaskInput = <Pressable style={styles.textInput} disabled onPress={() => { setShowLongJumpComponent(true) }} ><Text>CLICK</Text></Pressable>
-                // sportModalityMaskInput = <Button title='CLICK' onPress={() => { setShowLongJumpComponent(true) }}>CLICK</Button>
-                // sportModalityMaskInput = <TextInput
-                //     style={styles.textInput}
-                //     editable={false}
-                //     selectTextOnFocus={false}
-                //     placeholder='00.00m' />
+                // sportModalityMaskInput = <Pressable style={styles.textInput} disabled onPress={() => { setShowLongJumpComponent(true) }} ><Text>CLICK</Text></Pressable>
+                sportModalityMaskInput = <TextInput
+                    style={styles.textInput}
+                    editable={false}
+                    selectTextOnFocus={false}
+                    placeholder='00.00m' />
             }
         }
 

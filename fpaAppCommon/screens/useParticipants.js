@@ -22,9 +22,6 @@ const useParticipants = ({ matchId, modalidadeId }) => {
       if (a.altura < b.altura) return -1
       if (a.altura > b.altura) return 1
     }
-
-    if (sportModality.nome === 'Salto em comprimento') {
-    }
   }
 
   const sortHighestResultsTablePosition = ([, a], [, b]) => {
@@ -60,6 +57,8 @@ const useParticipants = ({ matchId, modalidadeId }) => {
       const resultsA = a.resultado
       const resultsB = b.resultado
 
+      console.log("XX", resultsA)
+
       const failedAttemptA = resultsA.find(result => {
         const attempts = result.tentativas
         const failedAttemptsHeight = attempts.every(attempt => !attempt)
@@ -72,8 +71,25 @@ const useParticipants = ({ matchId, modalidadeId }) => {
         if (failedAttemptsHeight) return result
       })
 
-      if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-      if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+      if (resultsA.length !== 1 && resultsB.length !== 1) {
+        if (failedAttemptA || failedAttemptB) {
+          if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+          if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+        }
+      } else if (resultsA.length === 1 && resultsB.length === 1) {
+        if (resultsA[resultsA.length - 1] === failedAttemptA || resultsB[resultsA.length - 1] !== failedAttemptB) return 1
+        if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsA.length - 1] === failedAttemptB) return -1
+      } else {
+        if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+        if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+      }
+
+      // if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+      // if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+
+      //     if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
+      // if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+
     }
   }
 

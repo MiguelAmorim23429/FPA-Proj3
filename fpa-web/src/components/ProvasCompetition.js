@@ -77,7 +77,7 @@ const ProvasCompetition = () => {
     }
 
     return (
-        matches.length == 0 ? ( // if there are no matches
+        (matches.length === 0 || matches.every(match => match[1].estado === "removida")) ? ( // if there are no matches
             <div className={addNewMatchForm ? 'main-provascomp-container-dark' : 'main-provascomp-container'}>
 
                 <div className={addNewMatchForm ? 'add-btn-container-dark' : 'add-btn-container'}>

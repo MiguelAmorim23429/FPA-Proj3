@@ -33,9 +33,9 @@ const AthleticsTestScreen = ({ route }) => {
             })
 
             if (results.length === 1) {
-                highestLegalResult = results[results.length - 1].altura
+                failedAttempt ? highestLegalResult = 'SM' : highestLegalResult = results[results.length - 1].altura + 'm'
             } else {
-                failedAttempt ? highestLegalResult = results[results.length - 2].altura : highestLegalResult = results[results.length - 1].altura
+                failedAttempt ? highestLegalResult = results[results.length - 2].altura + 'm' : highestLegalResult = results[results.length - 1].altura + 'm'
             }
             return highestLegalResult
         }
