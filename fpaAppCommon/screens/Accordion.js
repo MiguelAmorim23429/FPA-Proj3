@@ -49,7 +49,6 @@ const Accordion = (props) => {
     const showList = (matchKey) => {
 
         for (let match of matchesById) {
-            // console.log(matchKey)
             if (match[0] === matchKey) {
                 if (match[1].estado === "finalizada") {
                     setListExpanded(!listExpanded);
@@ -80,7 +79,6 @@ const Accordion = (props) => {
                                     heightAnim,
                                     {
                                         toValue: 200,
-                                        // toValue: 280,
                                         duration: 250,
                                         useNativeDriver: false,
                                     }),
@@ -115,7 +113,6 @@ const Accordion = (props) => {
                 }
             }
         }
-        // navigation.navigate('AthleticsTest', { idMatch: matchKey, idSportModality: sportModalityKey })
     }
 
     const getHighestValueOfJump = (results) => {
@@ -137,18 +134,26 @@ const Accordion = (props) => {
         }
 
         if (sportModality.nome === 'Salto em comprimento') {
-            const validJumps = results.filter(result => { if (result.valido) return result })
-            const jumpValues = validJumps.map(value => value.marca)
-            highestLegalResult = Math.max(...jumpValues)
-            console.log("xx", highestLegalResult)
+            const validJumps = results.map(result => {
+                if (result.marca !== '') {
+                    return result.marca
+                } else {
+                    return result.marca = 0
+                }
+            })
+            highestLegalResult = Math.max(...validJumps)
 
-            return highestLegalResult
+            if (highestLegalResult === 0) {
+                return 'X (0.0m)'
+            } else {
+                return highestLegalResult + 'm'
+            }
+
         }
     }
 
     return (
         <View>
-            {/* <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 64, padding: 0, marginLeft: 0, marginTop: 0, marginRight: 0, marginBottom: 8, borderRadius: 16 }} onPress={() => { escolherProva(props.matchId, props.sportModalityId) }}> */}
             <Pressable style={{ justifyContent: 'center', alignSelf: 'center', width: '95%', height: 64, padding: 0, margin: 0, borderRadius: 16 }} onPress={() => { escolherProva(matchId, sportModalityId) }}>
                 <View style={styles.listRowsContainer}>
 
@@ -175,7 +180,7 @@ const Accordion = (props) => {
                             <Text style={styles.participantsTablePosition}>{index + 1}º</Text>
                             <Text style={styles.nameText}>{participant[1].nome}</Text>
                             <Text style={styles.clubText}>{participant[1].clube.sigla}</Text>
-                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : getHighestValueOfJump(participant[1].resultado) + 'm'}</Text>
+                            <Text style={styles.resultText}>{participant[1].resultado.length === 0 ? '' : getHighestValueOfJump(participant[1].resultado)}</Text>
                             {(index === 0 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#FFD700' size={24} />}
                             {(index === 1 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#C0C0C0' size={24} />}
                             {(index === 2 && accordionOpen) && <EntypoIcon name='medal' style={styles.resultIcon} color='#CD7F32' size={24} />}

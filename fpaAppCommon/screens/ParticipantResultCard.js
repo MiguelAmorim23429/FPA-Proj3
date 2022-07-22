@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
     listRowsContainer: {
         height: 64,
         paddingLeft: 8,
-        // backgroundColor: '#ff7700',
         backgroundColor: '#464646',
         width: '100%',
         borderRadius: 16,

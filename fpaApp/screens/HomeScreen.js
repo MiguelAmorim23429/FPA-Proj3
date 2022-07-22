@@ -76,7 +76,6 @@ const HomeScreen = (props) => {
             translucent: true,
           }
         }
-        // containerStyle={{ margin: 0, padding: 0, height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000"}}
         containerStyle={{ margin: 0, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
         backgroundColor='#1375BC'
         ViewComponent={LinearGradient}
@@ -100,7 +99,6 @@ const HomeScreen = (props) => {
         {competitions.map(([key, value]) => {
           if (value.ativa) {
             return (
-              // <View style={{ justifyContent: 'center', alignSelf: 'center', width: '100%', height: 200, padding: 0, margin: 0, borderRadius: 16 }} key={key}>
               <View style={{ justifyContent: 'center', alignSelf: 'center', width: '100%', height: 160, padding: 0, margin: 0, borderRadius: 16 }} key={key}>
 
                 <Card containerStyle={styles.card}>
@@ -164,7 +162,6 @@ const styles = StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
     height: 140,
-    // height: 180,
     borderWidth: 0,
     elevation: 4,
     shadowColor: "#000",
@@ -203,7 +200,6 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   logOutPressable: {
-    // paddingHorizontal: 24,
     marginRight: 16,
     color: 'white'
   },

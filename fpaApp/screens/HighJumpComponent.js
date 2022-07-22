@@ -6,7 +6,6 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign'
 
 const HighJumpComponent = (props) => {
 
-  // const { setShowHighJumpComponent } = props
   const { enrolled, setEnrolled, enrolledIndex, inputChanged, setInputChanged, setShowInsertResultsComponent } = props
 
   const [jumps, setJumps] = useState(enrolled[enrolledIndex][1].resultado || [])

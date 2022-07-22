@@ -35,27 +35,6 @@ const CompetitionScreen = ({ route }) => {
         });
     }, [])
 
-    // Clicar no Card e redirecionar para outro ecrã com a lista de provas dessa competição selecionada.
-    const escolherProva = (matchKey) => {
-        console.log(`prova::::::${matchKey}`)
-        // console.log(`prova: ${matchKey} e modalidade: ${sportModality}`)
-        // for (let match of matchesById) {
-        //     // console.log(matchKey)
-        //     if (match[0] === matchKey) {
-        //         if (match[1].estado === "finalizada") {
-
-        //             navigation.navigate('AthleticsTest', {
-        //                 matchId: matchKey
-        //             })
-        //         } else if (match[1].estado === "ativa") {
-        //             Alert.alert('Esta prova ainda se encontra a decorrer.')
-        //         } else if (match[1].estado === "emInscricoes") {
-        //             Alert.alert('Esta prova ainda está em fase de inscrições.')
-        //         }
-        //     }
-        // }
-    }
-
     const goToPreviousScreen = () => {
         navigation.goBack()
     }
@@ -97,7 +76,6 @@ const CompetitionScreen = ({ route }) => {
                             translucent: true,
                         }
                     }
-                    // containerStyle={{ height: 80, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
                     containerStyle={{ marginLeft: 0, marginTop: 0, marginRight: 0, marginBottom: 8, padding: 0, height: 100, borderWidth: 0, elevation: 4, shadowColor: "#000" }}
                     backgroundColor='#1375BC'
                     ViewComponent={LinearGradient} // Don't forget this!

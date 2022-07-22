@@ -5,13 +5,6 @@ import { max } from 'moment';
 const useParticipants = ({ matchId, modalidadeId }) => {
 
   const db = getDatabase()
-  // const participantsRef = ref(db, '/provas/' + matchId + '/participantes/')
-  // const athletesRef = ref(db, '/atletas')
-  // const matchRef = ref(db, `/provas/${matchId}`)
-  // const sportModalitiesRef = ref(db, `modalidades/${modalidadeId}`)
-
-
-  // const sportModality = match && useSportModalities({ sportModalityId: match.modalidade })
 
   const [sportModality, setSportModality] = useState('')
   const [match, setMatch] = useState(null)
@@ -57,8 +50,6 @@ const useParticipants = ({ matchId, modalidadeId }) => {
       const resultsA = a.resultado
       const resultsB = b.resultado
 
-      console.log("XX", resultsA)
-
       const failedAttemptA = resultsA.find(result => {
         const attempts = result.tentativas
         const failedAttemptsHeight = attempts.every(attempt => !attempt)
@@ -71,25 +62,31 @@ const useParticipants = ({ matchId, modalidadeId }) => {
         if (failedAttemptsHeight) return result
       })
 
-      if (resultsA.length !== 1 && resultsB.length !== 1) {
-        if (failedAttemptA || failedAttemptB) {
-          if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-          if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
-        }
-      } else if (resultsA.length === 1 && resultsB.length === 1) {
-        if (resultsA[resultsA.length - 1] === failedAttemptA || resultsB[resultsA.length - 1] !== failedAttemptB) return 1
-        if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsA.length - 1] === failedAttemptB) return -1
-      } else {
+      if (!failedAttemptA && !failedAttemptB) {
         if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
         if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
+      } else {
+        if (resultsA.length === 1 || resultsB.length === 1) {
+          if (resultsA[0] !== failedAttemptA && resultsA[0].altura > resultsB[0].altura) return -1
+          if (resultsB[0] !== failedAttemptB && resultsA[0].altura < resultsB[0].altura) return 1
+          if (resultsA[0] !== failedAttemptA || resultsB[0] === failedAttemptB) return -1
+          if (resultsA[0] === failedAttemptA || resultsB[0] !== failedAttemptB) return 1
+        } else if (resultsA.length > 1 || resultsB.length > 1) {
+          if (resultsA[resultsA.length - 1] === failedAttemptA && resultsB[resultsB.length - 1] === failedAttemptB) {
+            if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+            if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+          }
+          if (resultsA[resultsA.length - 1] === failedAttemptA) {
+            if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 1].altura) return -1
+            if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 1].altura) return 1
+
+          }
+          if (resultsB[resultsB.length - 1] === failedAttemptB) {
+            if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 2].altura) return -1
+            if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 2].altura) return 1
+          }
+        }
       }
-
-      // if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-      // if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
-
-      //     if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-      // if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
-
     }
   }
 
@@ -147,7 +144,6 @@ const useParticipants = ({ matchId, modalidadeId }) => {
 
       let enrolledResults = {}
       let enrolledResultsArray = []
-      let resultsArray = []
 
       snapshot.forEach((childSnapshot) => {
         const idParticipant = childSnapshot.key

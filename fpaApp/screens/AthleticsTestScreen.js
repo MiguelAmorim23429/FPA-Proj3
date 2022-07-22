@@ -44,17 +44,13 @@ const AthleticsTestScreen = ({ route }) => {
     const [inputChanged, setInputChanged] = useState(false);
     const [resultsChanged, setResultsChanged] = useState(false);
 
-    // const [showInsertResultsComponent, setShowInsertResultsComponent] = useState(false);
     const [showInsertResultsComponent, setShowInsertResultsComponent] = useState(false);
 
     const sortResultsEachAthlete = (a, b) => {
-
         if (sportModality?.nome === "Salto em altura") {
             if (a.altura < b.altura) return -1
             if (a.altura > b.altura) return 1
         }
-
-        // return a.altura > b.altura ? -1 : 1
     }
 
     const sortHighestResultsTablePositionTRUE = ([, a], [, b]) => {
@@ -102,31 +98,31 @@ const AthleticsTestScreen = ({ route }) => {
                 if (failedAttemptsHeight) return result
             })
 
-            // if (resultsA.length !== 1 && resultsB.length !== 1) {
-            //     if (failedAttemptA || failedAttemptB) {
-            //         if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-            //         if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
-            //     }
-            // } else if (resultsA.length === 1 && resultsB.length === 1) {
-            //     if (resultsA[resultsA.length - 1] === failedAttemptA || resultsB[resultsA.length - 1] !== failedAttemptB) return 1
-            //     if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsA.length - 1] === failedAttemptB) return -1
-            // }
-
-            // if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
-            // if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
-
-            if (resultsA.length !== 1 && resultsB.length !== 1) {
-                if (failedAttemptA || failedAttemptB) {
-                  if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
-                  if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
-                }
-              } else if (resultsA.length === 1 && resultsB.length === 1) {
-                if (resultsA[resultsA.length - 1] === failedAttemptA || resultsB[resultsA.length - 1] !== failedAttemptB) return 1
-                if (resultsA[resultsA.length - 1] !== failedAttemptA || resultsB[resultsA.length - 1] === failedAttemptB) return -1
-              } else {
+            if (!failedAttemptA && !failedAttemptB) {
                 if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 1].altura) return -1
                 if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 1].altura) return 1
-              }
+            } else {
+                if (resultsA.length === 1 || resultsB.length === 1) {
+                    if (resultsA[0] !== failedAttemptA && resultsA[0].altura > resultsB[0].altura) return -1
+                    if (resultsB[0] !== failedAttemptB && resultsA[0].altura < resultsB[0].altura) return 1
+                    if (resultsA[0] !== failedAttemptA || resultsB[0] === failedAttemptB) return -1
+                    if (resultsA[0] === failedAttemptA || resultsB[0] !== failedAttemptB) return 1
+                } else if (resultsA.length > 1 || resultsB.length > 1) {
+                    if (resultsA[resultsA.length - 1] === failedAttemptA && resultsB[resultsB.length - 1] === failedAttemptB) {
+                        if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 2].altura) return -1
+                        if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 2].altura) return 1
+                    }
+                    if (resultsA[resultsA.length - 1] === failedAttemptA) {
+                        if (resultsA[resultsA.length - 2].altura > resultsB[resultsB.length - 1].altura) return -1
+                        if (resultsA[resultsA.length - 2].altura < resultsB[resultsB.length - 1].altura) return 1
+
+                    }
+                    if (resultsB[resultsB.length - 1] === failedAttemptB) {
+                        if (resultsA[resultsA.length - 1].altura > resultsB[resultsB.length - 2].altura) return -1
+                        if (resultsA[resultsA.length - 1].altura < resultsB[resultsB.length - 2].altura) return 1
+                    }
+                }
+            }
         }
     }
 
@@ -244,8 +240,6 @@ const AthleticsTestScreen = ({ route }) => {
         const updates = {}
         let resultsArray = []
 
-        // const enrolledResultsArray = Object.entries(enrolledResults)
-
         participants.forEach((participant) => {
 
             const participantKey = participant[0]
@@ -277,9 +271,6 @@ const AthleticsTestScreen = ({ route }) => {
     const setResultOnIndex = (result, index) => {
         setInputChanged(true)
         let clonedEnrolled = [...participants]
-        // let newResult = Object.assign({}, enrolled)
-        // console.log(valResultado, index, results, inscritos)
-        // newResult[index] = valResultado;
 
         clonedEnrolled[index][1].resultado = result
 
@@ -324,12 +315,21 @@ const AthleticsTestScreen = ({ route }) => {
         }
 
         if (sportModality?.nome === 'Salto em comprimento') {
-            const validJumps = results.filter(result => { if (result.valido) return result })
-            const jumpValues = validJumps.map(value => value.marca)
-            highestLegalResult = Math.max(...jumpValues)
-            const stringHighestResult = highestLegalResult.toString()
+            const validJumps = results.map(result => {
+                if (result.marca !== '') {
+                    return result.marca
+                } else {
+                    return result.marca = 0
+                }
+            })
+            highestLegalResult = Math.max(...validJumps)
 
-            return stringHighestResult
+
+            if (highestLegalResult === 0) {
+                return 'X (0.0m)'
+            } else {
+                return highestLegalResult + 'm'
+            }
         }
     }
 
@@ -380,7 +380,6 @@ const AthleticsTestScreen = ({ route }) => {
             else if (sportModality.unidade === 'metros' && sportModality.nome === 'Salto em comprimento') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    // value={participants[index][1].resultado.length === 0 ? '' : participants[index][1].resultado[0].marca || ''}
                     value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) || ''}
                     editable={false}
                     selectTextOnFocus={false}
@@ -389,7 +388,6 @@ const AthleticsTestScreen = ({ route }) => {
             else if (sportModality.unidade === 'metros' && sportModality.nome === 'Salto em altura') {
                 sportModalityMaskInput = <MaskInput
                     style={styles.textInput}
-                    // value={enrolled[index][1].resultado.length === 0 ? '' : enrolled[index][1].resultado[0].altura + ' m' || ''}
                     value={participants[index][1].resultado.length === 0 ? '' : getHighestValueOfJump(participants[index][1].resultado) || ''}
                     editable={false}
                     selectTextOnFocus={false}
@@ -404,7 +402,6 @@ const AthleticsTestScreen = ({ route }) => {
                     placeholder='00:00s' />
 
             } else if (sportModality.unidade === 'metros') {
-                // sportModalityMaskInput = <Pressable style={styles.textInput} disabled onPress={() => { setShowLongJumpComponent(true) }} ><Text>CLICK</Text></Pressable>
                 sportModalityMaskInput = <TextInput
                     style={styles.textInput}
                     editable={false}

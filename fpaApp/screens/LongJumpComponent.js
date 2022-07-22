@@ -6,7 +6,6 @@ import MaskInput from 'react-native-mask-input';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign'
 
 const LongJumpComponent = (props) => {
-    // const { enrolled, enrolledKey, enrolledIndex, setEnrolled, setShowLongJumpComponent, numberOfJumps, inputChanged, setInputChanged } = props
     const { enrolled, enrolledKey, enrolledIndex, setEnrolled, setShowInsertResultsComponent, numberOfJumps, inputChanged, setInputChanged } = props
 
     const [validJump, setValidJump] = useState(false)
@@ -39,10 +38,6 @@ const LongJumpComponent = (props) => {
 
         let clonedEnrolled = [...enrolled]
 
-        // let clonedEnrolled = enrolled.map(x => x)
-
-        // newResult[enrolledKey][1] = newResult[enrolledKey][1] || {}
-
         let clonedJumpsArray = [...jumpsArray]
 
         let newJumpsArray = clonedJumpsArray.map((jumpElement, index) => {
@@ -64,9 +59,6 @@ const LongJumpComponent = (props) => {
         }
 
         let clonedEnrolled = [...enrolled]
-        // let newResult = enrolled.map(x => x)
-
-        // newResult[enrolledKey][1] = newResult[enrolledKey][1] || {}
 
         let clonedJumpsArray = [...jumpsArray]
 
@@ -171,13 +163,6 @@ const LongJumpComponent = (props) => {
         return jumpsArray;
     }
 
-
-
-    // return {
-    //     "salto": <Home />,
-
-    // }[modalidade]
-
     return (
         <View style={styles.container}>
 
@@ -186,8 +171,6 @@ const LongJumpComponent = (props) => {
                 <AntDesignIcon name='close' color='#000' size={24} style={styles.closeWindowIcon} onPress={() => closeLongJumpComponent()} />
             </View>
 
-            {/* <AntDesignIcon name='close' color='#000' size={24} style={styles.closeWindowIcon} onPress={() => closeLongJumpComponent()} /> */}
-
             <ScrollView style={styles.firstSection}>
                 {createInputsByNumberOfJumps(numberOfJumps)}
             </ScrollView>
@@ -195,7 +178,6 @@ const LongJumpComponent = (props) => {
             <Divider width={1} style={styles.divider} />
 
             <View style={styles.secondSection}>
-                {/* <Pressable style={styles.confirmButton} onPress={() => setShowLongJumpComponent(false)}> */}
                 <Pressable style={styles.confirmButton} onPress={() => setShowInsertResultsComponent(false)}>
                     <Text style={styles.confirmButtonText}>Confirmar</Text>
                 </Pressable>
