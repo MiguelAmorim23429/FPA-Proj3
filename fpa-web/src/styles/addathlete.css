@@ -1,0 +1,92 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.add-athlete-form-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 16px;
+}
+
+.form-closebtn {
+    width: 32px;
+    height: 32px;
+    color: black;
+    cursor: pointer;
+}
+
+.add-athlete-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.add-athlete-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: flex-start;
+}
+
+.add-athlete-label {
+    font-size: 16px;
+    font-family: 'QuicksandMedium', sans-serif;
+    padding-left: 4px;
+    padding-bottom: 4px;
+}
+
+.add-athlete-input {
+    font-size: 16px;
+    font-family: 'QuicksandRegular', sans-serif;
+    height: 56px;
+    padding-left: 8px;
+    border: 1px solid #777;
+    border-radius: 4px;
+}
+
+.add-athlete-input:focus {
+    outline: none;
+}
+
+.add-athlete-btn {
+    border-radius: 1em;
+    border-style: none;
+    /* background-color: white; */
+    width: 136px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 16px;
+    cursor: pointer;
+    font-family: 'QuicksandSemiBold';
+    align-self: center;
+}
+
+.select-box-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-items: auto;
+    gap: 8px;
+}
+
+.single-select-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.info-match-select-box {
+    width: 90%;
+    height: 32px;
+}
+
+.select-default {
+    display: none;
+}

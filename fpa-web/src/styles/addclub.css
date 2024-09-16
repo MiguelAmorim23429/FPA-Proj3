@@ -1,0 +1,62 @@
+.add-club-form-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 16px;
+}
+
+.form-closebtn {
+    width: 32px;
+    height: 32px;
+    color: black;
+    cursor: pointer;
+}
+
+.add-club-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+    padding-top: 8px;
+}
+
+.add-club-input-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    justify-content: flex-start;
+}
+
+.add-club-label {
+    font-size: 16px;
+    font-family: 'QuicksandMedium', sans-serif;
+    padding-left: 4px;
+    padding-bottom: 4px;
+}
+
+.add-club-input {
+    font-size: 16px;
+    font-family: 'QuicksandRegular', sans-serif;
+    height: 56px;
+    padding-left: 8px;
+    border: 1px solid #777;
+    border-radius: 4px;
+}
+
+.add-club-input:focus {
+    outline: none;
+}
+
+.add-club-btn {
+    border-radius: 1em;
+    border-style: none;
+    /* background-color: white; */
+    width: 136px;
+    height: 40px;
+    font-size: 16px;
+    margin-top: 16px;
+    cursor: pointer;
+    font-family: 'QuicksandSemiBold';
+    align-self: center;
+}

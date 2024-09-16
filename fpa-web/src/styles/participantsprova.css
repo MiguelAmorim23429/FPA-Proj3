@@ -1,0 +1,93 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+.main-participantsprova-container {
+    min-height: 100vh;
+    display: flex;
+    padding: 16px;
+    flex-direction: column;
+}
+
+.start-btn-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.match-status-text {
+    margin-left: 12px;
+}
+
+.no-participants-found-container {
+    margin-top: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.start-test-btn {
+    width: 180px;
+    height: 48px;
+    color: white;
+    background-color: #1375BC;
+    border-style: none;
+    font-size: 18px;
+    border-radius: 24px;
+    margin-left: 72px;
+}
+
+.start-test-btn:hover {
+    cursor: pointer;
+}
+
+.lists-container {
+    display: flex;
+    gap: 24px;
+}
+
+.main-participant-container {
+    flex: 1;
+    /* width: 720px;
+    height: 480px; */
+}
+
+.participant-container {
+    display: flex;
+    height: 56px;
+    padding: 0 8px 0 16px;
+    border-width: 1px 0;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.2);
+}   
+
+.participant-list {
+    display: flex;
+    width: 70%;
+    list-style-type: none;
+    align-items: center;
+    gap: 24px;
+}
+
+.participant-list-item {
+    display: flex;
+    flex: 0.3;
+}
+
+.participant-list-btn-container {
+    width: 30%;
+}
+
+#remove-participant-btn {
+    background-color: white;
+    cursor: pointer;
+}
+
+#remove-participant-btn:hover {
+    background-color: #FEF2F3;
+}
